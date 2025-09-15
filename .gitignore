@@ -1,0 +1,16 @@
+# dependencies
+node_modules/
+frontend/node_modules/
+
+# build outputs
+dist/
+build/
+
+# cache
+.cache/
+
+# environment variables
+.env
+
+# misc
+.DS_Store
