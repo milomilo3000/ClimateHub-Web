@@ -1,0 +1,2 @@
+- Make it an instantious tracker instead of an average tracker, "how many did you buy last week?", "how many did you buy last month", "how many flights did you take last year". All quantities should be averaged to a weekly timeline, even for yearly things or monthly things like flights, etc.
+

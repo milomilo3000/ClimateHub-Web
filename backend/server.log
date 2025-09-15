@@ -1,0 +1,9 @@
+✅ Firebase Admin initialized successfully
+ClimateHub Backend running on port 5001
+✅ Connected to MongoDB
+Save request received: {
+  userUid: 'JBuiB7bN9iXvEITV27b7OE7rrre2',
+  hasFootprint: true,
+  footprintKeys: [ 'totalFootprint', 'breakdown', 'comparison' ]
+}
+User found: Yes awsumilo@gmail.com
