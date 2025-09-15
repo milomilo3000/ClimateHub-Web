@@ -1,0 +1,9 @@
+These are the fixes that need to be made regarding the carbon footprint calculator section:
+
+- There is still no moving animation of the birds on the screen or the leaves, or other animated objects, etc. I need it to
+They should be moving vertically or horizontally depending, as a repetitive animation on the screen like a replaying video.
+
+
+
+- Make the slider colour darker green so that it can be seen. right now it is blending in completely with the form box colour,
+so the slider cant even be seen (only a small circle can be seen). you had only made the colour of the cirlce dark green, not the line itself.
