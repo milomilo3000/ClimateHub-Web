@@ -10,87 +10,102 @@ import {
   Globe, 
   Award,
   ArrowRight,
-  CheckCircle
+  CheckCircle,
+  Shield,
+  Target,
+  Zap,
+  BarChart3
 } from 'lucide-react';
 
 const Home = () => {
   const features = [
     {
       icon: Calculator,
-      title: 'Carbon Footprint Tracker',
-      description: 'Calculate and track your carbon footprint with our comprehensive multi-step form. Compare your results with Singapore and global averages.',
+      title: 'Camp Carbon Tracker',
+      description: 'Track your environmental impact during NS. Calculate emissions from camp life, transport, and more. See how you stand compared to your other NSFs.',
       href: '/carbon-tracker'
     },
     {
       icon: BookOpen,
       title: 'Education Hub',
-      description: 'Learn about Singapore\'s environmental initiatives, government policies, and stay updated with the latest climate news.',
+      description: 'Learn about Singapore\'s climate goals and how you can contribute. Get updates on environmental policies and initiatives in Singapore\'s army.',
       href: '/education'
     },
     {
       icon: Calendar,
-      title: 'Event Calendar',
-      description: 'Discover environmental community events in Singapore. Submit and participate in climate action initiatives.',
+      title: 'Events Calendar',
+      description: 'Join green initiatives in your camp and in Singapore. From beach cleanups to eco-volunteering, turn your NS experience into environmental service.',
       href: '/events'
     },
     {
       icon: Users,
-      title: 'Community',
-      description: 'Connect with like-minded individuals, earn badges for eco actions, and track your progress over time.',
+      title: 'Unit Eco-Rankings',
+      description: 'Compete with other NSF units in sustainability challenges. Earn eco-badges and climb the green leaderboard with your campmates.',
       href: '/profile'
     }
   ];
 
   const stats = [
-    { label: 'Carbon Footprints Calculated', value: '10,000+', icon: Calculator },
-    { label: 'Environmental Events', value: '500+', icon: Calendar },
-    { label: 'Active Users', value: '5,000+', icon: Users },
-    { label: 'CO₂ Saved (tonnes)', value: '2,500+', icon: Leaf }
+    { label: 'NSF Carbon Footprints', value: '2,500+', icon: Calculator },
+    { label: 'Camp Eco-Events', value: '150+', icon: Calendar },
+    { label: 'Active NSF Users', value: '1,200+', icon: Users },
+    { label: 'CO₂ Saved (tonnes)', value: '850+', icon: Leaf }
   ];
 
   const benefits = [
-    'Track your personal carbon footprint',
-    'Compare with Singapore and global averages',
-    'Discover local environmental events',
-    'Learn about climate initiatives',
-    'Earn badges for eco actions',
-    'Stay informed with latest news',
-    'Connect with the community',
-    'Access educational resources'
+    'Track your camp environmental impact',
+    'Compete in unit eco-challenges',
+    'Learn about military/local sustainability',
+    'Earn eco-badges for eco-friendly actions',
+    'Join camp and local environmental initiatives',
+    'Connect with eco-conscious NSFs',
+    'Access local climate resources',
+    'Contribute to Singapore\'s green goals'
   ];
 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-50 to-secondary-50 py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="bg-gradient-to-br from-green-50 via-green-100 to-green-200 py-20 relative overflow-hidden">
+        {/* Camouflage pattern background */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-10 left-10 w-32 h-32 bg-green-800 rounded-full"></div>
+          <div className="absolute top-32 right-20 w-24 h-24 bg-green-700 rounded-full"></div>
+          <div className="absolute bottom-20 left-1/4 w-20 h-20 bg-green-600 rounded-full"></div>
+          <div className="absolute bottom-32 right-1/3 w-28 h-28 bg-green-800 rounded-full"></div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center">
             <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center">
-                <Leaf className="w-8 h-8 text-white" />
+              <div className="w-20 h-20 bg-green-600 rounded-2xl flex items-center justify-center relative">
+                <Shield className="w-10 h-10 text-white" />
+                <Leaf className="w-6 h-6 text-green-200 absolute -top-1 -right-1" />
               </div>
             </div>
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-              Singapore's Climate
-              <span className="text-primary-600"> Action Platform</span>
+              ClimateHub
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Track your carbon footprint, discover environmental events, and stay informed about 
-              climate initiatives in Singapore. Join the movement towards a sustainable future.
+            <h2 className="text-2xl md:text-3xl font-semibold text-green-700 mb-4">
+              Equipping NSFs to Serve Both Nation and Nature
+            </h2>
+            <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed">
+              Turn your camp routines into eco-missions. Track your footprint, reduce your impact, 
+              and help your campmates climb the eco-ranks while serving Singapore.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 to="/carbon-tracker"
-                className="btn-primary text-lg px-8 py-3 flex items-center justify-center space-x-2"
+                className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-lg text-lg transition-colors duration-200 inline-flex items-center justify-center space-x-2"
               >
-                <span>Calculate Your Footprint</span>
+                <span>Calculate your footprint</span>
                 <ArrowRight className="w-5 h-5" />
               </Link>
               <Link
                 to="/education"
-                className="btn-outline text-lg px-8 py-3 flex items-center justify-center space-x-2"
+                className="border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white font-semibold py-3 px-8 rounded-lg text-lg transition-colors duration-200 inline-flex items-center justify-center space-x-2"
               >
-                <span>Learn More</span>
+                <span>Learn more</span>
                 <BookOpen className="w-5 h-5" />
               </Link>
             </div>
@@ -101,12 +116,18 @@ const Home = () => {
       {/* Stats Section */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+              NSFs Making a Difference
+            </h2>
+            <p className="text-gray-600">Join fellow servicemen in Singapore's climate mission</p>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="flex justify-center mb-4">
-                  <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
-                    <stat.icon className="w-6 h-6 text-primary-600" />
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <stat.icon className="w-6 h-6 text-green-600" />
                   </div>
                 </div>
                 <div className="text-3xl font-bold text-gray-900 mb-2">{stat.value}</div>
@@ -122,11 +143,11 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Everything You Need for Climate Action
+              Your NS Climate Action Toolkit
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Our comprehensive platform provides all the tools and resources you need to 
-              understand and reduce your environmental impact.
+              Everything you need to make your National Service experience environmentally conscious 
+              and contribute to Singapore's green future.
             </p>
           </div>
           
@@ -135,15 +156,15 @@ const Home = () => {
               <Link
                 key={index}
                 to={feature.href}
-                className="card hover:shadow-lg transition-shadow duration-300 group"
+                className="bg-white rounded-xl p-6 hover:shadow-lg transition-all duration-300 group border border-gray-200 hover:border-green-300"
               >
-                <div className="flex items-center justify-center w-12 h-12 bg-primary-100 rounded-lg mb-4 group-hover:bg-primary-200 transition-colors duration-200">
-                  <feature.icon className="w-6 h-6 text-primary-600" />
+                <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg mb-4 group-hover:bg-green-200 transition-colors duration-200">
+                  <feature.icon className="w-6 h-6 text-green-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors duration-200">
+                <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-green-600 transition-colors duration-200">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-gray-600 text-sm leading-relaxed">
                   {feature.description}
                 </p>
               </Link>
@@ -158,39 +179,39 @@ const Home = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Why Choose ClimateHub?
+                Why Choose ClimateHub for NS?
               </h2>
               <p className="text-lg text-gray-600 mb-8">
-                Join thousands of Singaporeans who are taking action against climate change. 
-                Our platform makes it easy to understand your impact and make positive changes.
+                As an NSF, you're already serving Singapore. Now serve the environment too. 
+                Our platform helps you make your National Service experience sustainable and meaningful.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {benefits.map((benefit, index) => (
                   <div key={index} className="flex items-center space-x-3">
-                    <CheckCircle className="w-5 h-5 text-primary-600 flex-shrink-0" />
-                    <span className="text-gray-700">{benefit}</span>
+                    <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+                    <span className="text-gray-700 text-sm">{benefit}</span>
                   </div>
                 ))}
               </div>
             </div>
             <div className="relative">
-              <div className="bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl p-8 text-white">
+              <div className="bg-gradient-to-br from-green-500 to-green-700 rounded-2xl p-8 text-white">
                 <div className="flex items-center space-x-3 mb-6">
-                  <Award className="w-8 h-8" />
-                  <h3 className="text-2xl font-bold">Singapore's Green Future</h3>
+                  <Shield className="w-8 h-8" />
+                  <h3 className="text-2xl font-bold">NSF Green Mission</h3>
                 </div>
                 <p className="text-lg mb-6">
-                  Singapore has committed to net-zero emissions by 2050. Join the movement 
-                  and be part of the solution.
+                  Every NSF can contribute to Singapore's net-zero 2050 goal. 
+                  Make your service count for both nation and nature.
                 </p>
                 <div className="grid grid-cols-2 gap-4 text-center">
                   <div>
-                    <div className="text-2xl font-bold">8.56</div>
-                    <div className="text-sm opacity-90">Avg CO₂ tonnes/person</div>
-                  </div>
-                  <div>
                     <div className="text-2xl font-bold">2050</div>
                     <div className="text-sm opacity-90">Net-zero target</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold">NSF</div>
+                    <div className="text-sm opacity-90">Green warriors</div>
                   </div>
                 </div>
               </div>
@@ -200,26 +221,35 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-primary-600">
+      <section className="py-20 bg-green-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Ready to Take Action?
+            Ready to Serve Singapore's Green Future?
           </h2>
-          <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            Start your climate action journey today. Calculate your carbon footprint and 
-            discover ways to make a positive impact.
+          <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto">
+            Join fellow NSFs in making every day of service count for the environment. 
+            Start your eco-mission today and help your unit become the greenest in camp.
           </p>
-          <Link
-            to="/carbon-tracker"
-            className="bg-white text-primary-600 hover:bg-gray-100 font-semibold py-3 px-8 rounded-lg text-lg transition-colors duration-200 inline-flex items-center space-x-2"
-          >
-            <span>Get Started</span>
-            <ArrowRight className="w-5 h-5" />
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              to="/carbon-tracker"
+              className="bg-white text-green-600 hover:bg-gray-100 font-semibold py-3 px-8 rounded-lg text-lg transition-colors duration-200 inline-flex items-center space-x-2"
+            >
+              <span>Begin Eco-Mission</span>
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+            <Link
+              to="/events"
+              className="border-2 border-white text-white hover:bg-white hover:text-green-600 font-semibold py-3 px-8 rounded-lg text-lg transition-colors duration-200 inline-flex items-center space-x-2"
+            >
+              <span>Join Green Events</span>
+              <Calendar className="w-5 h-5" />
+            </Link>
+          </div>
         </div>
       </section>
     </div>
   );
 };
 
-export default Home; 
+export default Home;
