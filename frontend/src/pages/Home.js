@@ -63,6 +63,29 @@ const Home = () => {
     'Contribute to Singapore\'s green goals'
   ];
 
+  const partners = [
+    {
+      name: 'SG Eco Fund',
+      logo: '/images/sg-eco-fund-logo.png',
+      alt: 'SG Eco Fund Logo'
+    },
+    {
+      name: 'WWF Singapore',
+      logo: '/images/wwf-logo.png', 
+      alt: 'WWF Singapore Logo'
+    },
+    {
+      name: 'Ministry of Sustainability and the Environment',
+      logo: '/images/MSE-logo.png',
+      alt: 'Ministry of Sustainability and the Environment Logo'
+    },
+    {
+      name: 'WWF WeGotThis',
+      logo: '/images/wegotthis.gif',
+      alt: 'Wegotthis Logo'
+    },
+  ];
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -108,6 +131,36 @@ const Home = () => {
                 <span>Learn more</span>
                 <BookOpen className="w-5 h-5" />
               </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Partners Section */}
+      <section className="py-12 bg-gray-50 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-6">
+              Supported by
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12 lg:gap-16">
+              {partners.map((partner, index) => (
+                <div key={index} className="flex items-center justify-center">
+                  <img
+                    src={partner.logo}
+                    alt={partner.alt}
+                    className="h-12 md:h-16 max-w-32 md:max-w-40 object-contain transition-all duration-300"
+                    onError={(e) => {
+                      // Fallback if image doesn't exist
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'block';
+                    }}
+                  />
+                  <div className="hidden text-gray-600 font-medium text-sm">
+                    {partner.name}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
