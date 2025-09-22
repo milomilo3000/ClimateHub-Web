@@ -1,9 +1,15 @@
-These are the fixes that need to be made regarding the carbon footprint calculator section:
+1. Can you please remove the learn more button from Home.Js, directly amend this for me, and center the button for the calculate your footprint. This all exists in the first part of home.js. 
 
-- There is still no moving animation of the birds on the screen or the leaves, or other animated objects, etc. I need it to
-They should be moving vertically or horizontally depending, as a repetitive animation on the screen like a replaying video.
+2. I want to pin the top header of climatehub while the user is scrolling, that shouldn't go away. This header currently
+contains the following information: Climatehub, as well as the different tabs for the user to access regarding the use 
+of the product, such as the carbon footprint calculator, education hub, etc. This entire top section header needs to stay with the user as the user scrolls down, therefore being 
+accessible at any part of the page (no need to scroll back up for the header)
 
+3. The colour scheme of climatehub is too monotonous, same colour right now. This should change to the following colour scheme:
 
+	•	Hero Background: gradient from mint green → off-white (#E6F4EA → #FFFFFF)
+	•	Stats Section: white background with emerald icons and terracotta highlights
+	•	Toolkit Cards: light gray background, hover state in teal green
+	•	CTA (bottom green bar): instead of full green, make it emerald + blue gradient or just a muted teal with white text
 
-- Make the slider colour darker green so that it can be seen. right now it is blending in completely with the form box colour,
-so the slider cant even be seen (only a small circle can be seen). you had only made the colour of the cirlce dark green, not the line itself.
+Please just make these changes to the home page for now
