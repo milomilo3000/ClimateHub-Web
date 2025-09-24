@@ -40,7 +40,7 @@ const Home = () => {
     },
     {
       icon: Users,
-      title: 'Unit Eco-Rankings',
+      title: 'Profile',
       description: 'Compete with other NSF units in sustainability challenges. Earn eco-badges and climb the green leaderboard with your campmates.',
       href: '/profile'
     }
