@@ -236,15 +236,27 @@ const CarbonTrackerNew = () => {
     breakdown.shopping = shoppingEmissions;
     totalFootprint += shoppingEmissions;
 
+    // Calculate relativePercent (percentile)
+    const relativePercent = ((57.17 - totalFootprint) / 57.17) * 100;
+
     return {
       totalFootprint: totalFootprint,
       breakdown: breakdown,
       comparison: {
         singaporeAverage: 57.17,
-        globalAverage: 4.8,
-        percentile: Math.max(0, Math.min(100, ((57.17 - totalFootprint) / 57.17) * 100))
+        globalAverage: 24.2,
+        percentile: relativePercent,
       }
     };
+  };
+  // Helper for percentile block color
+  // Returns solid green if better than average, solid red otherwise
+  const getPercentileColor = (relativePercent) => {
+    if (relativePercent >= 0) {
+      return '#22c55e'; // solid green
+    } else {
+      return '#ef4444'; // solid red
+    }
   };
 
   // Helper functions for median values
@@ -770,11 +782,18 @@ const CarbonTrackerNew = () => {
         desc: "Bring your own bag and reduce single-use plastics.",
       },
     ];
+    // Percentile logic for color and text
+    const relativePercent = ((57.17 - results.totalFootprint) / 57.17) * 100;
+    const percentileColor = getPercentileColor(relativePercent);
+
     return (
       <div className="min-h-screen bg-white py-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Green summary block */}
-          <div className="rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white text-center p-10 mb-12 shadow">
+          {/* Your Carbon Footprint block with dynamic background color */}
+          <div
+            className="rounded-xl text-white text-center p-10 mb-12 shadow"
+            style={{ backgroundColor: percentileColor }}
+          >
             <div className="mb-4 flex justify-center">
               <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
                 <Calculator className="w-8 h-8 text-white" />
@@ -810,15 +829,20 @@ const CarbonTrackerNew = () => {
                   </div>
                   <div className="text-sm text-gray-500">kg CO₂ / week</div>
                 </div>
-                <div className="bg-white border border-purple-100 rounded-xl p-6 min-w-[200px] flex-1 text-center shadow-sm">
+                <div
+                  className="rounded-xl p-10 text-center shadow-sm bg-white border border-purple-100"
+                  style={{ minWidth: 200 }}
+                >
                   <div className="mb-2 flex justify-center">
                     <TrendingUp className="w-6 h-6 text-purple-600" />
                   </div>
                   <div className="text-sm uppercase font-medium text-purple-700 mb-1">Percentile</div>
                   <div className="text-3xl font-bold text-gray-900 mb-1">
-                    {results.comparison.percentile.toFixed(2)}%
+                    {relativePercent.toFixed(2)}%
                   </div>
-                  <div className="text-sm text-gray-500">Better than average</div>
+                  <div className="text-sm text-gray-500">
+                    {relativePercent >= 0 ? 'Better than average' : 'Worse than average'}
+                  </div>
                 </div>
               </div>
             </div>
@@ -844,15 +868,19 @@ const CarbonTrackerNew = () => {
                 </div>
                 <div className="text-sm text-gray-500">kg CO₂ / week</div>
               </div>
-              <div className="bg-white border border-purple-100 rounded-xl p-10 text-center shadow-sm">
+              <div
+                className="rounded-xl p-10 text-center shadow-sm bg-white border border-purple-100"
+              >
                 <div className="mb-2 flex justify-center">
                   <TrendingUp className="w-6 h-6 text-purple-600" />
                 </div>
                 <div className="text-sm uppercase font-medium text-purple-700 mb-1">Percentile</div>
                 <div className="text-3xl font-bold text-gray-900 mb-1">
-                  {results.comparison.percentile.toFixed(2)}%
+                  {relativePercent.toFixed(2)}%
                 </div>
-                <div className="text-sm text-gray-500">Better than average</div>
+                <div className="text-sm text-gray-500">
+                  {relativePercent >= 0 ? 'Better than average' : 'Worse than average'}
+                </div>
               </div>
             </div>
           </div>
