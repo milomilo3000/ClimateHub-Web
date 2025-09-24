@@ -4,7 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
-import CarbonTracker from './pages/CarbonTracker';
+import CarbonTrackerNew from './pages/CarbonTrackerNew';
 import EducationHub from './pages/EducationHub';
 import Events from './pages/Events';
 import Profile from './pages/Profile';
@@ -19,7 +19,7 @@ function App() {
           <main className="flex-grow">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/carbon-tracker" element={<CarbonTracker />} />
+              <Route path="/carbon-tracker" element={<CarbonTrackerNew />} />
               <Route path="/education" element={<EducationHub />} />
               <Route path="/events" element={<Events />} />
               <Route path="/profile" element={<Profile />} />

@@ -131,7 +131,24 @@ const EducationHub = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 coming-soon-container">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 coming-soon-container relative">
+        {/* Coming Soon Overlay */}
+        <div className="coming-soon-overlay fixed top-20 left-0 w-full min-h-[calc(100vh-5rem)] flex items-center justify-center z-50 bg-white/90">
+          <div className="coming-soon-content">
+            <div className="coming-soon-icon">
+              <BookOpen className="w-10 h-10 text-white" />
+            </div>
+            <h2 className="coming-soon-title">Coming Soon</h2>
+            <p className="coming-soon-subtitle">
+              The Climate News & Education Hub feature is currently under development. 
+              We're working hard to bring you the latest climate news, educational content, 
+              and an AI-powered climate assistant to help you learn about environmental issues.
+            </p>
+            <div className="coming-soon-badge">
+              📚 In Development
+            </div>
+          </div>
+        </div>
         <div className="blur-content">
           {/* Header */}
           <div className="text-center mb-8">
@@ -395,23 +412,6 @@ const EducationHub = () => {
         </div>
         </div>
 
-        {/* Coming Soon Overlay */}
-        <div className="coming-soon-overlay">
-          <div className="coming-soon-content">
-            <div className="coming-soon-icon">
-              <BookOpen className="w-10 h-10 text-white" />
-            </div>
-            <h2 className="coming-soon-title">Coming Soon</h2>
-            <p className="coming-soon-subtitle">
-              The Climate News & Education Hub feature is currently under development. 
-              We're working hard to bring you the latest climate news, educational content, 
-              and an AI-powered climate assistant to help you learn about environmental issues.
-            </p>
-            <div className="coming-soon-badge">
-              📚 In Development
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
