@@ -232,10 +232,14 @@ const Profile = () => {
                   {/* Chart */}
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={carbonHistory.map(item => ({
-                        date: formatDate(item.date),
-                        footprint: Math.round(item.totalFootprint * 100) / 100
-                      }))}>
+                      <LineChart data={carbonHistory
+                        .slice()
+                        .sort((a, b) => new Date(a.date) - new Date(b.date))
+                        .map(item => ({
+                          date: formatDate(item.date),
+                          footprint: Math.round(item.totalFootprint * 100) / 100
+                        }))
+                      }>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="date" />
                         <YAxis />

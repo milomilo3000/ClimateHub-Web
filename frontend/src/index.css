@@ -310,13 +310,34 @@
     user-select: none;
   }
 
+/* Default (mobile-first) */
+.slick-dots {
+  position: absolute;
+  bottom: -30px;  /* push dots further below button on phone */
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  z-index: 10;
+}
+
+.slick-dots li button:before {
+  font-size: 6px !important;  /* smaller dots for phones */
+  color: white !important;
+  opacity: 0.6;
+}
+
+.slick-dots li.slick-active button:before {
+  color: #10B981 !important;
+  opacity: 1;
+}
+
+/* Tablet and larger screens */
+@media (min-width: 640px) {
+  .slick-dots {
+    bottom: -100px; /* push dots further below button for laptop/tablet */
+  }
   .slick-dots li button:before {
-    color: white !important;
-    font-size: 12px !important;
+    font-size: 12px !important; /* bigger dots for larger screens */
   }
-  
-  /* Active dot in emerald green */
-  .slick-dots li.slick-active button:before {
-    color: #10B981 !important; /* Tailwind emerald-500 */
-  }
-} 
+}
+}

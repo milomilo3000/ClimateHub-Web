@@ -34,14 +34,13 @@ const CarbonTracker = () => {
   // Watch all slider values for display
   const watchedValues = watch();
 
-  // Updated steps configuration - reduced from 9 to 6 steps
+  // Updated steps configuration for new calculator
   const steps = [
-    { id: 1, title: 'Diet & Food Habits', description: 'Your daily food consumption and eating patterns' },
-    { id: 2, title: 'Transport', description: 'How you get around Singapore daily' },
-    { id: 3, title: 'Home & Utilities', description: 'Your home energy and water usage' },
-    { id: 4, title: 'Spending & Lifestyle', description: 'Your entertainment and dining habits' },
-    { id: 5, title: 'Electronics Usage', description: 'Your digital device usage patterns' },
-    { id: 6, title: 'Waste Generation', description: 'Your waste management habits' }
+    { id: 1, title: 'Electronics Usage', description: 'Your digital device and technology usage patterns' },
+    { id: 2, title: 'Diet & Food Habits', description: 'Your weekly food consumption and eating patterns' },
+    { id: 3, title: 'Transport', description: 'Your weekly travel and commuting habits' },
+    { id: 4, title: 'Home & Utilities', description: 'Your home energy and water usage patterns' },
+    { id: 5, title: 'Shopping', description: 'Your shopping and consumption habits' }
   ];
 
   const onSubmit = async (data) => {
@@ -103,108 +102,61 @@ const CarbonTracker = () => {
 
   const getStepContent = (step) => {
     switch (step) {
-      case 1: // Diet & Food Habits - Modified questions
+      case 1: // Electronics Usage
         return (
           <div className="space-y-6">
             <div>
-              <label className="form-label">On a typical day, how many of your meals contain meat (chicken, beef, pork, seafood)?</label>
-              <select {...register('diet.mealsWithMeat', { required: true })} className="input-field">
-                <option value="">Select meals per day</option>
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
+              <label className="form-label">How many hours a day have you spent on social media in the past week? (e.g., Instagram, TikTok, WhatsApp)</label>
+              <select {...register('electronics.socialMedia', { required: true })} className="input-field">
+                <option value="">Select hours per day</option>
+                <option value="0-2">0–2 hours</option>
+                <option value="2-4">2–4 hours</option>
+                <option value="4-6">4–6 hours</option>
+                <option value="6+">6+ hours</option>
               </select>
             </div>
             
             <div>
-              <label className="form-label">How often do you eat at hawker centres or food courts in a week?</label>
-              <input
-                type="range"
-                min="0" max="14"
-                {...register('diet.hawkerVisits', { required: true })}
-                className="w-full"
-              />
-              <div className="flex justify-between items-center text-sm text-gray-500 mt-2">
-                <span>0</span>
-                <span className="bg-primary-100 text-primary-800 px-2 py-1 rounded font-medium">
-                  Current: {watchedValues?.diet?.hawkerVisits || 0} times/week
-                </span>
-                <span>14</span>
-              </div>
-            </div>
-
-            <div>
-              <label className="form-label">
-                How often do you choose plant-based or meatless meals?
-              </label>
-              <select {...register('diet.plantBasedFrequency', { required: true })} className="input-field">
-                <option value="">Select frequency</option>
-                <option value="never">Never</option>
-                <option value="once_week">Once a week</option>
-                <option value="2_3_times">2–3 times a week</option>
-                <option value="almost_daily">Almost daily</option>
+              <label className="form-label">How many hours a day have you spent gaming in the past week? (console, PC, mobile)</label>
+              <select {...register('electronics.gaming', { required: true })} className="input-field">
+                <option value="">Select hours per day</option>
+                <option value="0-2">0–2 hours</option>
+                <option value="2-4">2–4 hours</option>
+                <option value="4-6">4–6 hours</option>
+                <option value="6+">6+ hours</option>
               </select>
             </div>
 
             <div>
-              <label className="form-label">
-                How many cups of bubble tea or sweetened beverages do you drink per week?
-              </label>
-              <input
-                type="range"
-                min="0" max="14"
-                {...register('diet.bubbleTeaCups', { required: true })}
-                className="w-full"
-              />
-              <div className="flex justify-between items-center text-sm text-gray-500 mt-2">
-                <span>0</span>
-                <span className="bg-primary-100 text-primary-800 px-2 py-1 rounded font-medium">
-                  Current: {watchedValues?.diet?.bubbleTeaCups || 0} cups/week
-                </span>
-                <span>14</span>
-              </div>
-            </div>
-
-            <div>
-              <label className="form-label">
-                How often do you order-in food delivery?
-              </label>
-              <input
-                type="range"
-                min="0" max="14"
-                {...register('diet.foodDelivery', { required: true })}
-                className="w-full"
-              />
-              <div className="flex justify-between items-center text-sm text-gray-500 mt-2">
-                <span>0</span>
-                <span className="bg-primary-100 text-primary-800 px-2 py-1 rounded font-medium">
-                  Current: {watchedValues?.diet?.foodDelivery || 0} times/week
-                </span>
-                <span>14</span>
-              </div>
-            </div>
-
-            <div>
-              <label className="form-label">How often do you buy packaged drinks/snacks in camp?</label>
-              <select {...register('diet.packagedSnacks', { required: true })} className="input-field">
-                <option value="">Select frequency</option>
-                <option value="daily">Daily</option>
-                <option value="few_times_week">Few times a week</option>
-                <option value="weekly">Weekly</option>
-                <option value="rarely">Rarely</option>
-                <option value="never">Never</option>
+              <label className="form-label">How many hours a day have you spent streaming videos or music (Netflix, Youtube, Spotify) in the past week?</label>
+              <select {...register('electronics.streaming', { required: true })} className="input-field">
+                <option value="">Select hours per day</option>
+                <option value="0-2">0–2 hours</option>
+                <option value="2-4">2–4 hours</option>
+                <option value="4-6">4–6 hours</option>
+                <option value="6+">6+ hours</option>
               </select>
             </div>
 
             <div>
-              <label className="form-label">When you eat, do you usually finish all your food or drinks without leaving waste behind?</label>
-              <select {...register('diet.foodWaste', { required: true })} className="input-field">
-                <option value="">Select option</option>
-                <option value="always_finish">Always finish</option>
-                <option value="usually_finish">Usually finish</option>
-                <option value="sometimes_finish">Sometimes finish</option>
-                <option value="rarely_finish">Rarely finish</option>
+              <label className="form-label">How many hours a day have you spent on your OSN, INET or personal laptop in the past week?</label>
+              <select {...register('electronics.laptop', { required: true })} className="input-field">
+                <option value="">Select hours per day</option>
+                <option value="0-2">0–2 hours</option>
+                <option value="2-4">2–4 hours</option>
+                <option value="4-6">4–6 hours</option>
+                <option value="6+">6+ hours</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="form-label">How many times a day have you fully charged your phone in the past week?</label>
+              <select {...register('electronics.phoneCharging', { required: true })} className="input-field">
+                <option value="">Select times per day</option>
+                <option value="1">1 time</option>
+                <option value="2">2 times</option>
+                <option value="3">3 times</option>
+                <option value="4+">4+ times</option>
               </select>
             </div>
           </div>
@@ -378,34 +330,8 @@ const CarbonTracker = () => {
           </div>
         );
 
-      case 4: // Spending & Lifestyle - Modified (removed cinema, theme parks, leisure activities)
-        return (
-          <div className="space-y-6">
-            <div>
-              <label className="form-label">How often do you go cafe-hopping or to restaurants?</label>
-              <select {...register('lifestyle.diningFrequency', { required: true })} className="input-field">
-                <option value="">Select frequency</option>
-                <option value="rarely">Rarely</option>
-                <option value="once_week">Once a week</option>
-                <option value="2_4_times_week">2–4 times a week</option>
-                <option value="almost_daily">Almost daily</option>
-              </select>
-            </div>
 
-            <div>
-              <label className="form-label">How often do you go out for nightlife activities such as concerts, nightclubs, live music bars, or late-night events?</label>
-              <select {...register('lifestyle.nightlifeFrequency', { required: true })} className="input-field">
-                <option value="">Select frequency</option>
-                <option value="never">Never</option>
-                <option value="few_months">Once every few months</option>
-                <option value="monthly">Monthly</option>
-                <option value="weekly">Weekly</option>
-              </select>
-            </div>
-          </div>
-        );
-
-      case 5: // Electronics Usage - Modified (removed phone upgrade, repair/reuse, multiple devices; added OSN & INET)
+      case 4: // Electronics Usage - Modified (removed phone upgrade, repair/reuse, multiple devices; added OSN & INET)
         return (
           <div className="space-y-6">
             <div>
@@ -478,7 +404,7 @@ const CarbonTracker = () => {
           </div>
         );
 
-      case 6: // Waste Generation - Modified (removed first 3 and last 2 questions)
+      case 5: // Waste Generation - Modified (removed first 3 and last 2 questions)
         return (
           <div className="space-y-6">
             <div>
