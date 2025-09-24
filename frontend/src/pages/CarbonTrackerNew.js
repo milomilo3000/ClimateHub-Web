@@ -240,9 +240,9 @@ const CarbonTrackerNew = () => {
       totalFootprint: totalFootprint,
       breakdown: breakdown,
       comparison: {
-        singaporeAverage: 8.56,
+        singaporeAverage: 57.17,
         globalAverage: 4.8,
-        percentile: Math.max(0, Math.min(100, ((8.56 - totalFootprint) / 8.56) * 100))
+        percentile: Math.max(0, Math.min(100, ((57.17 - totalFootprint) / 57.17) * 100))
       }
     };
   };
@@ -745,7 +745,7 @@ const CarbonTrackerNew = () => {
     // Prepare data for charts
     const breakdownData = Object.entries(results.breakdown).map(([category, value]) => ({
       name: category.charAt(0).toUpperCase() + category.slice(1),
-      value: value,
+      value: parseFloat(value.toFixed(2)),
     }));
     // Recommendations (example, can be expanded)
     const recommendations = [
@@ -785,79 +785,179 @@ const CarbonTrackerNew = () => {
             <div className="text-xl opacity-90">kg CO₂ per week</div>
           </div>
 
-          {/* Comparison cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div className="bg-white border border-green-100 rounded-xl p-10 text-center shadow-sm">
-              <div className="mb-2 flex justify-center">
-                <Users className="w-6 h-6 text-green-600" />
+          {/* Comparison cards - mobile: horizontal scrollable flex, desktop: grid */}
+          <div className="mb-12">
+            {/* Mobile: horizontal scrollable flex */}
+            <div className="block sm:hidden overflow-x-auto">
+              <div className="flex gap-4 min-w-[600px]">
+                <div className="bg-white border border-green-100 rounded-xl p-6 min-w-[200px] flex-1 text-center shadow-sm">
+                  <div className="mb-2 flex justify-center">
+                    <Users className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div className="text-sm uppercase font-medium text-green-700 mb-1">Singapore Average</div>
+                  <div className="text-3xl font-bold text-gray-900 mb-1">
+                    {results.comparison.singaporeAverage.toFixed(2)}
+                  </div>
+                  <div className="text-sm text-gray-500">kg CO₂ / week</div>
+                </div>
+                <div className="bg-white border border-blue-100 rounded-xl p-6 min-w-[200px] flex-1 text-center shadow-sm">
+                  <div className="mb-2 flex justify-center">
+                    <Globe className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div className="text-sm uppercase font-medium text-blue-700 mb-1">Global Average</div>
+                  <div className="text-3xl font-bold text-gray-900 mb-1">
+                    {results.comparison.globalAverage.toFixed(2)}
+                  </div>
+                  <div className="text-sm text-gray-500">kg CO₂ / week</div>
+                </div>
+                <div className="bg-white border border-purple-100 rounded-xl p-6 min-w-[200px] flex-1 text-center shadow-sm">
+                  <div className="mb-2 flex justify-center">
+                    <TrendingUp className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div className="text-sm uppercase font-medium text-purple-700 mb-1">Percentile</div>
+                  <div className="text-3xl font-bold text-gray-900 mb-1">
+                    {results.comparison.percentile.toFixed(2)}%
+                  </div>
+                  <div className="text-sm text-gray-500">Better than average</div>
+                </div>
               </div>
-              <div className="text-sm uppercase font-medium text-green-700 mb-1">Singapore Average</div>
-              <div className="text-3xl font-bold text-gray-900 mb-1">
-                {results.comparison.singaporeAverage.toFixed(2)}
-              </div>
-              <div className="text-sm text-gray-500">kg CO₂ / week</div>
             </div>
-            <div className="bg-white border border-blue-100 rounded-xl p-10 text-center shadow-sm">
-              <div className="mb-2 flex justify-center">
-                <Globe className="w-6 h-6 text-blue-600" />
+            {/* Desktop: grid */}
+            <div className="hidden sm:grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white border border-green-100 rounded-xl p-10 text-center shadow-sm">
+                <div className="mb-2 flex justify-center">
+                  <Users className="w-6 h-6 text-green-600" />
+                </div>
+                <div className="text-sm uppercase font-medium text-green-700 mb-1">Singapore Average</div>
+                <div className="text-3xl font-bold text-gray-900 mb-1">
+                  {results.comparison.singaporeAverage.toFixed(2)}
+                </div>
+                <div className="text-sm text-gray-500">kg CO₂ / week</div>
               </div>
-              <div className="text-sm uppercase font-medium text-blue-700 mb-1">Global Average</div>
-              <div className="text-3xl font-bold text-gray-900 mb-1">
-                {results.comparison.globalAverage.toFixed(2)}
+              <div className="bg-white border border-blue-100 rounded-xl p-10 text-center shadow-sm">
+                <div className="mb-2 flex justify-center">
+                  <Globe className="w-6 h-6 text-blue-600" />
+                </div>
+                <div className="text-sm uppercase font-medium text-blue-700 mb-1">Global Average</div>
+                <div className="text-3xl font-bold text-gray-900 mb-1">
+                  {results.comparison.globalAverage.toFixed(2)}
+                </div>
+                <div className="text-sm text-gray-500">kg CO₂ / week</div>
               </div>
-              <div className="text-sm text-gray-500">kg CO₂ / week</div>
-            </div>
-            <div className="bg-white border border-purple-100 rounded-xl p-10 text-center shadow-sm">
-              <div className="mb-2 flex justify-center">
-                <TrendingUp className="w-6 h-6 text-purple-600" />
+              <div className="bg-white border border-purple-100 rounded-xl p-10 text-center shadow-sm">
+                <div className="mb-2 flex justify-center">
+                  <TrendingUp className="w-6 h-6 text-purple-600" />
+                </div>
+                <div className="text-sm uppercase font-medium text-purple-700 mb-1">Percentile</div>
+                <div className="text-3xl font-bold text-gray-900 mb-1">
+                  {results.comparison.percentile.toFixed(2)}%
+                </div>
+                <div className="text-sm text-gray-500">Better than average</div>
               </div>
-              <div className="text-sm uppercase font-medium text-purple-700 mb-1">Percentile</div>
-              <div className="text-3xl font-bold text-gray-900 mb-1">
-                {results.comparison.percentile.toFixed(0)}%
-              </div>
-              <div className="text-sm text-gray-500">Better than average</div>
             </div>
           </div>
 
           {/* Charts */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
-            {/* Pie Chart: Footprint Breakdown */}
-            <div className="bg-white rounded-xl border border-gray-100 p-8 flex flex-col shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Footprint Breakdown</h3>
-              <div className="flex-1 min-h-[240px]">
-                <ResponsiveContainer width="100%" height={350} minWidth={500}>
-                  <PieChart margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                    <Pie
-                      data={breakdownData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                      outerRadius={110}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {breakdownData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
+          <div className="mb-12">
+            {/* Desktop: grid layout */}
+            <div className="hidden md:grid grid-cols-1 md:grid-cols-2 gap-12">
+              {/* Pie Chart: Footprint Breakdown */}
+              <div className="bg-white rounded-xl border border-gray-100 p-8 flex flex-col shadow-sm">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Footprint Breakdown</h3>
+                <div className="flex-1 min-h-[240px]">
+                  <ResponsiveContainer width="100%" height={350} minWidth={500}>
+                    <PieChart margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                      <Pie
+                        data={breakdownData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(2)}%`}
+                        outerRadius={70}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {breakdownData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+              {/* Bar Chart: Category Comparison */}
+              <div className="bg-white rounded-xl border border-gray-100 p-8 flex flex-col shadow-sm">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Category Comparison</h3>
+                <div className="flex-1 min-h-[240px]">
+                  <ResponsiveContainer width="100%" height={350} minWidth={500}>
+                    <BarChart data={breakdownData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" interval={0} />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="value" fill="#22c55e" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             </div>
-            {/* Bar Chart: Category Comparison */}
-            <div className="bg-white rounded-xl border border-gray-100 p-8 flex flex-col shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Category Comparison</h3>
-              <div className="flex-1 min-h-[240px]">
-                <ResponsiveContainer width="100%" height={350} minWidth={500}>
-                  <BarChart data={breakdownData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" interval={0} />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="value" fill="#22c55e" />
-                  </BarChart>
-                </ResponsiveContainer>
+            {/* Mobile: stacked, scrollable charts, smaller height */}
+            <div className="md:hidden flex flex-col gap-8">
+              <div className="bg-white rounded-xl border border-gray-100 p-4 flex flex-col shadow-sm overflow-x-auto max-w-full">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Footprint Breakdown</h3>
+                <div className="flex-1 min-h-[160px]">
+                  <ResponsiveContainer width="100%" height={250} minWidth={300} minHeight={200}>
+                    <PieChart margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                      <Pie
+                        data={breakdownData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        // Use SVG <text> for smaller font size label
+                        label={({ name, percent, ...rest }) => (
+                          <text
+                            fontSize="12"
+                            fontWeight="bold"
+                            fill="#333"
+                            x={rest.x}
+                            y={rest.y}
+                            textAnchor={rest.textAnchor}
+                            dominantBaseline={rest.dominantBaseline}
+                          >
+                            {`${name} ${(percent * 100).toFixed(2)}%`}
+                          </text>
+                        )}
+                        outerRadius={50}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {breakdownData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+              <div className="bg-white rounded-xl border border-gray-100 p-4 flex flex-col shadow-sm overflow-x-auto max-w-full">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Category Comparison</h3>
+                <div className="flex-1 min-h-[160px]">
+                  <ResponsiveContainer width="100%" height={200} minWidth={300}>
+                    <BarChart data={breakdownData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis
+                        dataKey="name"
+                        interval={0}
+                        tick={{ fontSize: 10 }}
+                        angle={-30}
+                        textAnchor="end"
+                      />
+                      <YAxis tick={{ fontSize: 10 }} />
+                      <Tooltip />
+                      <Bar dataKey="value" fill="#22c55e" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             </div>
           </div>
