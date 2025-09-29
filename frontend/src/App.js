@@ -8,6 +8,7 @@ import CarbonTrackerNew from './pages/CarbonTrackerNew';
 import EducationHub from './pages/EducationHub';
 import Events from './pages/Events';
 import Profile from './pages/Profile';
+import AboutUs from './pages/AboutUs';
 import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
               <Route path="/education" element={<EducationHub />} />
               <Route path="/events" element={<Events />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/about" element={<AboutUs />} />
             </Routes>
           </main>
           <Footer />
