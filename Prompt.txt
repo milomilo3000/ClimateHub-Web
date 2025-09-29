@@ -1,359 +1,47 @@
-QUESTIONS FOR THE REDEFINED CALCULATOR:
+Create a clean, modern About Us page for the ClimateHub website. The design should be youth-friendly but professional, using a minimal and engaging style.
 
-Electronics Usage
-Q1: How many hours a day have you spent on social media in the past week? (e.g., Instagram, TikTok, WhatsApp)
- (Options: 0–2, 2-4, 4-6, 6+ hours)
+The page should include:
 
-Q2: How many hours a day have you spent gaming in the past week? (console, PC, mobile)
- (Options: 0-2, 2-4, 4-6, 6+ hours)
+Header
 
-Q3: How many hours a day have you spent streaming videos or music (Netflix, Youtube, Spotify) in the past week?
- (Options: 0-2, 2-4,4-6, 6+ hours)
+Title: “About Us”
 
-Q4: How many hours a day have you spent on your OSN, INET or personal laptop in the past week?
- (Options 0–2, 2-4, 4-6, 6+)
+Subtitle: Meet the team behind ClimateHub — youth building tools for a sustainable future.
 
-Q5: “How many times a day have you fully charged your phone in the past week?”
- (Options 1,2,3, 4+ times)
+Team Section
 
-Diet & Food Habits
+Three team members, displayed in a grid of profile cards (with space for photos). Each card should include the person’s name, role/title, and a short description of their contributions.
 
-Q1. How many times have you consumed beef or pork in the past week?
- (Options: 0, 1-3, 3-7, 7+)
+Milan Nathani — Founder & Executive Lead
 
-Q2. How many times have you consumed any other meats (Chicken, fish, duck, etc.) in the past week?
- (Options: 0, 1-3, 3-7, 7+ times)
+Founder and driving force behind ClimateHub
 
-Q3. How many cups of bubble tea did you drink in the past week?
- (Options: 0, 1–3, 3–7, 7+ times)
+Leads strategy, technology, outreach, and overall project direction
 
-Q4. How many times did you order-in or takeaway in the past week (includes canteen, lim kopi, etc)?
- (Options: 0, 1–3, 3–7, 7+ times)
+Spearheads talks, school information sessions, and partnerships, while building the platform’s technical backbone
 
-Q5. How many times in the past week have you bought packaged drinks/snacks/instant noodles from Cheers?
- (Options: 0, 1-3, 3-7, 7+ times)
+Dylan Seng — Outreach, Marketing & Communications
 
-Q6. Thinking about the past week, how often did you throw away a majority of your meals?
- (Options: Never, Rarely, Often, Always)
+Leads ClimateHub’s outreach, social media, and publicity campaigns
 
-Transport
-Q1. How many trips did you make via public transport in the past week (MRT, LRT, Buses)?
- (Options: 0–3, 3–7, 7+ times)
+Represents the project through presentations, community engagement, and youth-facing initiatives
 
-Q2. How many trips by car/taxi have you made in the past week?
- (Options: 0–3, 3–7, 7+ times)
+Focuses on growing awareness and making sustainability relatable and engaging for youth
 
-Q3: How many trips by motorbikes or e-scooter have you made in the past week?
- (Options: 0–3, 3–7, 7+ times)
+Maahir Bhatia — Partnerships & Strategy
 
-Q4: How far is your trip from home to camp?
- (Options: 0–5km, 6–10km, 11–15km, 15km+)
+Contributed to pitching ClimateHub to the Ministry of Sustainability and Environment during its founding phase
 
+Advised on partnerships and strategic positioning
 
-Home & Utilities
- 
-Q1: What type of home do you live in?
- (Options: HDB, Condominium, Landed Property)
+Closing Section
 
-Q2: How many bedrooms does your house have (including living room)?
- (Options: 1, 2, 3, 4+) - add one for living room
+A short line: We’re a youth-led team committed to turning awareness into action and making sustainability accessible to everyone.
 
-Q3: When cooling your room, which applies most often?
- (Options: Only aircon, Only fan, Both aircon and fan) - if response is only fan then no aircon questions should be asked
+Styling Notes
 
+Use a modern grid layout with clean cards
 
-Q4: How many hours per day do you use the aircon/fan in your home?
- (Options: 0, 1–5, 6–10, 11–14 hours/day) 
+Include hover animations for each card
 
-Q5: What was the average temperature of your Aircon this past week?
-Slider (< 20, 20–23, 24–26, 26+)
-
-Q6: How many showers did you take per day this past week?
- (Options: 1, 2, 3+ times/day)
-
-Q7: Did you turn off lights, fans, and electronics when not in use this past week?
- (Options: Never, Rarely, Often, All the time)
-
-Shopping
-
-Q1: How many times did you go shopping in-person this past week (including Supermarkets, Shops, Stores)?
- (Options: 0–3, 3–7, 7+ times)
-
-Q2: When in-person shopping, how often did you bring a reusable bag instead of taking a plastic bag this past week?
- (Options: Never, Rarely, Often, All the time)
-
-Q3: How many times did you shop online (Shopee, Lazada, Qoo10) in the past week?
- (Options: 0–3, 3–7, 7+ times)
-
-
-
-
-
-
-
-You are redefining the Carbon Footprint Calculator questions. Update the questions exactly as listed below, and for each, implement calculation logic using the emission factors provided. Use median values for ranges. Always multiply the chosen option’s activity data by the corresponding emission factor. If an option is “Never” or “0”, return 0 emissions for that question.
-
-Electronics Usage
-Q1: Social Media
-Options: 0–2, 2–4, 4–6, 6+ hours/day
-
-
-EF: 0.123 kgCO2/hour
-
-
-Logic: Use median (1, 3, 5, 7 hours/day × 7 days). Multiply by EF.
-
-
-Q2: Gaming
-Options: 0–2, 2–4, 4–6, 6+ hours/day
-
-
-EF: 0.0044 kgCO2/hour
-
-
-Logic: Median (1, 3, 5, 7 × 7 days) × EF.
-
-
-Q3: Streaming (Netflix, YouTube, Spotify)
-Options: 0–2, 2–4, 4–6, 6+ hours/day
-
-
-EF: 0.055 kgCO2/hour
-
-
-Logic: Median × days × EF.
-
-
-Q4: Work/OSN/Laptop
-Options: 0–2, 2–4, 4–6, 6+ hours/day
-
-
-EF: 0.025 kgCO2/hour
-
-
-Logic: Median × days × EF.
-
-
-Q5: Phone charging
-Options: 1, 2, 3, 4+ times/day
-
-
-EF: 0.3 kgCO2/full charge
-
-
-Logic: Multiply by chosen frequency × 7 days.
-
-
-
-Diet & Food Habits
-Q1: Beef/Pork consumption
-Options: 0, 1–3, 3–7, 7+ times/week
-
-
-EF: Beef = 24.4, Pork = 12.0
-
-
-Logic: For simplicity, use average EF = 18.2 kgCO2/meal. Multiply by median (0, 2, 5, 7).
-
-
-Q2: Other Meats (Chicken/Fish/Duck)
-EF average: (3.5 + 6.3 + 4.2)/3 = 4.67 kgCO2/meal
-
-
-Options: 0, 1–3, 3–7, 7+ times/week
-
-
-Logic: Median × EF.
-
-
-Q3: Bubble tea
-EF: 0.4 kgCO2/cup
-
-
-Logic: Multiply by median (0, 2, 5, 7).
-
-
-Q4: Takeaway/Order-in (Canteen, Lim Kopi, etc.)
-EF: 0.28 kgCO2/meal
-
-
-Options: 0, 1–3, 3–7, 7+
-
-
-Logic: Median × EF.
-
-
-Q5: Packaged snacks/drinks (Cheers, 7-11, etc.)
-EF: 0.5 kgCO2/item
-
-
-Logic: Median × EF.
-
-
-Q6: Food Waste
-Options: Never, Rarely, Often, Always
-
-
-EF: 0.134 kgCO2/meal wasted
-
-
-Logic: Scale factor:
-
-
-Never = 0
-
-
-Rarely = 0.25 × 21 meals
-
-
-Often = 0.5 × 21 meals
-
-
-Always = 1 × 21 meals
- Multiply by EF.
-
-
-
-Transport
-Q1: Public Transport Trips (MRT/LRT/Buses)
-EF: Use weighted average = 0.05 kgCO₂/km.
-
-
-Logic: Multiply home-to-camp distance (Q4 median value) × number of trips selected (median of option range). Multiply by EF.
-
-
-Q2: Car/Taxi Trips
-EF: 0.192 kgCO₂/km.
-
-
-Logic: Multiply home-to-camp distance × trips × EF.
-
-
-Q3: Motorbike/E-Scooter Trips
-EF: 0.12 kgCO₂/km.
-
-
-Logic: Multiply home-to-camp distance × trips × EF.
-
-
-Q4: Distance from Home to Camp
-Options: 0–5, 6–10, 11–15, 15+ km
-
-
-Medians: 3, 8, 13, 18 km.
-
-
-Logic: This value is reused by Q1–Q3 for trip calculations.
-
-Home & Utilities
-Q1: Home type multiplier
-HDB = 1.0 baseline
-
-
-Condo = 1.4
-
-
-Landed = 2.2
-
-
-Q2: Bedrooms (proxy for size)
-Add as multiplier: 1 → 0.7, 2 → 1.0, 3 → 1.2, 4+ → 1.4.
-
-
-Q3: Cooling type
-If “Fan only”: Skip aircon questions. This means the aircon questions should not be visible to the user.
-
-
-If “Aircon” or “Both”: Continue, show the aircon questions. 
-
-
-Q4: Aircon usage (hours/day)
-EF: Aircon = 0.33 kgCO2/hour, Fan = 0.06 kgCO2/hour.
-
-
-Logic: Median × EF × 7.
-
-
-Q5: Aircon temperature adjustment
-Multipliers: <20 = 1.15, 20–23 = 1.0, 24–26 = 0.9, 26+ = 0.8.
-
-
-Apply multiplier to Q4 Aircon result.
-
-
-Q6: Showers/day
-EF: 0.8 kgCO2/shower
-
-
-Options: 1, 2, 3+. Multiply by 7.
-
-
-Q7: Appliances turned off?
-Options multipliers: Never = 1.3, Rarely = 1.15, Often = 1.07, Always = 1.0.
-
-
-Apply multiplier to total household electricity usage.
-
-
-
-Shopping
-Q1: In-person shopping trips
-EF: 0.2 kgCO2/trip
-
-
-Logic: Median × EF.
-
-
-Q2: Reusable Bag Usage as a Section Multiplier
-Baseline: Packaging emissions from shopping (Q1).
-
-
-Logic: User’s bag choice scales the Q1 question.
-
-
-Never = ×1.0 (full impact)
-
-
-Rarely = ×0.75 (slight reduction)
-
-
-Often = ×0.25 (significant reduction)
-
-
-Always = ×0.05 (near zero from bags)
-
-
-
-Q3: Online shopping frequency
-EF: 2.0 kgCO2/order (delivery impact)
-
-
-Logic: Median × EF.
-
-
-
-Implementation Notes
-Median Values for Ranges
- Always use the middle number (e.g., 2–4 → 3).
-
-
-Multipliers
-
-
-Apply multipliers in order: base × housing × behavior.
-
-
-Use fan/aircon skip logic.
-
-
-Weekly Total
-
-
-Sum all categories to get total weekly footprint.
-
-
-Display category breakdown for user feedback.
-
-
-
-
+Keep the color scheme consistent with ClimateHub’s branding (green, white, and earthy tones)
