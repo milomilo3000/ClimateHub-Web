@@ -17,24 +17,25 @@ import toast from 'react-hot-toast';
 const EducationHub = () => {
   const [news, setNews] = useState([]);
   const [filteredNews, setFilteredNews] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Disabled loading to prevent layout shifts
   const [category, setCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
 
-  useEffect(() => {
-    fetchNews();
-  }, []);
+  // Disabled news loading to prevent layout shifts
+  // useEffect(() => {
+  //   fetchNews();
+  // }, []);
 
-  useEffect(() => {
-    if (category !== 'all') {
-      fetchNewsByCategory();
-    } else {
-      fetchNews();
-    }
-  }, [category]);
+  // useEffect(() => {
+  //   if (category !== 'all') {
+  //     fetchNewsByCategory();
+  //   } else {
+  //     fetchNews();
+  //   }
+  // }, [category]);
 
   useEffect(() => {
     filterNews();
@@ -133,7 +134,7 @@ const EducationHub = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 coming-soon-container relative">
         {/* Coming Soon Overlay */}
-        <div className="coming-soon-overlay fixed top-20 left-0 w-full min-h-[calc(100vh-5rem)] flex items-center justify-center z-50 bg-white/90">
+        <div className="coming-soon-overlay">
           <div className="coming-soon-content">
             <div className="coming-soon-icon">
               <BookOpen className="w-10 h-10 text-white" />

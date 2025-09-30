@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://climatehub.com/</loc>
+    <loc>https://climatehub.sg/</loc>
   </url>
   <url>
-    <loc>https://climatehub.com/about</loc>
+    <loc>https://climatehub.sg/about</loc>
   </url>
   <url>
-    <loc>https://climatehub.com/features</loc>
+    <loc>https://climatehub.sg/carbon-tracker</loc>
+  </url>
+  <url>
+    <loc>https://climatehub.sg/events</loc>
+  </url>
+  <url>
+    <loc>https://climatehub.sg/education</loc>
   </url>
 </urlset>
