@@ -1,9 +1,12 @@
 {
+  "root": "build/",
+  "clean_urls": false,
   "routes": {
-    "/about": "index.html",
-    "/carbon-tracker": "index.html",
-    "/events": "index.html",
-    "/education": "index.html",
     "/**": "index.html"
+  },
+  "headers": {
+    "/static/**": {
+      "Cache-Control": "public, max-age=31536000, immutable"
+    }
   }
 }

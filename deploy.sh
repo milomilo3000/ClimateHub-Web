@@ -48,6 +48,11 @@ sudo mkdir -p /var/www/climatehub-backend
 sudo cp -r frontend/* /var/www/climatehub/
 sudo cp -r backend/* /var/www/climatehub-backend/
 
+# Copy nginx configuration
+sudo cp nginx-config.conf /etc/nginx/sites-available/climatehub
+sudo ln -sf /etc/nginx/sites-available/climatehub /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+
 # Set permissions
 sudo chown -R www-data:www-data /var/www/climatehub/
 sudo chmod -R 755 /var/www/climatehub/
