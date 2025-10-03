@@ -1,5 +1,9 @@
 {
-    "routes": {
-      "/**": "index.html"
-    }
+  "routes": {
+    "/about": "index.html",
+    "/carbon-tracker": "index.html",
+    "/events": "index.html",
+    "/education": "index.html",
+    "/**": "index.html"
   }
+}
