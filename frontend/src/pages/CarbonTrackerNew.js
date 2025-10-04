@@ -96,12 +96,43 @@ const CarbonTrackerNew = () => {
       setResults(weeklyFootprint);
       setFormData(data);
       setSaved(false);
+      
+      // Auto-save results if user is logged in
+      if (user) {
+        await autoSaveResults(weeklyFootprint, data);
+      }
+      
       toast.success('Carbon footprint calculated successfully!');
     } catch (error) {
       console.error('Calculation error:', error);
       toast.error('Failed to calculate carbon footprint');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const autoSaveResults = async (footprintResults, inputData) => {
+    try {
+      const token = await getAuth().currentUser?.getIdToken();
+      const response = await axios.post('/api/carbon/save', {
+        footprint: footprintResults,
+        breakdown: footprintResults.breakdown,
+        inputData: inputData,
+        notes: 'Auto-saved weekly footprint calculation'
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (response.data.success) {
+        setSaved(true);
+        await refreshUserProfile();
+        toast.success('Results automatically saved to your profile!');
+      }
+    } catch (error) {
+      console.error('Auto-save error:', error);
+      // Don't show error toast for auto-save failures to avoid interrupting user experience
     }
   };
 
@@ -1006,24 +1037,18 @@ const CarbonTrackerNew = () => {
             </ul>
           </div>
 
-          {/* Save button and confirmation */}
+          {/* Auto-save confirmation and retry button */}
           <div className="flex flex-col items-center gap-4 w-full max-w-lg mx-auto">
-            <button
-              onClick={saveResults}
-              disabled={saved}
-              className={`flex items-center space-x-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
-                saved
-                  ? 'bg-green-100 text-green-700 cursor-not-allowed'
-                  : 'bg-green-600 text-white hover:bg-green-700 shadow-lg hover:shadow-xl'
-              }`}
-            >
-              <Save className="w-5 h-5" />
-              <span>{saved ? 'Results Saved!' : 'Save Results'}</span>
-            </button>
-            {saved && (
-              <div className="flex items-center text-green-700 text-sm font-medium mt-1">
-                <CheckCircle className="w-5 h-5 mr-1" />
-                Results saved to your profile!
+            {saved && user && (
+              <div className="flex items-center text-green-700 text-sm font-medium bg-green-50 px-4 py-2 rounded-lg border border-green-200">
+                <CheckCircle className="w-5 h-5 mr-2" />
+                Results automatically saved to your profile!
+              </div>
+            )}
+            {!user && (
+              <div className="flex items-center text-blue-700 text-sm font-medium bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
+                <Calculator className="w-5 h-5 mr-2" />
+                Sign in to automatically save your results to your profile
               </div>
             )}
             <button
@@ -1033,7 +1058,7 @@ const CarbonTrackerNew = () => {
                 setFormData({});
                 setSaved(false);
               }}
-              className="flex items-center space-x-2 px-6 py-3 rounded-full font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-300 mt-2"
+              className="flex items-center space-x-2 px-6 py-3 rounded-full font-semibold bg-green-600 text-white hover:bg-green-700 shadow-lg hover:shadow-xl transition-all duration-300"
             >
               <Calculator className="w-5 h-5" />
               <span>Calculate Again</span>
