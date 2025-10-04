@@ -245,19 +245,29 @@ const Home = () => {
              </h2>
              <p className="text-sm sm:text-base text-gray-600">Join fellow servicemen in Singapore's climate mission</p>
            </div>
-           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-               {stats.map((stat, index) => (
-                 <div key={index} className="text-center py-4 sm:py-0">
-                   <div className="flex justify-center mb-3 sm:mb-4">
-                     <div className="w-12 h-12 sm:w-14 sm:h-14 bg-green-100 rounded-lg flex items-center justify-center">
-                       <stat.icon className="w-6 h-6 sm:w-7 sm:h-7 text-emerald-600" />
-                     </div>
-                   </div>
-                   <div className="text-2xl sm:text-3xl font-bold text-black mb-1 sm:mb-2">{stat.value}</div>
-                   <div className="text-gray-600 text-xs sm:text-sm px-2">{stat.label}</div>
-                 </div>
-               ))}
-          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+              {stats.map((stat, index) => (
+                <div key={index} className="text-center py-4 sm:py-0">
+                  <div className="flex justify-center mb-3 sm:mb-4">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-green-100 rounded-lg flex items-center justify-center">
+                      <stat.icon className="w-6 h-6 sm:w-7 sm:h-7 text-emerald-600" />
+                    </div>
+                  </div>
+                  <div className="text-2xl sm:text-3xl font-bold text-black mb-1 sm:mb-2">{stat.value}</div>
+                  <div className="text-gray-600 text-xs sm:text-sm px-2">{stat.label}</div>
+                </div>
+              ))}
+         </div>
+         
+         {/* Disclaimer */}
+         <div className="flex justify-center mt-8 sm:mt-10">
+           <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-3 max-w-md mx-auto">
+             <p className="text-xs sm:text-sm text-yellow-800 text-center font-medium">
+               <span className="inline-block mr-1">⚠️</span>
+               Please note: The statistics displayed above are sample data for demonstration purposes and do not reflect actual user metrics.
+             </p>
+           </div>
+         </div>
         </div>
       </section>
 
