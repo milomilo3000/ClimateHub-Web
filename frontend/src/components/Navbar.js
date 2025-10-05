@@ -44,9 +44,11 @@ const Navbar = () => {
           {/* Logo and main navigation */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">CH</span>
-              </div>
+              <img
+                src="/images/apple-touch-icon.png"
+                alt="ClimateHub Logo"
+                className="w-8 h-8 rounded-lg"
+              />
               <span className="text-xl font-bold text-gray-900">ClimateHub</span>
             </Link>
             
