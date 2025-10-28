@@ -1,37 +1,89 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const chatbotRouter = require('./routes/chatbot');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const mongoose = require('mongoose');
-require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
-// Middleware
 const allowedOrigins = [
   'http://localhost:3000',              // Local dev
+  'http://localhost:5001',              // Proxy requests
   process.env.FRONTEND_URL,
-  'https://climatehub-frontend.onrender.com',             // From .env for Render/Netlify
-  'https://climatehub.sg',              // Your GoDaddy domain
-  'https://api.climatehub.sg'           // If frontend calls via subdomain
+  'https://climatehub-frontend.onrender.com', // Render/Netlify
+  'https://climatehub.sg',              // Main domain
+  'https://api.climatehub.sg'           // Subdomain / API domain
 ];
 
-// CORS middleware
-app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl)
-    if (!origin) return callback(null, true);
+// Normalize origins once for comparison (strip trailing slashes, drop falsy envs)
+const normalizedAllowedOrigins = allowedOrigins
+  .filter(Boolean)
+  .map(o => o.replace(/\/$/, ''));
 
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.log(`CORS: Allowing origin ${origin} for debugging`);
-      callback(null, true); // Temporarily allow all origins for debugging
+console.log("🟢 ClimateHub backend booting");
+console.log("🔑 OPENAI_API_KEY present?", !!process.env.OPENAI_API_KEY);
+console.log("🌐 Allowed origins:", allowedOrigins);
+console.log("🪵 Server logging active...");
+
+app.use(cors({
+  origin: function(origin, callback) {
+    console.log("🛰 Incoming request Origin:", origin);
+
+    // Allow same-origin / server-to-server / curl / Postman (no Origin header)
+    if (!origin) {
+      console.log("✅ No origin header (server-to-server or curl) -> allowed");
+      return callback(null, true);
     }
+
+    // strip trailing slash for comparison
+    const cleanOrigin = origin.replace(/\/$/, '');
+    const isAllowed = normalizedAllowedOrigins.includes(cleanOrigin);
+
+    if (isAllowed) {
+      console.log("✅ Origin allowed:", cleanOrigin);
+      return callback(null, true);
+    }
+
+    console.warn("🚫 CORS blocked origin:", cleanOrigin);
+    console.warn("🔎 Allowed origins are:", normalizedAllowedOrigins);
+    return callback(new Error("Not allowed by CORS"));
   },
-  credentials: true
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: true,
+  preflightContinue: false,
+  optionsSuccessStatus: 200
 }));
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const cleanOrigin = origin ? origin.replace(/\/$/, '') : null;
+  const isAllowed = !cleanOrigin || normalizedAllowedOrigins.includes(cleanOrigin);
+
+  console.log(`➡ ${req.method} ${req.originalUrl} from ${origin || 'no-origin'}`);
+
+  if (isAllowed) {
+    res.header('Access-Control-Allow-Origin', origin || 'http://localhost:3000');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  } else {
+    console.warn("❗ Request origin not in whitelist during header injection:", cleanOrigin);
+  }
+
+  // If browser is doing a preflight check, answer it here with 200
+  if (req.method === 'OPTIONS') {
+    console.log("🕊 Responding early to preflight OPTIONS");
+    return res.status(200).end();
+  }
+
+  next();
+});
+
+app.options('*', cors());
 
 // Rate limiting
 const limiter = rateLimit({
@@ -42,16 +94,6 @@ app.use(limiter);
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
-
-// Request logging middleware
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`, {
-    origin: req.headers.origin,
-    userAgent: req.headers['user-agent'],
-    body: req.body
-  });
-  next();
-});
 
 // Database connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/climatehub', {
@@ -69,7 +111,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/carbon', require('./routes/carbon'));
 app.use('/api/news', require('./routes/news'));
 app.use('/api/events', require('./routes/events'));
-app.use('/api/chatbot', require('./routes/chatbot'));
+app.use('/api/chatbot', chatbotRouter);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -100,4 +142,4 @@ app.listen(PORT, () => {
   console.log(`ClimateHub Backend running on port ${PORT}`);
 });
 
-module.exports = app; 
+module.exports = app;

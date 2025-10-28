@@ -1,13 +1,36 @@
 const express = require('express');
-const OpenAI = require('openai');
 const router = express.Router();
+const OpenAI = require('openai');
 
-// Initialize OpenAI (you'll need to add your API key)
-// const openai = new OpenAI({
-//   apiKey: process.env.OPENAI_API_KEY
-// });
+// Initialize OpenAI client
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
-// For demo purposes, we'll use a mock response system
+const SYSTEM_PROMPT = `
+You are ClimateHub, a friendly sustainability assistant for youth in Singapore.
+
+Core rules:
+- Be helpful, practical, and honest.
+- Never shame the user. No guilt language.
+- Focus on realistic, small behaviour changes (AC temperature habits, MRT vs private car, food swaps, etc.).
+- When talking about policy, prioritise Singapore examples like the Singapore Green Plan 2030, carbon tax, public transport efficiency, and energy-saving habits in HDBs.
+- If a user asks something not directly climate-related (math, life advice, etc.), you MAY answer it. At the end, gently connect back to climate/sustainability if it naturally fits.
+- If you're not fully sure about a specific Singapore law, number, or target, say you're not 100% sure and suggest checking NEA or the Ministry of Sustainability and the Environment.
+
+Style:
+- Talk like you're explaining to a smart 17–20 year old in Singapore.
+- Keep it conversational, specific, and non-judgmental.
+- Do not invent super-specific statistics if you aren't sure; describe trends instead.
+
+Formatting:
+- Use **bold text** for important terms, titles, and key points.
+- When listing multiple points, use numbered lists (1. 2. 3.) or bullet points with clear structure.
+- Add line breaks between different sections or topics for better readability.
+- Format key initiatives like **City in Nature** or **Green Plan 2030** in bold.
+- Use proper paragraph spacing - separate different concepts with blank lines.
+`;
+
 const mockResponses = {
   'climate change': 'Climate change refers to long-term shifts in global weather patterns and average temperatures. In Singapore, we\'re experiencing rising temperatures, increased rainfall intensity, and sea level rise. The government has set ambitious targets to reduce emissions and adapt to climate impacts.',
   'carbon footprint': 'Your carbon footprint is the total amount of greenhouse gases (primarily CO2) emitted by your activities. In Singapore, the average person emits about 8.56 tonnes of CO2 per year. You can reduce your footprint by using public transport, eating less meat, and conserving energy.',
@@ -24,76 +47,96 @@ const mockResponses = {
   'waste reduction': 'Singapore\'s Zero Waste Masterplan aims to reduce waste sent to landfill by 30% by 2030. You can help by practicing the 3Rs: Reduce, Reuse, Recycle. Consider composting food waste and buying products with minimal packaging.',
   'green buildings': 'Singapore has one of the highest concentrations of green buildings in the world. The Building and Construction Authority (BCA) Green Mark scheme certifies buildings for environmental performance. Many new developments incorporate green features.',
   'electric vehicles': 'Singapore is promoting electric vehicles to reduce emissions. The government offers rebates for electric cars and is expanding charging infrastructure. Consider an electric vehicle for your next car purchase.',
-  'climate action': 'Singapore has committed to net-zero emissions by 2050. The Green Plan 2030 outlines strategies for sustainable development. You can participate by supporting green initiatives, reducing your carbon footprint, and staying informed about climate policies.'
+  'climate action': 'Singapore has committed to net-zero emissions by 2050. The Green Plan 2030 outlines strategies for sustainable development. You can participate by supporting green initiatives, reducing your carbon footprint, and staying informed about climate policies.',
+  'singapore green plan 2030': 'The **Singapore Green Plan 2030** is a comprehensive roadmap that charts ambitious and concrete targets over the next 10 years, strengthening Singapore\'s commitments under the UN\'s 2030 Sustainable Development Agenda and Paris Agreement.\n\nKey pillars include:\n\n1. **City in Nature**: 1 million more trees by 2030\n2. **Sustainable Living**: Reducing waste by 30%\n3. **Energy Reset**: Deploying 2GWp solar energy\n4. **Green Economy**: Greening 80% of buildings\n5. **Resilient Future**: Coastal protection and food security\n\nThe plan aims to position Singapore as a global city of sustainability.',
+  'green plan 2030': 'The **Singapore Green Plan 2030** is a comprehensive roadmap that charts ambitious and concrete targets over the next 10 years, strengthening Singapore\'s commitments under the UN\'s 2030 Sustainable Development Agenda and Paris Agreement.\n\nKey pillars include:\n\n1. **City in Nature**: 1 million more trees by 2030\n2. **Sustainable Living**: Reducing waste by 30%\n3. **Energy Reset**: Deploying 2GWp solar energy\n4. **Green Economy**: Greening 80% of buildings\n5. **Resilient Future**: Coastal protection and food security\n\nThe plan aims to position Singapore as a global city of sustainability.',
+  'green plan': 'The **Singapore Green Plan 2030** is a comprehensive roadmap that charts ambitious and concrete targets over the next 10 years, strengthening Singapore\'s commitments under the UN\'s 2030 Sustainable Development Agenda and Paris Agreement.\n\nKey pillars include:\n\n1. **City in Nature**: 1 million more trees by 2030\n2. **Sustainable Living**: Reducing waste by 30%\n3. **Energy Reset**: Deploying 2GWp solar energy\n4. **Green Economy**: Greening 80% of buildings\n5. **Resilient Future**: Coastal protection and food security\n\nThe plan aims to position Singapore as a global city of sustainability.'
 };
 
 // Get chatbot response
 router.post('/chat', async (req, res) => {
-  try {
-    const { message } = req.body;
+  console.log("💬 /api/chatbot/chat hit");
+  console.log("📩 Request headers:", req.headers);
+  console.log("📩 Request method:", req.method);
+  console.log("🔍 Request body:", JSON.stringify(req.body));
+  console.log("🔍 Request URL:", req.url);
+  console.log("🔍 Request path:", req.path);
 
-    if (!message) {
-      return res.status(400).json({ error: 'Message is required' });
+  try {
+    console.log("📩 Raw req.body:", req.body);
+    console.log("🔑 Key available in handler?", !!process.env.OPENAI_API_KEY);
+    console.log("🔑 OpenAI API Key starts with:", process.env.OPENAI_API_KEY?.substring(0, 10) + "...");
+
+    const { message } = req.body || {};
+    console.log("🧠 User message:", message);
+
+    if (!message || !message.trim()) {
+      console.log("⚠️ No message provided by client.");
+      return res.status(400).json({ 
+        success: false,
+        response: "Please ask a question so I can help 😊",
+      });
     }
 
-    // For demo purposes, we'll use mock responses
-    // In production, you would use OpenAI API
-    let response = 'I\'m here to help you with climate and environmental questions related to Singapore. Please ask me about topics like climate change, carbon footprint, recycling, sustainable living, or any other environmental concerns.';
+    // Call OpenAI's chat completion endpoint
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: message }
+      ],
+      temperature: 0.7,
+      max_tokens: 400,
+    });
 
-    const lowerMessage = message.toLowerCase();
-    
-    // Check for keywords in the message
+    const botReply =
+      completion?.choices?.[0]?.message?.content?.trim() ||
+      "I'm here to help with climate, sustainability, and environmental questions in Singapore.";
+
+    console.log("🤖 OpenAI reply generated OK");
+
+    return res.json({
+      success: true,
+      response: botReply,
+      message: message
+    });
+
+  } catch (error) {
+    console.log("💥 CATCH BLOCK RUNNING - falling back");
+    console.error("❌ Chatbot error:", error?.message);
+    console.error("❌ Full error:", error);
+    console.error('Request body (in catch):', req.body);
+    console.error("❌ OpenAI API Key present?", !!process.env.OPENAI_API_KEY);
+    console.error("❌ OpenAI API Key length:", process.env.OPENAI_API_KEY?.length || 0);
+
+    // Check if it's an API key issue
+    if (error?.message?.includes('API key') || error?.message?.includes('authentication')) {
+      return res.status(500).json({
+        success: false,
+        response: "I'm having trouble connecting to my AI service. Please check that the OpenAI API key is properly configured.",
+        error: "API_KEY_ERROR"
+      });
+    }
+
+    // Fallback to keyword-based mock responses
+    const fallbackQuestion = req.body?.message || "";
+    const lowerMessage = fallbackQuestion.toLowerCase();
+
+    let fallbackResponse = "I'm sorry, I'm having trouble responding right now. I can still help with climate, carbon footprint, recycling, public transport, energy saving in Singapore, and daily habit changes.";
+
     for (const [keyword, mockResponse] of Object.entries(mockResponses)) {
       if (lowerMessage.includes(keyword)) {
-        response = mockResponse;
+        fallbackResponse = mockResponse;
         break;
       }
     }
 
-    // If no specific keyword found, provide a general response
-    if (response === 'I\'m here to help you with climate and environmental questions related to Singapore. Please ask me about topics like climate change, carbon footprint, recycling, sustainable living, or any other environmental concerns.') {
-      response = `I understand you're asking about "${message}". While I don't have a specific response for that, I can help you with topics like climate change, carbon footprint, recycling, sustainable living, green energy, plastic waste, public transport, local food, energy conservation, water conservation, biodiversity, air pollution, waste reduction, green buildings, electric vehicles, and climate action in Singapore. What would you like to know more about?`;
-    }
-
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    res.json({
+    return res.status(200).json({
       success: true,
-      response,
-      message: req.body.message
-    });
-
-    /* 
-    // Uncomment this section when you have OpenAI API key
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content: "You are a helpful climate and environmental assistant focused on Singapore. Provide accurate, helpful information about climate change, sustainability, environmental policies, and green initiatives in Singapore. Keep responses concise and practical."
-        },
-        {
-          role: "user",
-          content: message
-        }
-      ],
-      max_tokens: 300,
-      temperature: 0.7
-    });
-
-    res.json({
-      success: true,
-      response: completion.choices[0].message.content,
-      message: req.body.message
-    });
-    */
-
-  } catch (error) {
-    console.error('Chatbot error:', error);
-    res.status(500).json({ 
-      error: 'Failed to get response',
-      fallback: 'I\'m sorry, I\'m having trouble responding right now. Please try asking about climate change, carbon footprint, recycling, or sustainable living in Singapore.'
+      response: fallbackResponse,
+      message: fallbackQuestion,
+      note: "fallback-mock",
+      error: error?.message
     });
   }
 });
@@ -130,14 +173,15 @@ router.get('/status', (req, res) => {
   res.json({
     success: true,
     status: 'online',
-    model: 'demo-mode', // or 'gpt-3.5-turbo' when using OpenAI
+    model: 'gpt-4o-mini', // or 'gpt-3.5-turbo' when using OpenAI
     features: [
       'Climate and environmental Q&A',
       'Singapore-specific information',
       'Real-time responses',
-      'Topic suggestions'
+      'Topic suggestions',
+      'OpenAI-backed assistant with Singapore context'
     ]
   });
 });
 
-module.exports = router; 
+module.exports = router;
