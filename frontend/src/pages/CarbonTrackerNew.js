@@ -15,11 +15,15 @@ import {
   Leaf,
   Clock,
   Wind,
-  Bird
+  Bird,
+  Share2,
+  Award
 } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import ImpactMeasures from '../components/ImpactMeasures';
+import RecommendationCarousel from '../components/RecommendationCarousel';
 
 const CarbonTrackerNew = () => {
   const { user, refreshUserProfile } = useAuth();
@@ -1021,20 +1025,49 @@ const CarbonTrackerNew = () => {
             </div>
           </div>
 
-          {/* Recommendations */}
-          <div className="mb-8 px-6 sm:px-10">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Recommendations</h3>
-            <ul className="space-y-2">
-              {recommendations.map((rec, idx) => (
-                <li key={idx} className="bg-gray-50 rounded-lg px-4 py-3 flex items-start border border-gray-100">
-                  <Leaf className="w-5 h-5 text-green-500 mt-1 mr-3 flex-shrink-0" />
-                  <div>
-                    <div className="font-medium text-gray-800">{rec.title}</div>
-                    <div className="text-gray-600 text-sm">{rec.desc}</div>
+          {/* Performance Badge */}
+          {relativePercent >= 0 && (
+            <div className="mb-8 flex justify-center">
+              <div className="bg-green-50 border border-green-200 rounded-2xl px-6 py-4 flex items-center space-x-3">
+                <Award className="w-6 h-6 text-green-600" />
+                <div>
+                  <div className="font-semibold text-green-800">🌿 Great job!</div>
+                  <div className="text-sm text-green-700">
+                    You're greener than {Math.abs(relativePercent).toFixed(0)}% of users
                   </div>
-                </li>
-              ))}
-            </ul>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Impact Measures */}
+          <ImpactMeasures userCO2={results.totalFootprint * 52} groupFactor={40000} />
+
+          {/* Recommendations Carousel */}
+          <RecommendationCarousel recommendations={recommendations} />
+
+          {/* Share Button */}
+          <div className="mb-8 flex justify-center">
+            <button
+              onClick={() => {
+                if (navigator.share) {
+                  navigator.share({
+                    title: 'My Carbon Footprint - ClimateHub',
+                    text: `I calculated my weekly carbon footprint: ${results.totalFootprint.toFixed(2)} kg CO₂. Join me in tracking your environmental impact!`,
+                    url: window.location.origin + '/carbon-tracker'
+                  });
+                } else {
+                  navigator.clipboard.writeText(
+                    `I calculated my weekly carbon footprint: ${results.totalFootprint.toFixed(2)} kg CO₂ on ClimateHub! ${window.location.origin}/carbon-tracker`
+                  );
+                  toast.success('Shared to clipboard!');
+                }
+              }}
+              className="flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors"
+            >
+              <Share2 className="w-5 h-5" />
+              <span>Share My Footprint</span>
+            </button>
           </div>
 
           {/* Auto-save confirmation and retry button */}

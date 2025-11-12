@@ -1,47 +1,102 @@
-Create a clean, modern About Us page for the ClimateHub website. The design should be youth-friendly but professional, using a minimal and engaging style.
+You are redesigning the **Summary Results Page** of the ClimateHub carbon footprint calculator. 
+The goal is to make the layout more visual and engaging while maintaining data clarity and scientific credibility.
 
-The page should include:
+### CONTEXT
+- The top section (summary + charts) is already implemented.
+- You need to redesign the **Impact Measures** and **Recommendations** sections to be visually rich, interactive, and emotionally engaging.
+- Keep a minimalist aesthetic consistent with ClimateHub’s brand (white, green, gray, with accent icons and rounded cards).
 
-Header
+---
 
-Title: “About Us”
+### 🎨 DESIGN GOAL
+Transform the lower half of the results page into two horizontal sections:
+1. **Impact Measures (Visual Data Cards)**
+2. **Recommendations (Interactive Swipe Cards)**
 
-Subtitle: Meet the team behind ClimateHub — youth building tools for a sustainable future.
+---
 
-Team Section
+### 🧩 SECTION 1 — IMPACT MEASURES
 
-Three team members, displayed in a grid of profile cards (with space for photos). Each card should include the person’s name, role/title, and a short description of their contributions.
+**Layout:**
+- Title: “Your Impact in Context 🌍”
+- 2–3 horizontal visual cards, each spanning full width (responsive carousel on mobile).
+- Each card displays one key “relatability metric” — e.g. Trees Absorbed, Sea Level Rise, Plastic Bottles Equivalent.
+- Each card has:
+  - A relevant background image or gradient overlay (e.g. trees, ocean, cityscape).
+  - A bold number (e.g. “9,210 Trees”) in center.
+  - A short contextual line below (“If all 40,000 NSFs emitted like you, that’s 9 million trees’ worth of CO₂.”)
+  - A subtle icon in the corner (🌳, 🌊, 🏙️).
+- Add a **scroll or dot navigation** if multiple cards exist.
+- Background should dim slightly on hover for interactivity.
 
-Milan Nathani — Founder & Executive Lead
+**Design Specs:**
+- Card height: 220–250px
+- Border-radius: 20px
+- Background: use subtle semi-transparent overlay (e.g. `rgba(34, 197, 94, 0.1)`)
+- Font color: white or dark depending on background
+- Font weight: numbers in 700–800, context text in 500
+- Add subtle animation: fade-in / slide from left on load
 
-Founder and driving force behind ClimateHub
+**Code behavior:**
+- Create `<ImpactMeasures />` component.
+- Accepts props: `userCO2`, `groupFactor=40000`
+- Dynamically computes:
+  - `treeEquivalent = userCO2 / 22`
+  - `groupTreeEquivalent = treeEquivalent * 40000`
+  - `seaLevelEquivalent = userCO2 * seaRiseFactor`
+  - `scaledSeaLevel = seaLevelEquivalent * 40000`
+- Render cards with computed numbers.
+- Example visuals:
+  - 🌳 “Tree Equivalence” → photo of forest background.
+  - 🌊 “Sea-Level Rise Impact” → ocean horizon background.
+  - 🔋 “Energy Equivalent” → Singapore skyline at night.
 
-Leads strategy, technology, outreach, and overall project direction
+---
 
-Spearheads talks, school information sessions, and partnerships, while building the platform’s technical backbone
+### 🌿 SECTION 2 — RECOMMENDATIONS (INTERACTIVE)
 
-Dylan Seng — Outreach, Marketing & Communications
+**Layout:**
+- Title: “What You Can Do Next 💡”
+- Display a stack of **Recommendation Cards** with tick ✅ and cross ❌ buttons on left/right edges of the card.
+- Each card contains:
+  - A short title (“Reduce Electronics Usage”)
+  - A one-line actionable tip (“Unplug devices when not in use.”)
+  - A subtle icon (💻, 🍔, 🚎, 🏠, 🛍️)
+- When the user clicks ✅, the card slides right and fades (marked “done”).
+- When ❌, it slides left and disappears.
+- After each swipe, show the next recommendation in stack (like Tinder-style cards).
 
-Leads ClimateHub’s outreach, social media, and publicity campaigns
+**Design Specs:**
+- Card width: 80% of container (centered)
+- Height: 120–140px
+- Border-radius: 16px
+- Background: white with soft shadow (`rgba(0, 0, 0, 0.1)`)
+- Animation: spring-like slide/fade using Framer Motion
+- Button icons on left/right (✅ ❌) slightly overlap the card edge (like circular floating buttons)
+- Progress indicator (3 dots) below card stack
 
-Represents the project through presentations, community engagement, and youth-facing initiatives
+**Code Behavior:**
+- Create `<RecommendationCarousel />` component
+- Props: `recommendations = []`
+- Each recommendation object: `{ title, description, icon }`
+- Use Framer Motion or React Spring for transitions
+- On swipe or button press, move to next card
+- Optional: store completed cards in localStorage (“actions taken”)
 
-Focuses on growing awareness and making sustainability relatable and engaging for youth
+---
 
-Maahir Bhatia — Partnerships & Strategy
+### 📱 RESPONSIVE BEHAVIOR
+- On desktop: show impact cards horizontally, rec cards centered
+- On mobile: stack impact cards vertically with swipe scroll; make rec cards full width
 
-Contributed to pitching ClimateHub to the Ministry of Sustainability and Environment during its founding phase
+---
 
-Advised on partnerships and strategic positioning
+### ✨ ADDITIONAL TOUCHES
+- Add subtle hover animations or parallax motion for impact visuals
+- Add info tooltip icons (“i”) to show data sources (“1 mature tree absorbs ~22kg CO₂/year”)
+- Add share button: “Share my footprint” (generate shareable image of summary)
+- Add optional badge if user’s footprint is below average (“🌿 Great job! You’re greener than 70% of users.”)
 
-Closing Section
+---
 
-A short line: We’re a youth-led team committed to turning awareness into action and making sustainability accessible to everyone.
-
-Styling Notes
-
-Use a modern grid layout with clean cards
-
-Include hover animations for each card
-
-Keep the color scheme consistent with ClimateHub’s branding (green, white, and earthy tones)
+### 📋 FINAL STRUCTURE

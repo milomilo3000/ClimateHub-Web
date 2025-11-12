@@ -295,6 +295,132 @@
     animation: pulse 2s infinite;
   }
 
+  /* Impact Measures Animations */
+  @keyframes slideInFromLeft {
+    0% {
+      transform: translateX(-100px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideInFromRight {
+    0% {
+      transform: translateX(100px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      transform: translateY(30px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes scaleIn {
+    0% {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  /* Recommendation Card Animations */
+  @keyframes cardSwipeRight {
+    0% {
+      transform: translateX(0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(300px) rotate(30deg);
+      opacity: 0;
+    }
+  }
+
+  @keyframes cardSwipeLeft {
+    0% {
+      transform: translateX(0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(-300px) rotate(-30deg);
+      opacity: 0;
+    }
+  }
+
+  /* Utility Classes */
+  .animate-slide-in-left {
+    animation: slideInFromLeft 0.6s ease-out;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInFromRight 0.6s ease-out;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.4s ease-out;
+  }
+
+  .animate-swipe-right {
+    animation: cardSwipeRight 0.3s ease-in-out forwards;
+  }
+
+  .animate-swipe-left {
+    animation: cardSwipeLeft 0.3s ease-in-out forwards;
+  }
+
+  /* Chat message formatting */
+  .chat-message-content {
+    line-height: 1.5;
+  }
+
+  .chat-message-content p {
+    margin-bottom: 0.75rem;
+  }
+
+  .chat-message-content p:last-child {
+    margin-bottom: 0;
+  }
+
+  .chat-message-content strong {
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  .chat-message-content ul,
+  .chat-message-content ol {
+    margin: 0.5rem 0;
+    padding-left: 1.25rem;
+  }
+
+  .chat-message-content li {
+    margin-bottom: 0.25rem;
+  }
+
+  .chat-message-content li strong {
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
   @keyframes pulse {
     0%, 100% {
       transform: scale(1);

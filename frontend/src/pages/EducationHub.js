@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { 
   BookOpen, 
   Newspaper, 
@@ -17,28 +18,33 @@ import toast from 'react-hot-toast';
 const EducationHub = () => {
   const [news, setNews] = useState([]);
   const [filteredNews, setFilteredNews] = useState([]);
-  const [loading, setLoading] = useState(false); // Disabled loading to prevent layout shifts
+  const [loading, setLoading] = useState(true); // Re-enabled for news loading
   const [category, setCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
 
-  // Disabled news loading to prevent layout shifts
-  // useEffect(() => {
-  //   fetchNews();
-  // }, []);
+  // Pagination state for news list
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
-  // useEffect(() => {
-  //   if (category !== 'all') {
-  //     fetchNewsByCategory();
-  //   } else {
-  //     fetchNews();
-  //   }
-  // }, [category]);
+  // Re-enabled news loading with proper RSS feeds
+  useEffect(() => {
+    fetchNews();
+  }, []);
+
+  useEffect(() => {
+    if (category !== 'all') {
+      fetchNewsByCategory();
+    } else {
+      fetchNews();
+    }
+  }, [category]);
 
   useEffect(() => {
     filterNews();
+    setCurrentPage(1);
   }, [news, searchQuery]);
 
   const fetchNews = async () => {
@@ -87,6 +93,17 @@ const EducationHub = () => {
     setFilteredNews(filtered);
   };
 
+  // Compute pagination details whenever filteredNews or currentPage changes
+  const totalPages = Math.ceil(filteredNews.length / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedNews = filteredNews.slice(startIndex, startIndex + itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    // clamp page number between 1 and totalPages
+    const safePage = Math.max(1, Math.min(pageNumber, totalPages));
+    setCurrentPage(safePage);
+  };
+
   const sendChatMessage = async () => {
     if (!chatInput.trim()) return;
 
@@ -96,9 +113,17 @@ const EducationHub = () => {
     setChatLoading(true);
 
     try {
+      console.log('🚀 Sending chat request:', chatInput);
+      console.log('🌐 Request URL:', '/api/chatbot/chat');
+      
       const response = await axios.post('/api/chatbot/chat', {
         message: chatInput
       });
+
+      console.log('📨 Full response received:', response);
+      console.log('📊 Response data:', response.data);
+      console.log('✅ Response success:', response.data.success);
+      console.log('💬 Bot response:', response.data.response);
 
       if (response.data.success) {
         const botMessage = { 
@@ -107,9 +132,14 @@ const EducationHub = () => {
           timestamp: new Date() 
         };
         setChatMessages(prev => [...prev, botMessage]);
+      } else {
+        console.error('❌ Response not successful:', response.data);
+        toast.error('Failed to get response: ' + (response.data.error || 'Unknown error'));
       }
     } catch (error) {
-      console.error('Chat error:', error);
+      console.error('💥 Chat error:', error);
+      console.error('💥 Error response:', error.response?.data);
+      console.error('💥 Error status:', error.response?.status);
       toast.error('Failed to get response');
     } finally {
       setChatLoading(false);
@@ -132,25 +162,7 @@ const EducationHub = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 coming-soon-container relative">
-        {/* Coming Soon Overlay */}
-        <div className="coming-soon-overlay">
-          <div className="coming-soon-content">
-            <div className="coming-soon-icon">
-              <BookOpen className="w-10 h-10 text-white" />
-            </div>
-            <h2 className="coming-soon-title">Coming Soon</h2>
-            <p className="coming-soon-subtitle">
-              The Climate News & Education Hub feature is currently under development. 
-              We're working hard to bring you the latest climate news, educational content, 
-              and an AI-powered climate assistant to help you learn about environmental issues.
-            </p>
-            <div className="coming-soon-badge">
-              📚 In Development
-            </div>
-          </div>
-        </div>
-        <div className="blur-content">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
@@ -171,10 +183,34 @@ const EducationHub = () => {
           {/* News Section */}
           <div className="lg:col-span-2">
             <div className="card">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4 sm:mb-0">
-                  Latest Climate News
-                </h2>
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 w-full">
+                <div className="w-full sm:w-auto mb-4 sm:mb-0">
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    Latest Climate News
+                  </h2>
+
+                  {/* Pagination controls */}
+                  <div className="flex flex-wrap items-center gap-2 mt-3">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                      <button
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={`px-3 py-1 rounded-md text-sm font-medium border ${
+                          pageNum === currentPage
+                            ? 'bg-primary-600 text-white border-primary-600'
+                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    ))}
+                    <span className="text-xs text-gray-500 ml-1">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Search + Category */}
                 <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -182,13 +218,20 @@ const EducationHub = () => {
                       type="text"
                       placeholder="Search news..."
                       value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        // reset to first page after new search
+                        setCurrentPage(1);
+                      }}
                       className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     />
                   </div>
                   <select
                     value={category}
-                    onChange={(e) => setCategory(e.target.value)}
+                    onChange={(e) => {
+                      setCategory(e.target.value);
+                      setCurrentPage(1); // reset to first page on category change
+                    }}
                     className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   >
                     <option value="all">All Categories</option>
@@ -210,8 +253,8 @@ const EducationHub = () => {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {filteredNews.map((item, index) => (
-                    <div key={index} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
+                  {paginatedNews.map((item, index) => (
+                    <div key={startIndex + index} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center space-x-2">
                           {item.category === 'local' ? (
@@ -255,6 +298,27 @@ const EducationHub = () => {
                   ))}
                 </div>
               )}
+              {/* Bottom pager */}
+              {!loading && filteredNews.length > 0 && (
+                <div className="flex flex-wrap items-center justify-center gap-2 pt-6 border-t border-gray-200">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                    <button
+                      key={pageNum}
+                      onClick={() => handlePageChange(pageNum)}
+                      className={`px-3 py-1 rounded-md text-sm font-medium border ${
+                        pageNum === currentPage
+                          ? 'bg-primary-600 text-white border-primary-600'
+                          : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+                  <span className="text-xs text-gray-500 ml-1">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -289,8 +353,27 @@ const EducationHub = () => {
                               : 'bg-gray-100 text-gray-900'
                           }`}
                         >
-                          <p className="text-sm">{message.content}</p>
-                          <p className="text-xs opacity-70 mt-1">
+                          {message.type === 'bot' ? (
+                            <div className="text-sm chat-message-content">
+                              <ReactMarkdown
+                                components={{
+                                  p: ({ children }) => <p className="mb-3 last:mb-0 leading-relaxed">{children}</p>,
+                                  strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
+                                  ul: ({ children }) => <ul className="list-none pl-0 mb-3 space-y-2">{children}</ul>,
+                                  ol: ({ children }) => <ol className="list-decimal pl-4 mb-3 space-y-2">{children}</ol>,
+                                  li: ({ children }) => <li className="mb-2 pl-0">{children}</li>,
+                                  h1: ({ children }) => <h1 className="text-lg font-bold mb-3 mt-4 first:mt-0">{children}</h1>,
+                                  h2: ({ children }) => <h2 className="text-base font-bold mb-2 mt-3 first:mt-0">{children}</h2>,
+                                  h3: ({ children }) => <h3 className="text-sm font-bold mb-2 mt-3 first:mt-0">{children}</h3>,
+                                }}
+                              >
+                                {message.content}
+                              </ReactMarkdown>
+                            </div>
+                          ) : (
+                            <p className="text-sm">{message.content}</p>
+                          )}
+                          <p className="text-xs opacity-70 mt-2">
                             {message.timestamp.toLocaleTimeString()}
                           </p>
                         </div>
@@ -411,8 +494,6 @@ const EducationHub = () => {
             </div>
           </div>
         </div>
-        </div>
-
       </div>
     </div>
   );

@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import RouteDebugger from './components/RouteDebugger';
 import Home from './pages/Home';
 import CarbonTrackerNew from './pages/CarbonTrackerNew';
 import EducationHub from './pages/EducationHub';
@@ -17,7 +16,6 @@ function App() {
     <AuthProvider>
       <Router>
         <div className="min-h-screen flex flex-col">
-          <RouteDebugger />
           <Navbar />
           <main className="flex-grow">
             <Routes>
