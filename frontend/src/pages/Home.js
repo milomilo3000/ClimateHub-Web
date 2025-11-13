@@ -17,6 +17,8 @@ import {
   BarChart3
 } from 'lucide-react';
 import Slider from "react-slick";
+import FadeIn from '../components/animations/FadeIn';
+import StaggerWrapper from '../components/animations/StaggerWrapper';
 
 const Home = () => {
   const features = [
@@ -169,6 +171,7 @@ const Home = () => {
          }
        `}</style>
       {/* Hero Section */}
+      <FadeIn>
       <section className="relative">
         <HeroCarousel />
         
@@ -205,8 +208,10 @@ const Home = () => {
      </div>
    </div>
       </section>
+      </FadeIn>
 
        {/* Partners Section */}
+      <FadeIn delay={0.1}>
       <section className="py-8 sm:py-12 bg-gray-50 border-t border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-6 sm:mb-8">
@@ -235,8 +240,10 @@ const Home = () => {
           </div>
         </div>
       </section>
+      </FadeIn>
 
        {/* Stats Section */}
+       <FadeIn delay={0.2}>
        <section className="py-12 sm:py-16 bg-green-200">
          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
            <div className="text-center mb-8 sm:mb-12">
@@ -245,6 +252,7 @@ const Home = () => {
              </h2>
              <p className="text-sm sm:text-base text-gray-600">Join fellow servicemen in Singapore's climate mission</p>
            </div>
+          <StaggerWrapper>
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center py-4 sm:py-0">
@@ -258,6 +266,7 @@ const Home = () => {
                 </div>
               ))}
          </div>
+         </StaggerWrapper>
          
          {/* Disclaimer */}
          <div className="flex justify-center mt-8 sm:mt-10">
@@ -270,8 +279,10 @@ const Home = () => {
          </div>
         </div>
       </section>
+      </FadeIn>
 
       {/* Features Section */}
+      <FadeIn delay={0.3}>
       <section className="py-12 sm:py-16 lg:py-20 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12 lg:mb-16">
@@ -284,6 +295,7 @@ const Home = () => {
             </p>
           </div>
           
+          <StaggerWrapper>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
             {features.map((feature, index) => (
               <Link
@@ -303,10 +315,13 @@ const Home = () => {
               </Link>
             ))}
           </div>
+          </StaggerWrapper>
         </div>
       </section>
+      </FadeIn>
 
       {/* Benefits Section */}
+      <FadeIn delay={0.4}>
       <section className="py-12 sm:py-16 lg:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
@@ -352,8 +367,10 @@ const Home = () => {
           </div>
         </div>
       </section>
+      </FadeIn>
 
       {/* CTA Section */}
+      <FadeIn delay={0.5}>
       <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-r from-emerald-600 to-blue-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6">
@@ -381,6 +398,7 @@ const Home = () => {
           </div>
         </div>
       </section>
+      </FadeIn>
     </div>
   );
 };

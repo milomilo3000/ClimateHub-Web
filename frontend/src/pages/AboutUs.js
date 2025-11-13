@@ -1,5 +1,7 @@
 import React from 'react';
 import { Users, Target, Globe } from 'lucide-react';
+import FadeIn from "../components/animations/FadeIn";
+import StaggerWrapper from "../components/animations/StaggerWrapper";
 
 const AboutUs = () => {
   const teamMembers = [
@@ -29,6 +31,7 @@ const AboutUs = () => {
   return (
     <div className="min-h-screen bg-black">
       {/* Header Section */}
+      <FadeIn>
       <div className="relative overflow-hidden bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center">
@@ -47,8 +50,10 @@ const AboutUs = () => {
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-100 rounded-full opacity-20"></div>
         </div>
       </div>
+      </FadeIn>
 
       {/* Meet the Founder Section */}
+      <FadeIn delay={0.1}>
       <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-24 my-20">
         <div className="bg-white rounded-3xl shadow-lg p-12">
           <h2 className="text-5xl font-extrabold text-center text-black mb-12">Meet the Founder</h2>
@@ -72,19 +77,22 @@ const AboutUs = () => {
           </div>
         </div>
       </div>
+      </FadeIn>
 
       {/* Meet the Team Section */}
+      <FadeIn delay={0.2}>
       <div className="bg-white text-black py-16">
         <h2 className="text-4xl font-bold text-black text-center mb-12 font-sans">Meet the Team</h2>
 
         {/* Team Section */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <StaggerWrapper>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {otherMembers.map((member, index) => {
               const IconComponent = member.icon;
               return (
+                <FadeIn key={member.name}>
                 <div
-                  key={member.name}
                   className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden"
                 >
                   {/* Card Header */}
@@ -113,13 +121,17 @@ const AboutUs = () => {
                   {/* Hover effect overlay */}
                   <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-blue-500 opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
+                </FadeIn>
               );
             })}
           </div>
+          </StaggerWrapper>
         </div>
       </div>
+      </FadeIn>
 
       {/* Closing Section */}
+      <FadeIn delay={0.3}>
       <div className="bg-gradient-to-r from-green-500 to-blue-500 text-white py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="bg-white bg-opacity-10 rounded-2xl p-8 backdrop-blur-sm">
@@ -136,6 +148,7 @@ const AboutUs = () => {
           </div>
         </div>
       </div>
+      </FadeIn>
     </div>
   );
 };
