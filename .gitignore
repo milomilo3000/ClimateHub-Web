@@ -37,3 +37,8 @@ Thumbs.db
 # ─── Test / Coverage ────────────────────────────
 coverage/
 .nyc_output/
+
+# Secrets
+backend/.env
+.env
+
