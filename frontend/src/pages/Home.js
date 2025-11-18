@@ -176,12 +176,15 @@ const Home = () => {
         <HeroCarousel />
         
          <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8">
-     <div className="flex justify-center mb-4 sm:mb-6">
-       <div className="w-16 h-16 sm:w-20 sm:h-20 bg-green-600 rounded-2xl flex items-center justify-center relative">
-         <Shield className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
-         <Leaf className="w-5 h-5 sm:w-6 sm:h-6 text-green-200 absolute -top-1 -right-1" />
-       </div>
-     </div>
+    <div className="flex justify-center mb-4 sm:mb-6">
+      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center relative overflow-hidden bg-white">
+        <img
+          src="/images/apple-touch-icon.png"
+          alt="ClimateHub leaf logo"
+          className="w-full h-full object-contain"
+        />
+      </div>
+    </div>
      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-6">
        ClimateHub
      </h1>
