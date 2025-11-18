@@ -52,36 +52,50 @@ const AboutUs = () => {
       </div>
       </FadeIn>
 
+      {/* Why We Started Section */}
+      <FadeIn delay={0.05}>
+      <div className="w-full bg-white py-20">
+        <div className="max-w-5xl mx-auto px-6">
+          <h2 className="text-5xl font-extrabold text-center text-black mb-10">Why We Started</h2>
+          <p className="text-lg leading-relaxed text-black max-w-4xl mx-auto">
+            ClimateHub was born during our time in Basic Military Training (BMT), where we saw firsthand how <strong> everyday habits—air‑conditioning, transport choices, food waste, and digital consumption—</strong>quietly drive emissions in ways most young people never think about. 
+            <br/><br/>
+            Among our peers, we noticed a common pattern: <strong> <i> youth genuinely care about climate change, but many don’t know where to begin, what actions matter, or how their individual lifestyles contribute to Singapore’s carbon footprint.</i></strong> The sustainability space often felt too abstract, too technical, or too distant from our lived experiences as NSFs.
+            <br/><br/>
+            Our vision with ClimateHub is to close this <strong> awareness‑to‑action gap </strong>. We wanted to build a platform that speaks directly to youth—grounded in Singapore’s context, simple to use, powered by real data, and focused on empowering small but meaningful daily actions. What started as an NS‑camp initiative has grown into a national youth‑driven movement to help every young person track, understand, and reduce their carbon footprint.
+          </p>
+        </div>
+      </div>
+      </FadeIn>
+
       {/* Meet the Founder Section */}
       <FadeIn delay={0.1}>
-      <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-24 my-20">
-        <div className="bg-white rounded-3xl shadow-lg p-12">
-          <h2 className="text-5xl font-extrabold text-center text-black mb-12">Meet the Founder</h2>
-          <div className="flex flex-col md:flex-row items-center md:items-start max-w-4xl mx-auto gap-12 text-black">
-            {/* Left column: Founder Images Gallery */}
-            <div className="w-full md:w-1/2 grid grid-rows-2 gap-4 h-[600px]">
-              <img src="/images/About-Img1.jpg" alt="Founder 1" className="rounded-xl shadow-md object-cover object-top w-full h-full" />
-              <img src="/images/About-Img2.jpg" alt="Founder 2" className="rounded-xl shadow-md object-cover object-top w-full h-full" />
-            </div>
-            {/* Right column: Founder Info */}
-            <div className="w-full md:w-1/2 self-start">
-              <h3 className="text-4xl font-bold mb-2">{founder.name}</h3>
-              <p className="text-2xl font-semibold mb-6 text-black">{founder.role}</p>
-              <p className="leading-relaxed mb-8 text-lg">
-                Milan Nathani is the founder and executive lead of ClimateHub, a youth-driven climate-tech platform created to make sustainability accessible and actionable. Inspired during his National Service, he saw the potential to turn shared routines into collective climate action. Milan has led ClimateHub from idea to impact — coding the platform, securing SG Eco Fund support, piloting it in SAF camps, and building partnerships through talks and outreach. Under his leadership, ClimateHub has earned national recognition and is growing as a platform that empowers youth to track, reduce, and rethink their carbon footprints.
-              </p>
-              <blockquote className="border-l-4 border-green-600 italic text-black text-xl px-6 py-4 bg-green-100 rounded-lg shadow-inner">
-                "Our future depends on the actions we take today. I believe every young person has the power to make a difference, and ClimateHub is here to help unlock that potential."
-              </blockquote>
-            </div>
+      <div className="w-full bg-white py-24">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center md:items-start gap-12 text-black">
+          {/* Left column: Founder Images Gallery */}
+          <div className="w-full md:w-1/2 grid grid-rows-2 gap-4 h-[600px]">
+            <img src="/images/About-Img1.jpg" alt="Founder 1" className="rounded-xl shadow-md object-cover object-top w-full h-full" />
+            <img src="/images/About-Img2.jpg" alt="Founder 2" className="rounded-xl shadow-md object-cover object-top w-full h-full" />
           </div>
+          {/* Right column: Founder Info */}
+          <div className="w-full md:w-1/2 self-start">
+            <h2 className="text-5xl font-extrabold text-left text-black mb-10">Meet the Founder</h2>
+            <h3 className="text-4xl font-bold mb-2">{founder.name}</h3>
+            <p className="text-2xl font-semibold mb-6 text-black">{founder.role}</p>
+            <p className="leading-relaxed mb-8 text-lg">
+              Milan Nathani is the founder and executive lead of ClimateHub, a youth-driven climate-tech platform created to make sustainability accessible and actionable. Inspired during his National Service, he saw the potential to turn shared routines into collective climate action. Milan has led ClimateHub from idea to impact — coding the platform, securing SG Eco Fund support, piloting it in SAF camps, and building partnerships through talks and outreach. Under his leadership, ClimateHub has earned national recognition and is growing as a platform that empowers youth to track, reduce, and rethink their carbon footprints.
+            </p>
+            <blockquote className="border-l-4 border-green-600 italic text-black text-xl px-6 py-4 bg-green-100 rounded-lg shadow-inner">
+              "Our future depends on the actions we take today. I believe every young person has the power to make a difference, and ClimateHub is here to help unlock that potential."
+            </blockquote>
+          </div> 
         </div>
       </div>
       </FadeIn>
 
       {/* Meet the Team Section */}
       <FadeIn delay={0.2}>
-      <div className="bg-white text-black py-16">
+      <div className="w-full bg-white py-16 text-black">
         <h2 className="text-4xl font-bold text-black text-center mb-12 font-sans">Meet the Team</h2>
 
         {/* Team Section */}
