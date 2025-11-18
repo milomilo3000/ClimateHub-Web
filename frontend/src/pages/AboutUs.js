@@ -58,11 +58,16 @@ const AboutUs = () => {
         <div className="max-w-5xl mx-auto px-6">
           <h2 className="text-5xl font-extrabold text-center text-black mb-10">Why We Started</h2>
           <p className="text-lg leading-relaxed text-black max-w-4xl mx-auto">
-            ClimateHub was born during our time in Basic Military Training (BMT), where we saw firsthand how <strong> everyday habits—air‑conditioning, transport choices, food waste, and digital consumption—</strong>quietly drive emissions in ways most young people never think about. 
+            ClimateHub was born during our time in Basic Military Training (BMT), where we saw firsthand how 
+            <strong> everyday habits — air‑conditioning, transport choices, food waste, and digital consumption — </strong>
+            quietly drive emissions in ways most young people never think about.
             <br/><br/>
-            Among our peers, we noticed a common pattern: <strong> <i> youth genuinely care about climate change, but many don’t know where to begin, what actions matter, or how their individual lifestyles contribute to Singapore’s carbon footprint.</i></strong> The sustainability space often felt too abstract, too technical, or too distant from our lived experiences as NSFs.
+            Among our peers, we noticed a common pattern: 
+            <strong><i> youth genuinely care about climate change, but many don’t know where to begin, what actions matter, or how their individual lifestyles contribute to Singapore’s carbon footprint.</i></strong>
+            The sustainability space often felt too abstract, too technical, or too distant from our lived experiences as NSFs and students.
             <br/><br/>
-            Our vision with ClimateHub is to close this <strong> awareness‑to‑action gap </strong>. We wanted to build a platform that speaks directly to youth—grounded in Singapore’s context, simple to use, powered by real data, and focused on empowering small but meaningful daily actions. What started as an NS‑camp initiative has grown into a national youth‑driven movement to help every young person track, understand, and reduce their carbon footprint.
+            Our vision with ClimateHub is to close this <strong>awareness‑to‑action gap</strong>. We wanted a platform built for youth — grounded in Singapore’s context, simple to use, powered by real data, and focused on enabling small, meaningful daily changes. 
+            What started as an NSF‑camp initiative has grown into a national youth‑driven movement to help every young person track, understand, and reduce their carbon footprint.
           </p>
         </div>
       </div>
