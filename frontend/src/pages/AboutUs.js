@@ -15,7 +15,8 @@ const AboutUs = () => {
       name: 'Dylan Seng',
       role: 'Outreach, Marketing & Communications',
       description: 'Leads ClimateHub\'s outreach, social media, and publicity campaigns. Represents the project through presentations, community engagement, and youth-facing initiatives. Focuses on growing awareness and making sustainability relatable and engaging for youth.',
-      icon: Users
+      icon: Users,
+      image: '/images/@Dylan_About-Us.jpg'
     },
     {
       name: 'Maahir Bhatia',
@@ -116,8 +117,16 @@ const AboutUs = () => {
                 >
                   {/* Card Header */}
                   <div className="bg-gradient-to-r from-green-500 to-blue-500 p-6 text-white relative">
-                    <div className="flex items-center justify-center w-16 h-16 bg-white bg-opacity-20 rounded-full mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                      <IconComponent className="w-8 h-8" />
+                    <div className="flex items-center justify-center w-16 h-16 bg-white bg-opacity-20 rounded-full mx-auto mb-4 overflow-hidden group-hover:scale-110 transition-transform duration-300">
+                      {member.image ? (
+                        <img 
+                          src={member.image} 
+                          alt={member.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <IconComponent className="w-8 h-8" />
+                      )}
                     </div>
                     <h3 className="text-xl font-bold text-center mb-2">{member.name}</h3>
                     <p className="text-green-100 text-center font-medium">{member.role}</p>
