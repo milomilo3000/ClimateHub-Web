@@ -7,13 +7,18 @@ const Navbar = () => {
   const { user, signInWithGoogle, signOutUser } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isFeaturesOpen, setIsFeaturesOpen] = useState(false);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
   const location = useLocation();
-  const dropdownRef = useRef(null);
+  const aboutRef = useRef(null);
+  const featuresRef = useRef(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (aboutRef.current && !aboutRef.current.contains(event.target)) {
+        setIsAboutOpen(false);
+      }
+      if (featuresRef.current && !featuresRef.current.contains(event.target)) {
         setIsFeaturesOpen(false);
       }
     };
@@ -26,13 +31,20 @@ const Navbar = () => {
 
   const navigation = [
     { name: 'Home', href: '/' },
-    { name: 'About Us', href: '/about' },
   ];
 
   const featuresDropdown = [
     { name: 'Carbon Calculator', href: '/carbon-tracker' },
     { name: 'Education Hub', href: '/education' },
     { name: 'Events Calendar', href: '/events' },
+  ];
+
+  const aboutDropdown = [
+    { name: 'How We Started', href: '/about/how-we-started' },
+    { name: 'Our Mission', href: '/about/mission' },
+    { name: 'Our Team', href: '/about/team' },
+    { name: 'Our Impact', href: '/about/impact' },
+    { name: 'Contact Us', href: '/about/contact' },
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -68,8 +80,44 @@ const Navbar = () => {
                 </Link>
               ))}
               
+              {/* About Us dropdown */}
+              <div className="relative" ref={aboutRef}>
+                <button
+                  onClick={() => setIsAboutOpen(!isAboutOpen)}
+                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200 ${
+                    aboutDropdown.some(item => isActive(item.href))
+                      ? 'border-primary-500 text-primary-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  About Us
+                  <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-200 ${isAboutOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {isAboutOpen && (
+                  <div className="absolute top-full left-0 mt-1 w-56 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                    <div className="py-1">
+                      {aboutDropdown.map((item) => (
+                        <Link
+                          key={item.name}
+                          to={item.href}
+                          className={`block px-4 py-2 text-sm transition-colors duration-200 ${
+                            isActive(item.href)
+                              ? 'bg-primary-50 text-primary-600'
+                              : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                          }`}
+                          onClick={() => setIsAboutOpen(false)}
+                        >
+                          {item.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Features dropdown */}
-              <div className="relative" ref={dropdownRef}>
+              <div className="relative" ref={featuresRef}>
                 <button
                   onClick={() => setIsFeaturesOpen(!isFeaturesOpen)}
                   className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200 ${
@@ -183,6 +231,39 @@ const Navbar = () => {
               </Link>
             ))}
             
+            {/* Mobile About Us section */}
+            <div className="space-y-1">
+              <button
+                onClick={() => setIsAboutOpen(!isAboutOpen)}
+                className="flex items-center justify-between w-full px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors duration-200"
+              >
+                About Us
+                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isAboutOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {isAboutOpen && (
+                <div className="pl-4 space-y-1">
+                  {aboutDropdown.map((item) => (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                        isActive(item.href)
+                          ? 'bg-primary-50 text-primary-600 border-l-4 border-primary-500'
+                          : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                      }`}
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        setIsAboutOpen(false);
+                      }}
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
             {/* Mobile Features section */}
             <div className="space-y-1">
               <button

@@ -10,6 +10,11 @@ import Events from './pages/Events';
 import Profile from './pages/Profile';
 import AboutUs from './pages/AboutUs';
 import { AuthProvider } from './contexts/AuthContext';
+import HowWeStarted from './pages/About/HowWeStarted';
+import Mission from './pages/About/Mission';
+import Team from './pages/About/Team';
+import Impact from './pages/About/Impact';
+import Contact from './pages/About/Contact';
 
 function App() {
   return (
@@ -25,6 +30,12 @@ function App() {
               <Route path="/events" element={<Events />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/about" element={<AboutUs />} />
+              <Route path="/about/how-we-started" element={<HowWeStarted />} />
+              <Route path="/about/mission" element={<Mission />} />
+              <Route path="/about/team" element={<Team />} />
+              <Route path="/about/impact" element={<Impact />} />
+              <Route path="/about/contact" element={<Contact />} />
+ 
               <Route path="*" element={
                 <div className="min-h-screen flex items-center justify-center">
                   <div className="text-center">

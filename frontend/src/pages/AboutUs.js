@@ -116,27 +116,31 @@ const AboutUs = () => {
                   className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden"
                 >
                   {/* Card Header */}
-                  <div className="bg-gradient-to-r from-green-500 to-blue-500 p-6 text-white relative">
+                  <div className="bg-white p-0 text-white relative">
                     {member.image && (
-                      <img 
-                        src={member.image} 
-                        alt={member.name} 
-                        className="w-20 h-20 rounded-full mx-auto mb-4 object-cover object-center"
-                      />
-                    )}
-                    {!member.image && (
-                      <div className="flex items-center justify-center w-16 h-16 bg-white bg-opacity-20 rounded-full mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <IconComponent className="w-8 h-8" />
+                      <div className="w-full h-40 overflow-hidden rounded-t-2xl">
+                        <img 
+                          src={member.image} 
+                          alt={member.name} 
+                          className="w-full h-full object-cover object-center"
+                        />
                       </div>
                     )}
-                    <h3 className="text-xl font-bold text-center mb-2">{member.name}</h3>
-                    <p className="text-green-100 text-center font-medium">{member.role}</p>
-                    
-                    {/* Decorative wave */}
-                    <div className="absolute bottom-0 left-0 w-full">
-                      <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-6">
-                        <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="fill-white"></path>
-                      </svg>
+                    <div className="p-6 bg-gradient-to-r from-green-500 to-blue-500 text-white relative">
+                      {!member.image && (
+                        <div className="flex items-center justify-center w-16 h-16 bg-white bg-opacity-20 rounded-full mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                          <IconComponent className="w-8 h-8" />
+                        </div>
+                      )}
+                      <h3 className="text-xl font-bold text-center mb-2">{member.name}</h3>
+                      <p className="text-green-100 text-center font-medium">{member.role}</p>
+                      
+                      {/* Decorative wave */}
+                      <div className="absolute bottom-0 left-0 w-full">
+                        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-6">
+                          <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="fill-white"></path>
+                        </svg>
+                      </div>
                     </div>
                   </div>
 
