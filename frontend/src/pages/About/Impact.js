@@ -117,7 +117,22 @@ const Impact = () => {
   }, []);
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-16">
+    <>
+      {/* Background Lottie Animation - now above canvas & clearly visible */}
+      <div className="fixed inset-0 z-0 opacity-100 pointer-events-none">
+        <div className="absolute inset-0">
+          <lottie-player
+            src="https://lottie.host/7de588d6-e547-43e0-9537-acf0b3f3ff56/8vf7y3gJ2t.json"
+            background="transparent"
+            speed="1"
+            loop
+            autoplay
+            style={{ width: "100%", height: "100%", position: "absolute", inset: 0 }}
+          ></lottie-player>
+        </div>
+      </div>
+
+      <div className="relative z-10 max-w-5xl mx-auto px-6 py-16">
       <StaggerWrapper>
         <FadeIn>
           <h1 className="text-5xl font-extrabold text-center mb-12 text-gray-900 tracking-tight">
@@ -188,7 +203,7 @@ const Impact = () => {
                     {trialStats.map((stat, idx) => (
                       <div
                         key={idx}
-                        className="w-full flex-shrink-0 flex items-center justify-center text-5xl font-black text-green-900 tracking-tight drop-shadow-2xl px-6"
+                        className="w-full flex-shrink-0 flex items-center justify-center text-3xl sm:text-4xl md:text-5xl font-black text-green-900 tracking-tight drop-shadow-2xl px-4 sm:px-6 leading-tight"
                       >
                         {stat}
                       </div>
@@ -248,7 +263,8 @@ const Impact = () => {
           }
         `}
       </style>
-    </div>
+      </div>
+    </>
   );
 };
 

@@ -11,6 +11,7 @@
     "date-fns": "^2.29.3",
     "firebase": "^9.17.2",
     "framer-motion": "^12.23.24",
+    "lottie-react": "^2.4.1",
     "lucide-react": "^0.263.1",
     "react": "^18.2.0",
     "react-calendar": "^4.2.1",
