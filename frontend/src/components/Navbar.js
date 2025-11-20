@@ -8,6 +8,8 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isFeaturesOpen, setIsFeaturesOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [isMobileAboutOpen, setIsMobileAboutOpen] = useState(false);
+  const [isMobileFeaturesOpen, setIsMobileFeaturesOpen] = useState(false);
   const location = useLocation();
   const aboutRef = useRef(null);
   const featuresRef = useRef(null);
@@ -234,14 +236,14 @@ const Navbar = () => {
             {/* Mobile About Us section */}
             <div className="space-y-1">
               <button
-                onClick={() => setIsAboutOpen(!isAboutOpen)}
+                onClick={() => setIsMobileAboutOpen(!isMobileAboutOpen)}
                 className="flex items-center justify-between w-full px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors duration-200"
               >
                 About Us
-                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isAboutOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isMobileAboutOpen ? 'rotate-180' : ''}`} />
               </button>
 
-              {isAboutOpen && (
+              {isMobileAboutOpen && (
                 <div className="pl-4 space-y-1">
                   {aboutDropdown.map((item) => (
                     <Link
@@ -254,7 +256,7 @@ const Navbar = () => {
                       }`}
                       onClick={() => {
                         setIsMenuOpen(false);
-                        setIsAboutOpen(false);
+                        setIsMobileAboutOpen(false);
                       }}
                     >
                       {item.name}
@@ -267,13 +269,13 @@ const Navbar = () => {
             {/* Mobile Features section */}
             <div className="space-y-1">
               <button
-                onClick={() => setIsFeaturesOpen(!isFeaturesOpen)}
+                onClick={() => setIsMobileFeaturesOpen(!isMobileFeaturesOpen)}
                 className="flex items-center justify-between w-full px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors duration-200"
               >
                 Features
-                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isFeaturesOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isMobileFeaturesOpen ? 'rotate-180' : ''}`} />
               </button>
-              {isFeaturesOpen && (
+              {isMobileFeaturesOpen && (
                 <div className="pl-4 space-y-1">
                   {featuresDropdown.map((item) => (
                     <Link
@@ -286,7 +288,7 @@ const Navbar = () => {
                       }`}
                       onClick={() => {
                         setIsMenuOpen(false);
-                        setIsFeaturesOpen(false);
+                        setIsMobileFeaturesOpen(false);
                       }}
                     >
                       {item.name}
@@ -312,4 +314,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar; 
+export default Navbar;
