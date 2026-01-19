@@ -28,6 +28,9 @@ const CarbonTracker = () => {
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [aiRecs, setAiRecs] = useState(null);
+  const [aiRecsLoading, setAiRecsLoading] = useState(false);
+  const [aiRecsError, setAiRecsError] = useState(null);
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
   
@@ -51,6 +54,8 @@ const CarbonTracker = () => {
         setResults(response.data.footprint);
         setFormData(data);
         setSaved(false);
+        setAiRecs(null);
+        setAiRecsError(null);
         toast.success('Carbon footprint calculated successfully!');
       }
     } catch (error) {
@@ -62,6 +67,36 @@ const CarbonTracker = () => {
   };
 
   const saveResults = async () => {
+  const generateAiRecommendations = async (footprint, inputData) => {
+    setAiRecsLoading(true);
+    setAiRecsError(null);
+
+    try {
+      // Send only what the model needs (keeps token cost predictable)
+      const payload = {
+        totalFootprint: footprint?.totalFootprint,
+        breakdown: footprint?.breakdown,
+        comparison: footprint?.comparison,
+        // include a minimal subset of answers for personalization
+        inputs: inputData || formData || {}
+      };
+
+      const response = await axios.post('/api/carbon/recommendations', payload);
+
+      if (response.data?.success) {
+        setAiRecs(response.data.recommendations);
+        toast.success('AI recommendations generated!');
+      } else {
+        throw new Error(response.data?.error || 'Unknown recommendations error');
+      }
+    } catch (err) {
+      console.error('AI recommendations error:', err);
+      setAiRecsError(err?.message || 'Failed to generate AI recommendations');
+      toast.error('Failed to generate AI recommendations');
+    } finally {
+      setAiRecsLoading(false);
+    }
+  };
     if (!user) {
       toast.error('Please sign in to save your results');
       return;
@@ -539,22 +574,113 @@ const CarbonTracker = () => {
           </div>
         </div>
 
-        {/* Recommendations */}
+        {/* AI Recommendations */}
         <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Recommendations</h3>
-          <div className="space-y-3">
-            {results.recommendations?.map((rec, index) => (
-              <div key={index} className="flex items-start space-x-3">
-                <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                <p className="text-gray-700">{rec}</p>
-              </div>
-            )) || (
-              <div className="flex items-start space-x-3">
-                <AlertCircle className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
-                <p className="text-gray-700">Consider reducing your carbon footprint by making small changes to your daily habits.</p>
-              </div>
-            )}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">AI Recommendations</h3>
+              <p className="text-sm text-gray-600">
+                Personalised tips based on your footprint breakdown (actionable, Singapore-friendly).
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => generateAiRecommendations(results, formData)}
+              disabled={aiRecsLoading}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gray-900 text-white font-semibold hover:bg-gray-800 transition-colors disabled:opacity-60"
+            >
+              {aiRecsLoading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Generating...</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-sm">Generate with AI</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
           </div>
+
+          {/* Error state */}
+          {aiRecsError && (
+            <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 mt-0.5" />
+                <div>
+                  <p className="font-semibold">Couldn’t generate recommendations.</p>
+                  <p className="text-red-700/90">{aiRecsError}</p>
+                  <p className="text-red-700/90 mt-1">
+                    Tip: check your backend route <span className="font-mono">/api/carbon/recommendations</span> and your OpenAI key.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* If backend already returned basic recs, show them as “quick tips” */}
+          {results.recommendations?.length > 0 && !aiRecs && (
+            <div className="mb-4 bg-green-50 border border-green-200 rounded-lg p-4">
+              <p className="text-sm font-semibold text-green-800 mb-2">Quick tips</p>
+              <div className="space-y-2">
+                {results.recommendations.slice(0, 6).map((rec, index) => (
+                  <div key={index} className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-green-900/90">{rec}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* AI output */}
+          {!aiRecsLoading && aiRecs?.items?.length > 0 && (
+            <div className="space-y-4">
+              {aiRecs.items.map((item, idx) => (
+                <div key={idx} className="rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <span className="px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800">
+                      {item.category || 'Tip'}
+                    </span>
+                    {item.difficulty && (
+                      <span className="px-2 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100">
+                        {item.difficulty}
+                      </span>
+                    )}
+                    {typeof item.estimatedSavingsKgCo2ePerWeek === 'number' && (
+                      <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700 border border-green-100">
+                        ~{item.estimatedSavingsKgCo2ePerWeek.toFixed(1)} kg CO₂e/week
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="text-gray-900 font-semibold mb-1">{item.title}</p>
+                  <p className="text-sm text-gray-700 mb-3">{item.whyThisMatters}</p>
+
+                  {item.steps?.length > 0 && (
+                    <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                      {item.steps.slice(0, 4).map((s, i) => (
+                        <li key={i}>{s}</li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {item.localContextNote && (
+                    <p className="text-xs text-gray-500 mt-3">{item.localContextNote}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Empty state */}
+          {!aiRecsLoading && !aiRecs?.items?.length && !aiRecsError && (
+            <div className="text-sm text-gray-600">
+              Click <span className="font-semibold">Generate with AI</span> to get personalised recommendations based on your biggest emission drivers.
+            </div>
+          )}
         </div>
 
         {/* Save Button */}
@@ -598,6 +724,9 @@ const CarbonTracker = () => {
     setCurrentStep(1);
     setResults(null);
     setFormData({});
+    setAiRecs(null);
+    setAiRecsError(null);
+    setAiRecsLoading(false);
     setSaved(false);
   };
 

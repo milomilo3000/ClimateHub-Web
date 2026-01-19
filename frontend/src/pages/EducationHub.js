@@ -1,19 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { 
-  BookOpen, 
-  Newspaper, 
-  MessageCircle, 
-  Send, 
+import {
+  BookOpen,
+  Newspaper,
+  MessageCircle,
+  Send,
   Search,
   Filter,
   Globe,
   MapPin,
   Calendar,
-  ExternalLink
+  ExternalLink,
+  Users,
+  TrendingUp,
+  ArrowRight,
+  Leaf
 } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import FadeIn from '../components/animations/FadeIn';
+import StaggerWrapper from '../components/animations/StaggerWrapper';
 
 const EducationHub = () => {
   const [news, setNews] = useState([]);
@@ -161,28 +167,322 @@ const EducationHub = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
-          <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center">
-              <BookOpen className="w-8 h-8 text-white" />
+    <StaggerWrapper>
+      <div className="min-h-screen bg-gray-50">
+        <div className="w-full">
+        {/* Header / Hero Section */}
+        <FadeIn duration={2}>
+          <div className="">
+            <div className="bg-gradient-to-r from-green-500 to-emerald-600 w-full px-6 py-20 md:px-28 md:py-28 shadow-lg">
+              <div className="max-w-7xl mx-auto">
+                <div className="grid gap-6 md:gap-8 md:grid-cols-[minmax(0,1.4fr),minmax(0,1fr)] items-center">
+                {/* Hero copy */}
+                <div>
+                  <p className="inline-flex items-center px-3 py-1 mb-4 text-xs font-semibold tracking-wide uppercase rounded-full bg-white/15 text-green-50 border border-white/20">
+                    Learn · Share · Act
+                  </p>
+                  <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
+                    Education Hub
+                  </h1>
+                  <p className="text-base md:text-lg text-green-50/90 max-w-xl mb-6 leading-relaxed">
+                    Stay informed about Singapore's environmental initiatives, government policies,
+                    and the latest climate news from around the world—empowering you to take
+                    meaningful action for our planet.
+                  </p>
+
+                  <ul className="space-y-2 text-sm md:text-base text-green-50/90 mb-8">
+                    <li className="flex items-start gap-2">
+                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-white" />
+                      <span>Curated climate news from trusted local and global sources.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-white" />
+                      <span>Interactive AI assistant for personalized climate education.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-white" />
+                      <span>Comprehensive overview of Singapore's sustainability initiatives.</span>
+                    </li>
+                  </ul>
+
+                  <div className="flex flex-wrap gap-4 items-center">
+                    <button
+                      onClick={() => document.getElementById('news-section')?.scrollIntoView({ behavior: 'smooth' })}
+                      className="inline-flex items-center space-x-2 bg-white text-green-700 hover:bg-green-50 font-semibold py-3 px-6 rounded-full text-sm md:text-base transition-colors duration-200 shadow-md"
+                    >
+                      <BookOpen className="w-5 h-5" />
+                      <span>Explore Resources</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                    <span className="text-xs md:text-sm text-green-50/80">
+                      Free access · Updated daily
+                    </span>
+                  </div>
+                </div>
+
+                {/* News Scrolling Animation (inside laptop frame) */}
+                <div className="relative flex justify-center md:justify-end">
+                  <div className="relative w-full max-w-lg">
+                    {/* Laptop lid + bezel */}
+                    <div className="relative rounded-[2rem] bg-slate-900 p-4 shadow-2xl border border-slate-800">
+                      {/* camera notch */}
+                      <div className="absolute top-2 left-1/2 -translate-x-1/2 h-1.5 w-16 rounded-full bg-slate-700/60" />
+
+                      {/* Screen */}
+                      <div className="rounded-2xl bg-slate-100 overflow-hidden border border-slate-200">
+                        <div className="p-5 md:p-6 flex flex-col gap-4 text-slate-900">
+                          {/* News Ticker Header */}
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center shadow-md">
+                              <Newspaper className="w-6 h-6 text-white" />
+                            </div>
+                            <div>
+                              <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wide">
+                                Breaking News
+                              </p>
+                              <p className="text-sm font-semibold text-slate-900">
+                                Latest Updates
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Scrolling News Container */}
+                          <div className="relative h-64 overflow-hidden rounded-xl bg-white border border-slate-200">
+                            <div className="absolute inset-0 animate-scroll-news">
+                              {/* News Item 1 */}
+                              <div className="flex items-start gap-3 p-4 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
+                                <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                  <Leaf className="w-4 h-4 text-white" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="text-sm font-semibold text-gray-900 mb-1">
+                                    Singapore Green Plan 2030
+                                  </h4>
+                                  <p className="text-xs text-gray-600 leading-relaxed">
+                                    Comprehensive roadmap to achieve net-zero emissions by 2050, focusing on sustainable development.
+                                  </p>
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-[10px] font-medium text-green-700">
+                                      Active
+                                    </span>
+                                    <span className="text-[10px] text-gray-500">2 hours ago</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* News Item 2 */}
+                              <div className="flex items-start gap-3 p-4 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
+                                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                  <TrendingUp className="w-4 h-4 text-white" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="text-sm font-semibold text-gray-900 mb-1">
+                                    SolarNova Initiative Progress
+                                  </h4>
+                                  <p className="text-xs text-gray-600 leading-relaxed">
+                                    2GW solar deployment target on track with over 500MWp already installed across HDB rooftops.
+                                  </p>
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-100 text-[10px] font-medium text-blue-700">
+                                      Progress
+                                    </span>
+                                    <span className="text-[10px] text-gray-500">5 hours ago</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* News Item 3 */}
+                              <div className="flex items-start gap-3 p-4 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
+                                <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                  <Users className="w-4 h-4 text-white" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="text-sm font-semibold text-gray-900 mb-1">
+                                    Electric Vehicle Adoption
+                                  </h4>
+                                  <p className="text-xs text-gray-600 leading-relaxed">
+                                    15,000+ EVs now on Singapore roads with comprehensive incentives and charging infrastructure.
+                                  </p>
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-100 text-[10px] font-medium text-emerald-700">
+                                      Growing
+                                    </span>
+                                    <span className="text-[10px] text-gray-500">1 day ago</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* News Item 4 */}
+                              <div className="flex items-start gap-3 p-4 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
+                                <div className="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                  <BookOpen className="w-4 h-4 text-white" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="text-sm font-semibold text-gray-900 mb-1">
+                                    Zero Waste Masterplan
+                                  </h4>
+                                  <p className="text-xs text-gray-600 leading-relaxed">
+                                    30% waste reduction target with mandatory reporting and extended producer responsibility.
+                                  </p>
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-orange-100 text-[10px] font-medium text-orange-700">
+                                      Policy
+                                    </span>
+                                    <span className="text-[10px] text-gray-500">2 days ago</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* News Item 5 */}
+                              <div className="flex items-start gap-3 p-4 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
+                                <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                  <Globe className="w-4 h-4 text-white" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="text-sm font-semibold text-gray-900 mb-1">
+                                    Carbon Tax Implementation
+                                  </h4>
+                                  <p className="text-xs text-gray-600 leading-relaxed">
+                                    Carbon pricing framework strengthened with tax increase to S$25 per tonne by 2024.
+                                  </p>
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-purple-100 text-[10px] font-medium text-purple-700">
+                                      Economic
+                                    </span>
+                                    <span className="text-[10px] text-gray-500">3 days ago</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* News Item 6 */}
+                              <div className="flex items-start gap-3 p-4 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
+                                <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                  <Leaf className="w-4 h-4 text-white" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="text-sm font-semibold text-gray-900 mb-1">
+                                    30 by 30 Food Security
+                                  </h4>
+                                  <p className="text-xs text-gray-600 leading-relaxed">
+                                    Goal to produce 30% of nutritional needs locally through urban farming and aquaculture.
+                                  </p>
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-[10px] font-medium text-green-700">
+                                      Agriculture
+                                    </span>
+                                    <span className="text-[10px] text-gray-500">1 week ago</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Duplicate first items for seamless loop */}
+                              <div className="flex items-start gap-3 p-4 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
+                                <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                  <Leaf className="w-4 h-4 text-white" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="text-sm font-semibold text-gray-900 mb-1">
+                                    Singapore Green Plan 2030
+                                  </h4>
+                                  <p className="text-xs text-gray-600 leading-relaxed">
+                                    Comprehensive roadmap to achieve net-zero emissions by 2050, focusing on sustainable development.
+                                  </p>
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-[10px] font-medium text-green-700">
+                                      Active
+                                    </span>
+                                    <span className="text-[10px] text-gray-500">2 hours ago</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex items-start gap-3 p-4 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
+                                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                  <TrendingUp className="w-4 h-4 text-white" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="text-sm font-semibold text-gray-900 mb-1">
+                                    SolarNova Initiative Progress
+                                  </h4>
+                                  <p className="text-xs text-gray-600 leading-relaxed">
+                                    2GW solar deployment target on track with over 500MWp already installed across HDB rooftops.
+                                  </p>
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-100 text-[10px] font-medium text-blue-700">
+                                      Progress
+                                    </span>
+                                    <span className="text-[10px] text-gray-500">5 hours ago</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Navigation buttons */}
+                          <div className="grid grid-cols-3 gap-3 pt-1">
+                            <button
+                              type="button"
+                              onClick={() => document.getElementById('news-section')?.scrollIntoView({ behavior: 'smooth' })}
+                              className="py-2.5 rounded-lg bg-white text-[11px] font-semibold text-slate-900 flex items-center justify-center shadow-sm border border-slate-200 hover:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
+                            >
+                              News
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => document.getElementById('initiatives-section')?.scrollIntoView({ behavior: 'smooth' })}
+                              className="py-2.5 rounded-lg bg-white text-[11px] font-semibold text-slate-900 flex items-center justify-center shadow-sm border border-slate-200 hover:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
+                            >
+                              Policies
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => document.getElementById('chat-section')?.scrollIntoView({ behavior: 'smooth' })}
+                              className="py-2.5 rounded-lg bg-white text-[11px] font-semibold text-slate-900 flex items-center justify-center shadow-sm border border-slate-200 hover:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
+                            >
+                              Ask AI
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => document.getElementById('initiatives-section')?.scrollIntoView({ behavior: 'smooth' })}
+                              className="py-2.5 rounded-lg bg-white text-[11px] font-semibold text-slate-900 flex items-center justify-center shadow-sm border border-slate-200 hover:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
+                            >
+                              Solar
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => document.getElementById('initiatives-section')?.scrollIntoView({ behavior: 'smooth' })}
+                              className="py-2.5 rounded-lg bg-white text-[11px] font-semibold text-slate-900 flex items-center justify-center shadow-sm border border-slate-200 hover:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
+                            >
+                              Carbon
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => document.getElementById('news-section')?.scrollIntoView({ behavior: 'smooth' })}
+                              className="py-2.5 rounded-lg bg-orange-500 text-[11px] font-semibold text-white flex items-center justify-center shadow-sm border border-orange-600 hover:bg-orange-600 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
+                            >
+                              Explore
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Laptop base */}
+                    <div className="mx-auto mt-3 h-5 w-[88%] rounded-b-[2rem] rounded-t-xl bg-slate-800 shadow-lg border border-slate-700" />
+                    {/* Trackpad */}
+                    <div className="mx-auto -mt-2 h-7 w-[32%] rounded-xl bg-slate-700/50" />
+                  </div>
+                </div>
+                </div>
+              </div>
             </div>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Education Hub
-          </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Stay informed about Singapore's environmental initiatives, government policies, 
-            and the latest climate news from around the world.
-          </p>
-        </div>
+        </FadeIn>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* News Section */}
-          <div className="lg:col-span-2">
-            <div className="card">
+        {/* News Section */}
+        <div id="news-section" className="lg:col-span-2">
+          <div className="card">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 w-full">
                 <div className="w-full sm:w-auto mb-4 sm:mb-0">
                   <h2 className="text-2xl font-bold text-gray-900">
@@ -323,7 +623,7 @@ const EducationHub = () => {
           </div>
 
           {/* Chatbot Section */}
-          <div className="lg:col-span-1">
+          <div id="chat-section" className="lg:col-span-1">
             <div className="card h-full">
               <div className="flex items-center space-x-2 mb-6">
                 <MessageCircle className="w-6 h-6 text-primary-600" />
@@ -417,7 +717,7 @@ const EducationHub = () => {
         </div>
 
         {/* Educational Content */}
-        <div className="mt-12">
+        <div id="initiatives-section" className="mt-12">
           <div className="card">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Singapore's Environmental Initiatives</h2>
             
@@ -494,8 +794,9 @@ const EducationHub = () => {
             </div>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </StaggerWrapper>
   );
 };
 

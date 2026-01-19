@@ -436,6 +436,20 @@
     user-select: none;
   }
 
+  /* News Scrolling Animation */
+  @keyframes scroll-news {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-50%);
+    }
+  }
+
+  .animate-scroll-news {
+    animation: scroll-news 20s linear infinite;
+  }
+
 /* Default (mobile-first) */
 .slick-dots {
   position: absolute;

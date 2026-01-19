@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Leaf, 
@@ -23,49 +23,214 @@ import 'animate.css';
 
 
 const Home = () => {
+  // ---- Counter-up animation (easeOut) for stats ----
+  const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+  const useInViewOnce = (options = { threshold: 0.35, rootMargin: '0px' }) => {
+    const ref = useRef(null);
+    const [inView, setInView] = useState(false);
+
+    useEffect(() => {
+      const el = ref.current;
+      if (!el || inView) return;
+
+      const observer = new window.IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setInView(true);
+            observer.disconnect();
+          }
+        },
+        options
+      );
+
+      observer.observe(el);
+      return () => observer.disconnect();
+    }, [inView, options]);
+
+    return [ref, inView];
+  };
+
+  const AnimatedNumber = ({
+    value,
+    duration = 3000,
+    ease = easeOutCubic,
+    start = 0,
+    format,
+    inView
+  }) => {
+    const [display, setDisplay] = useState(start);
+
+    useEffect(() => {
+      if (!inView) return;
+
+      let rafId;
+      const from = Number.isFinite(start) ? start : 0;
+      const to = Number.isFinite(value) ? value : 0;
+      const startTime = performance.now();
+
+      const tick = (now) => {
+        const elapsed = now - startTime;
+        const t = Math.min(1, elapsed / duration);
+        const eased = ease(t);
+        const current = from + (to - from) * eased;
+
+        // whole-number feel like arcade counters
+        setDisplay(Math.round(current));
+
+        if (t < 1) {
+          rafId = requestAnimationFrame(tick);
+        }
+      };
+
+      // reset on trigger so the animation always starts at 0
+      setDisplay(from);
+      rafId = requestAnimationFrame(tick);
+
+      return () => {
+        if (rafId) cancelAnimationFrame(rafId);
+      };
+    }, [inView, value, duration, ease, start]);
+
+    return <>{format ? format(display) : display}</>;
+  };
   const features = [
     {
       icon: Calculator,
-      title: 'Camp Carbon Tracker',
-      description: 'Track your environmental impact during NS. Calculate emissions from camp life, transport, and more. See how you stand compared to your other NSFs.',
+      title: 'Carbon Footprint Calculator',
+      description: 'Calculate your environmental impact with specialized trackers for NSFs and Singaporean youth (school & university). Track emissions from daily activities, transport, and lifestyle choices.',
       href: '/carbon-tracker'
     },
     {
       icon: BookOpen,
       title: 'Education Hub',
-      description: 'Learn about Singapore\'s climate goals and how you can contribute. Get updates on environmental policies and initiatives in Singapore\'s army.',
+      description: 'Learn about Singapore’s climate goals and how Singaporean youth can contribute. Explore policies, initiatives, and practical guides for greener daily choices.',
       href: '/education'
     },
     {
       icon: Calendar,
       title: 'Events Calendar',
-      description: 'Join green initiatives in your camp and in Singapore. From beach cleanups to eco-volunteering, turn your NS experience into environmental service.',
+      description: 'Join green initiatives across camps, schools, and communities. From cleanups to eco-volunteering, turn everyday life into environmental action.',
       href: '/events'
     },
     {
       icon: Users,
       title: 'Profile',
-      description: 'Compete with other NSF units in sustainability challenges. Earn eco-badges and climb the green leaderboard with your campmates.',
+      description: 'Track progress, earn eco-badges, and compare sustainability goals with friends, schoolmates, and NSF units through challenges and leaderboards.',
       href: '/profile'
     }
   ];
 
+  // Roulette features array (only 3)
+  const rouletteFeatures = [
+    {
+      icon: Calculator,
+      title: 'Carbon Footprint Calculator',
+      description: 'Calculate your environmental impact with specialized trackers for NSFs and Singaporean youth (school & university). Track emissions from daily activities, transport, and lifestyle choices.',
+      href: '/carbon-tracker'
+    },
+    {
+      icon: Calendar,
+      title: 'Events Calendar',
+      description: 'Join green initiatives across camps, schools, and communities. From cleanups to eco-volunteering, turn everyday life into environmental action.',
+      href: '/events'
+    },
+    {
+      icon: BookOpen,
+      title: 'Education Hub',
+      description: 'Learn about Singapore’s climate goals and how Singaporean youth can contribute. Explore policies, initiatives, and practical guides for greener daily choices.',
+      href: '/education'
+    }
+  ];
+  // RouletteCarousel component
+  const RouletteCarousel = () => {
+    const sliderRef = React.useRef(null);
+    const [currentIndex, setCurrentIndex] = React.useState(1);
+    const settings = {
+      dots: true,
+      infinite: true,
+      speed: 500,
+      slidesToShow: 3,
+      slidesToScroll: 1,
+      centerMode: true,
+      centerPadding: '0px',
+      arrows: false,
+      // initialSlide removed
+      beforeChange: (_, next) => setCurrentIndex(next),
+      focusOnSelect: true,
+      responsive: [
+        {
+          breakpoint: 1024,
+          settings: {
+            slidesToShow: 1,
+            centerMode: true,
+            centerPadding: '60px',
+          }
+        },
+        {
+          breakpoint: 640,
+          settings: {
+            slidesToShow: 1,
+            centerMode: true,
+            centerPadding: '24px',
+          }
+        }
+      ]
+    };
+    React.useEffect(() => {
+      sliderRef.current?.slickGoTo(1, true);
+    }, []);
+    return (
+      <Slider ref={sliderRef} {...settings} className="roulette-carousel">
+        {rouletteFeatures.map((feature, idx) => {
+          const Icon = feature.icon;
+          return (
+            <div
+              className="roulette-slide"
+              key={idx}
+              onClick={() => sliderRef.current?.slickGoTo(idx)}
+            >
+              <div className="roulette-card bg-white border border-gray-200 rounded-2xl p-6 sm:p-7 min-h-[220px] flex flex-col">
+                <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center mb-4">
+                  <Icon className="w-7 h-7 text-green-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4 flex-grow">
+                  {feature.description}
+                </p>
+                <Link
+                  to={feature.href}
+                  className="flex items-center text-green-700 text-sm font-medium mt-auto hover:text-green-800"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <span>Explore</span>
+                  <ArrowRight className="w-4 h-4 ml-1" />
+                </Link>
+              </div>
+            </div>
+          );
+        })}
+      </Slider>
+    );
+  };
+
   const stats = [
-    { label: 'NSF Carbon Footprints', value: '2,500+', icon: Calculator },
-    { label: 'Camp Eco-Events', value: '150+', icon: Calendar },
-    { label: 'Active NSF Users', value: '1,200+', icon: Users },
-    { label: 'CO₂ Saved (tonnes)', value: '850+', icon: Leaf }
+    { label: 'Carbon Footprints Tracked', value: 140, suffix: '+', icon: Calculator },
+    { label: 'Eco-Events Hosted', value: 3, suffix: '', icon: Calendar },
+    { label: 'Active Users', value: 50, suffix: '', icon: Users },
+    { label: 'CO₂ Saved (tonnes)', value: 200, suffix: '+', icon: Leaf }
   ];
 
+  // Trigger stats counter animation once when the stats section enters view
+  const [statsRef, statsInView] = useInViewOnce({ threshold: 0.35 });
+
   const benefits = [
-    'Track your camp environmental impact',
-    'Compete in unit eco-challenges',
-    'Learn about military/local sustainability',
-    'Earn eco-badges for eco-friendly actions',
-    'Join camp and local environmental initiatives',
-    'Connect with eco-conscious NSFs',
-    'Access local climate resources',
-    'Contribute to Singapore\'s green goals'
+    'Track your environmental impact',
+    'Learn about local sustainability initiatives',
+    'Join local environmental initiatives',
+    "Contribute to Singapore's green goals"
   ];
 
   const partners = [
@@ -134,6 +299,54 @@ const Home = () => {
   return (
     <>
       <style>{`
+         /* Roulette carousel */
+         .roulette-carousel .slick-dots {
+           position: relative;
+           bottom: 0;
+           margin-top: 16px;
+         }
+         .roulette-carousel .slick-dots li button:before {
+           font-size: 10px;
+           opacity: 0.35;
+           color: #16a34a; /* green-600 */
+         }
+         .roulette-carousel .slick-dots li.slick-active button:before {
+           opacity: 1;
+           color: #16a34a;
+         }
+         .roulette-slide {
+           padding: 10px;
+         }
+         .roulette-card {
+           opacity: 0.4;
+           transform: scale(0.92);
+           background: #ffffff;
+           transition: opacity 250ms ease, transform 250ms ease, box-shadow 250ms ease, background-color 250ms ease;
+         }
+
+         /* Hover preview: make hovered card fully visible + pop + light green */
+         .roulette-slide:hover .roulette-card {
+           opacity: 1;
+           transform: scale(1);
+           background-color: #bbf7d0; /* tailwind green-200 */
+           box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+         }
+
+         /* Do NOT keep the centered slide popped — hover should be the only trigger */
+         .roulette-carousel .slick-center .roulette-card {
+           opacity: 0.4;
+           transform: scale(0.92);
+           box-shadow: none;
+           background: #ffffff;
+         }
+
+         /* If the centered slide is hovered, apply the same hover styles */
+         .roulette-carousel .slick-center:hover .roulette-card {
+           opacity: 1;
+           transform: scale(1);
+           background-color: #bbf7d0; /* tailwind green-200 */
+           box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+         }
          .custom-carousel .slick-dots {
            position: absolute;
            bottom: 20px;
@@ -197,13 +410,13 @@ const Home = () => {
               
               <FadeIn delay={1.0}>
                 <h2 className="text-base sm:text-xl md:text-2xl lg:text-3xl font-semibold text-green-200 mb-3 sm:mb-4 px-2">
-                  Equipping NSFs to Serve Both Nation and Nature
+                  Empowering Singaporeans to Serve Both Nation and Nature
                 </h2>
               </FadeIn>
               <FadeIn delay={1.2}>
                 <p className="text-sm sm:text-lg md:text-xl text-gray-100 mb-6 sm:mb-8 max-w-xs sm:max-w-2xl lg:max-w-3xl mx-auto leading-relaxed px-2">
-                  Turn your camp routines into eco-missions. Track your footprint, reduce your impact, 
-                  and help your campmates climb the eco-ranks while serving Singapore.
+                  Transform your daily routines into eco-missions. Track your footprint, reduce your impact, 
+                  and join fellow Singaporeans in building a sustainable future.
                 </p>
               </FadeIn>
               <FadeIn delay={1.4}>
@@ -226,127 +439,106 @@ const Home = () => {
           </FadeIn>
         </section>
 
-        {/* Partners Section */}
-        <section className="py-8 sm:py-12 bg-gray-50 border-t border-gray-200">
-          <FadeIn delay={0.1}>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center mb-6 sm:mb-8">
-                <p className="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wide mb-4 sm:mb-6">
-                  Supported by
-                </p>
-                <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-12">
-                  {partners.map((partner, index) => (
-                    <div key={index} className="flex items-center justify-center">
-                      <img
-                        src={partner.logo}
-                        alt={partner.alt}
-                        className="h-8 sm:h-10 md:h-12 lg:h-16 max-w-24 sm:max-w-28 md:max-w-32 lg:max-w-40 object-contain transition-all duration-300"
-                        onError={(e) => {
-                          // Fallback if image doesn't exist
-                          e.target.style.display = 'none';
-                          e.target.nextSibling.style.display = 'block';
-                        }}
-                      />
-                      <div className="hidden text-gray-600 font-medium text-sm">
-                        {partner.name}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+        {/* Roulette Feature Section */}
+        <section className="py-12 sm:py-16 bg-white border-t border-green-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8 sm:mb-10">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+                Everything you need to start your own action journey
+              </h2>
+              <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+                Built for Singaporean youth — NSFs, school and university students — to track impact, learn fast, and take action.
+              </p>
             </div>
-          </FadeIn>
+
+            <div className="roulette-carousel">
+              <RouletteCarousel />
+            </div>
+          </div>
         </section>
 
-        {/* Stats Section */}
-        <section className="py-12 sm:py-16 bg-green-200">
-          <FadeIn delay={0.2}>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center mb-8 sm:mb-12">
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2 sm:mb-4">
-                  NSFs Making a Difference
-                </h2>
-                <p className="text-sm sm:text-base text-gray-600">Join fellow servicemen in Singapore's climate mission</p>
-              </div>
-              <StaggerWrapper>
-                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-                  {stats.map((stat, index) => (
-                    <div key={index} className="text-center py-4 sm:py-0">
-                      <div className="flex justify-center mb-3 sm:mb-4">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 bg-green-100 rounded-lg flex items-center justify-center">
-                          <stat.icon className="w-6 h-6 sm:w-7 sm:h-7 text-emerald-600" />
-                        </div>
-                      </div>
-                      <div className="text-2xl sm:text-3xl font-bold text-black mb-1 sm:mb-2">{stat.value}</div>
-                      <div className="text-gray-600 text-xs sm:text-sm px-2">{stat.label}</div>
-                    </div>
-                  ))}
-                </div>
-              </StaggerWrapper>
-              {/* Disclaimer */}
-              <div className="flex justify-center mt-8 sm:mt-10">
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-3 max-w-md mx-auto">
-                  <p className="text-xs sm:text-sm text-yellow-800 text-center font-medium">
-                    <span className="inline-block mr-1">⚠️</span>
-                    Please note: The statistics displayed above are sample data for demonstration purposes and do not reflect actual user metrics.
-                  </p>
-                </div>
+
+        {/* Partners & Stats Combined Section */}
+        <section className="py-16 bg-green-50 border-t border-slate-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+            {/* LEFT — PARTNERS WITH TITLE */}
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+                Recognised & Supported By
+              </h2>
+              <p className="text-gray-600 text-sm sm:text-base mb-6">
+                ClimateHub is a proud recipient of the SG Eco Fund and collaborates with leading national and international sustainability organisations.
+              </p>
+
+              <div className="flex flex-wrap items-center gap-6 sm:gap-8">
+                {partners.map((partner, index) => (
+                  <div key={index} className="flex items-center justify-center">
+                    <img
+                      src={partner.logo}
+                      alt={partner.alt}
+                      className="h-10 sm:h-12 md:h-14 object-contain transition-all duration-300"
+                    />
+                  </div>
+                ))}
               </div>
             </div>
-          </FadeIn>
+
+            {/* RIGHT — STATISTICS GRID */}
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+                Making a Difference Together
+              </h2>
+
+              <div ref={statsRef} className="grid grid-cols-2 gap-6">
+                {stats.map((stat, index) => (
+                  <div
+                    key={index}
+                    className="p-4 border rounded-xl bg-white shadow-sm hover:shadow-md transition-all duration-300"
+                  >
+                    <div className="flex items-center mb-3">
+                      <stat.icon className="w-6 h-6 text-green-600" />
+                    </div>
+                    <div className="text-2xl font-bold text-gray-900">
+                      <AnimatedNumber
+                        value={stat.value}
+                        duration={3000}
+                        inView={statsInView}
+                        format={(n) => `${n}${stat.suffix || ''}`}
+                      />
+                    </div>
+                    <div className="text-gray-600 text-xs sm:text-sm">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+
+              
+            </div>
+
+          </div>
         </section>
 
         {/* Features Section */}
-        <section className="py-12 sm:py-16 lg:py-20 bg-gray-100">
-          <FadeIn delay={0.3}>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
-                  Your NS Climate Action Toolkit
-                </h2>
-                <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-xl sm:max-w-2xl mx-auto px-4">
-                  Everything you need to make your National Service experience environmentally conscious 
-                  and contribute to Singapore's green future.
-                </p>
-              </div>
-              <StaggerWrapper>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-                  {features.map((feature, index) => (
-                    <Link
-                      key={index}
-                      to={feature.href}
-                      className="bg-white rounded-xl p-4 sm:p-6 hover:shadow-lg transition-all duration-300 group border border-gray-200 hover:border-green-400 hover:bg-green-50 min-h-[160px] sm:min-h-[180px] flex flex-col"
-                    >
-                      <div className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 rounded-lg mb-3 sm:mb-4 group-hover:bg-green-100 transition-colors duration-200">
-                        <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 text-gray-600 group-hover:text-green-600" />
-                      </div>
-                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-black transition-colors duration-200">
-                        {feature.title}
-                      </h3>
-                      <p className="text-gray-600 text-sm sm:text-base leading-relaxed flex-grow">
-                        {feature.description}
-                      </p>
-                    </Link>
-                  ))}
-                </div>
-              </StaggerWrapper>
-            </div>
-          </FadeIn>
-        </section>
 
         {/* Benefits Section */}
-        <section className="py-12 sm:py-16 lg:py-20 bg-white">
+        <section className="py-10 sm:py-12 bg-slate-50 border-t border-slate-100">
           <FadeIn delay={0.4}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-                <div className="order-2 lg:order-1">
-                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 sm:mb-6">
-                    Why Choose ClimateHub for NS?
-                  </h2>
-                  <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8">
-                    As an NSF, you're already serving Singapore. Now serve the environment too. 
-                    Our platform helps you make your National Service experience sustainable and meaningful.
-                  </p>
+              {/* Centered title like the roulette section */}
+              <div className="text-center mb-8">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+                  Why Choose ClimateHub?
+                </h2>
+                <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
+                  Whether you're serving National Service or navigating student life, you can make a difference.
+                  ClimateHub helps you understand and reduce your environmental impact in meaningful ways.
+                </p>
+              </div>
+
+              {/* Two-column: bullets left, pangolin animation right */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center max-w-5xl mx-auto">
+                {/* LEFT — POINTERS */}
+                <div className="lg:pl-6">
                   <div className="grid grid-cols-1 gap-3 sm:gap-4">
                     {benefits.map((benefit, index) => (
                       <div key={index} className="flex items-start space-x-3 py-1">
@@ -356,27 +548,14 @@ const Home = () => {
                     ))}
                   </div>
                 </div>
-                <div className="relative order-1 lg:order-2 mb-8 lg:mb-0">
-                  <div className="bg-gradient-to-br from-green-500 to-green-700 rounded-2xl p-6 sm:p-8 text-white">
-                    <div className="flex items-center space-x-3 mb-4 sm:mb-6">
-                      <Shield className="w-6 h-6 sm:w-8 sm:h-8" />
-                      <h3 className="text-xl sm:text-2xl font-bold">NSF Green Mission</h3>
-                    </div>
-                    <p className="text-base sm:text-lg mb-4 sm:mb-6 leading-relaxed">
-                      Every NSF can contribute to Singapore's net-zero 2050 goal. 
-                      Make your service count for both nation and nature.
-                    </p>
-                    <div className="grid grid-cols-2 gap-4 text-center">
-                      <div>
-                        <div className="text-xl sm:text-2xl font-bold">2050</div>
-                        <div className="text-xs sm:text-sm opacity-90">Net-zero target</div>
-                      </div>
-                      <div>
-                        <div className="text-xl sm:text-2xl font-bold">NSF</div>
-                        <div className="text-xs sm:text-sm opacity-90">Green warriors</div>
-                      </div>
-                    </div>
-                  </div>
+
+                {/* RIGHT — PANGOLIN IMAGE */}
+                <div className="w-full flex items-center justify-center lg:pr-6">
+                  <img
+                    src="/images/Pangolin-Laptop.png"
+                    alt="Pangolin using ClimateHub to track carbon footprint"
+                    className="max-w-full h-auto max-h-[260px] sm:max-h-[300px] object-contain"
+                  />
                 </div>
               </div>
             </div>
@@ -384,31 +563,33 @@ const Home = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-r from-emerald-600 to-blue-600">
+        <section className="py-12 sm:py-16 lg:py-20 bg-white border-t border-slate-100">
           <FadeIn delay={0.5}>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6">
-                Ready to Serve Singapore's Green Future?
-              </h2>
-              <p className="text-base sm:text-lg lg:text-xl text-green-100 mb-6 sm:mb-8 max-w-xl sm:max-w-2xl mx-auto px-4">
-                Join fellow NSFs in making every day of service count for the environment. 
-                Start your eco-mission today and help your unit become the greenest in camp.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center max-w-md sm:max-w-none mx-auto">
-                <Link
-                  to="/carbon-tracker"
-                  className="bg-white text-emerald-600 hover:bg-gray-100 font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg text-base sm:text-lg transition-colors duration-200 inline-flex items-center justify-center space-x-2 w-full sm:w-auto min-h-[48px]"
-                >
-                  <span>Begin Eco-Mission</span>
-                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                </Link>
-                <Link
-                  to="/events"
-                  className="border-2 border-white text-white hover:bg-white hover:text-emerald-600 font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg text-base sm:text-lg transition-colors duration-200 inline-flex items-center justify-center space-x-2 w-full sm:w-auto min-h-[48px]"
-                >
-                  <span>Join Green Events</span>
-                  <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
-                </Link>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl shadow-2xl p-8 sm:p-12 text-center">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6">
+                  Ready to Build Singapore's Green Future?
+                </h2>
+                <p className="text-base sm:text-lg lg:text-xl text-green-100 mb-6 sm:mb-8 max-w-xl sm:max-w-2xl mx-auto px-4">
+                  Join fellow Singaporeans in making every day count for the environment. 
+                  Start your eco-mission today and be part of the movement towards sustainability.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center max-w-md sm:max-w-none mx-auto">
+                  <Link
+                    to="/carbon-tracker"
+                    className="bg-white text-emerald-600 hover:bg-gray-100 font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg text-base sm:text-lg transition-colors duration-200 inline-flex items-center justify-center space-x-2 w-full sm:w-auto min-h-[48px]"
+                  >
+                    <span>Calculate Your Footprint</span>
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </Link>
+                  <Link
+                    to="/events"
+                    className="border-2 border-white text-white hover:bg-white hover:text-emerald-600 font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg text-base sm:text-lg transition-colors duration-200 inline-flex items-center justify-center space-x-2 w-full sm:w-auto min-h-[48px]"
+                  >
+                    <span>Explore Events</span>
+                    <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </Link>
+                </div>
               </div>
             </div>
           </FadeIn>
