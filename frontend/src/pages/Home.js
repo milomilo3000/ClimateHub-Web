@@ -410,13 +410,12 @@ const Home = () => {
               
               <FadeIn delay={1.0}>
                 <h2 className="text-base sm:text-xl md:text-2xl lg:text-3xl font-semibold text-green-200 mb-3 sm:mb-4 px-2">
-                  Empowering Singaporeans to Serve Both Nation and Nature
+                  Environmental action, made easy
                 </h2>
               </FadeIn>
               <FadeIn delay={1.2}>
                 <p className="text-sm sm:text-lg md:text-xl text-gray-100 mb-6 sm:mb-8 max-w-xs sm:max-w-2xl lg:max-w-3xl mx-auto leading-relaxed px-2">
-                  Transform your daily routines into eco-missions. Track your footprint, reduce your impact, 
-                  and join fellow Singaporeans in building a sustainable future.
+                Understand how everyday choices affect the environment, and what you can do to reduce your impact.
                 </p>
               </FadeIn>
               <FadeIn delay={1.4}>
