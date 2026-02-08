@@ -40,27 +40,47 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/" className="text-gray-300 hover:text-white transition-colors duration-200">
+                <Link 
+                  to="/" 
+                  className="text-gray-300 hover:text-white transition-colors duration-200"
+                  onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' })}
+                >
                   Home
                 </Link>
               </li>
               <li>
-                <Link to="/carbon-tracker" className="text-gray-300 hover:text-white transition-colors duration-200">
+                <Link 
+                  to="/carbon-tracker" 
+                  className="text-gray-300 hover:text-white transition-colors duration-200"
+                  onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' })}
+                >
                   Carbon Tracker
                 </Link>
               </li>
               <li>
-                <Link to="/education" className="text-gray-300 hover:text-white transition-colors duration-200">
+                <Link 
+                  to="/education" 
+                  className="text-gray-300 hover:text-white transition-colors duration-200"
+                  onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' })}
+                >
                   Education Hub
                 </Link>
               </li>
               <li>
-                <Link to="/events" className="text-gray-300 hover:text-white transition-colors duration-200">
+                <Link 
+                  to="/events" 
+                  className="text-gray-300 hover:text-white transition-colors duration-200"
+                  onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' })}
+                >
                   Events
                 </Link>
               </li>
               <li>
-                <Link to="/profile" className="text-gray-300 hover:text-white transition-colors duration-200">
+                <Link 
+                  to="/profile" 
+                  className="text-gray-300 hover:text-white transition-colors duration-200"
+                  onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' })}
+                >
                   Profile
                 </Link>
               </li>

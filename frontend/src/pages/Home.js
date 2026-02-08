@@ -155,9 +155,11 @@ const Home = () => {
       centerMode: true,
       centerPadding: '0px',
       arrows: false,
-      // initialSlide removed
+      initialSlide: 1,
       beforeChange: (_, next) => setCurrentIndex(next),
-      focusOnSelect: true,
+      focusOnSelect: false,
+      accessibility: false,
+      pauseOnFocus: false,
       responsive: [
         {
           breakpoint: 1024,
@@ -177,9 +179,6 @@ const Home = () => {
         }
       ]
     };
-    React.useEffect(() => {
-      sliderRef.current?.slickGoTo(1, true);
-    }, []);
     return (
       <Slider ref={sliderRef} {...settings} className="roulette-carousel">
         {rouletteFeatures.map((feature, idx) => {
@@ -280,16 +279,16 @@ const Home = () => {
     };
 
     return (
-      <Slider {...settings} className="h-screen relative custom-carousel">
+      <Slider {...settings} className="relative custom-carousel hero-carousel">
         {heroImages.map((src, index) => (
-          <div key={index} className="h-screen relative">
+          <div key={index} className="relative hero-carousel-slide">
             <img
               src={src}
               alt={`Slide ${index + 1}`}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover hero-carousel-img"
             />
             {/* Dark overlay so text is readable */}
-            <div className="absolute inset-0 bg-black bg-opacity-70"></div>
+            <div className="absolute inset-0 bg-black bg-opacity-70 hero-carousel-overlay"></div>
           </div>
         ))}
       </Slider>
@@ -299,6 +298,36 @@ const Home = () => {
   return (
     <>
       <style>{`
+         /* HERO carousel should fit within viewport minus navbar so dots are visible */
+         :root {
+           --navbar-height: 72px; /* adjust if you change navbar height */
+         }
+
+         .hero-carousel,
+         .hero-carousel .slick-list,
+         .hero-carousel .slick-track {
+           height: calc(100vh - var(--navbar-height));
+         }
+
+         .hero-carousel-slide {
+           height: calc(100vh - var(--navbar-height));
+         }
+
+         .hero-carousel-img {
+           height: 100%;
+         }
+
+         /* The text overlay container should match the reduced hero height too */
+         .hero-overlay-container {
+           height: calc(100vh - var(--navbar-height));
+         }
+
+         /* On small screens, navbar is usually taller */
+         @media (max-width: 640px) {
+           :root {
+             --navbar-height: 88px;
+           }
+         }
          /* Roulette carousel */
          .roulette-carousel .slick-dots {
            position: relative;
@@ -391,7 +420,7 @@ const Home = () => {
         <section className="relative">
           <FadeIn>
             <HeroCarousel />
-            <div className="absolute inset-0 h-screen flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8">
+            <div className="absolute inset-0 hero-overlay-container flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8">
               <FadeIn delay={0.6}>
                 <div className="flex justify-center mb-4 sm:mb-6">
                   <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center relative overflow-hidden bg-white">

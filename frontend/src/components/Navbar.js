@@ -57,7 +57,14 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           {/* Logo and main navigation */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
+            <Link 
+              to="/" 
+              className="flex items-center space-x-2"
+              onClick={() => {
+                // Force scroll to top when clicking logo
+                window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+              }}
+            >
               <img
                 src="/images/apple-touch-icon.png"
                 alt="ClimateHub Logo"
@@ -72,6 +79,11 @@ const Navbar = () => {
                 <Link
                   key={item.name}
                   to={item.href}
+                  onClick={() => {
+                    // Force scroll to top when clicking Home
+                    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+                    
+                  }}
                   className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200 ${
                     isActive(item.href)
                       ? 'border-primary-500 text-primary-600'
@@ -227,7 +239,11 @@ const Navbar = () => {
                     ? 'bg-primary-50 text-primary-600 border-l-4 border-primary-500'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                 }`}
-                onClick={() => setIsMenuOpen(false)}
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  // Force scroll to top when clicking Home
+                  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+                }}
               >
                 {item.name}
               </Link>
