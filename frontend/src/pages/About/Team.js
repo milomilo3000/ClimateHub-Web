@@ -36,7 +36,7 @@ const Team = () => {
                     </h3>
                     <p className="text-white/90 font-medium">Co-Founder &amp; Lead Developer</p>
                     <a
-                      href="https://www.linkedin.com/"
+                      href="https://www.linkedin.com/in/milan-nathani-32b235111/"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center mt-2 text-white hover:text-white/80"
@@ -61,7 +61,7 @@ const Team = () => {
                     </h3>
                     <p className="text-white/90 font-medium">Marketing Lead</p>
                     <a
-                      href="https://www.linkedin.com/"
+                      href="https://www.linkedin.com/in/dylan-s-797905303/"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center mt-2 text-white hover:text-white/80"
