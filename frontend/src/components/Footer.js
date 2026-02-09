@@ -21,13 +21,13 @@ const Footer = () => {
               <span className="text-xl font-bold">ClimateHub</span>
             </div>
             <p className="text-gray-300 mb-4 max-w-md">
-              Singapore's one-stop platform for climate action. Track your carbon footprint, 
-              discover environmental events, and stay informed about climate initiatives.
+              Singapore's one-stop platform for environmental action. Track your carbon footprint, 
+              discover eco-events, and stay informed about environmental initiatives.
             </p>
             <div className="flex space-x-4">
               
               <a
-                href="https://www.tiktok.com/@climatehub.sg"
+                href="https://www.tiktok.com/@climatehubsg"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white transition-colors duration-200"
@@ -35,7 +35,7 @@ const Footer = () => {
                 <FaTiktok className="w-5 h-5" />
                 </a>
                 <a
-                href="https://www.tiktok.com/@climatehub.sg"
+                href="https://www.instagram.com/climatehubsg/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white transition-colors duration-200"
@@ -66,7 +66,7 @@ const Footer = () => {
                   className="text-gray-300 hover:text-white transition-colors duration-200"
                   onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' })}
                 >
-                  Carbon Tracker
+                  Carbon Footprint Calculator
                 </Link>
               </li>
               <li>
@@ -84,7 +84,7 @@ const Footer = () => {
                   className="text-gray-300 hover:text-white transition-colors duration-200"
                   onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' })}
                 >
-                  Events
+                  Eco-Events Calendar
                 </Link>
               </li>
               <li>
@@ -123,7 +123,7 @@ const Footer = () => {
         <div className="border-t border-gray-800 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              © 2024 ClimateHub. All rights reserved.
+              © 2025 ClimateHub. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors duration-200">

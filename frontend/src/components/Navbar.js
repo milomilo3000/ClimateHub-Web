@@ -38,7 +38,7 @@ const Navbar = () => {
   const featuresDropdown = [
     { name: 'Carbon Calculator', href: '/carbon-tracker' },
     { name: 'Education Hub', href: '/education' },
-    { name: 'Events Calendar', href: '/events' },
+    { name: 'Eco-Events Calendar', href: '/events' },
   ];
 
   const aboutDropdown = [

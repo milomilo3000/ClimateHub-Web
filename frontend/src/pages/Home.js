@@ -109,7 +109,7 @@ const Home = () => {
     },
     {
       icon: Calendar,
-      title: 'Events Calendar',
+      title: 'Eco-Events Calendar',
       description: 'Join green initiatives across camps, schools, and communities. From cleanups to eco-volunteering, turn everyday life into environmental action.',
       href: '/events'
     },
@@ -131,7 +131,7 @@ const Home = () => {
     },
     {
       icon: Calendar,
-      title: 'Events Calendar',
+      title: 'Eco-Events Calendar',
       description: 'Join green initiatives across camps, schools, and communities. From cleanups to eco-volunteering, turn everyday life into environmental action.',
       href: '/events'
     },
@@ -444,7 +444,7 @@ const Home = () => {
               </FadeIn>
               <FadeIn delay={1.2}>
                 <p className="text-sm sm:text-lg md:text-xl text-gray-100 mb-6 sm:mb-8 max-w-xs sm:max-w-2xl lg:max-w-3xl mx-auto leading-relaxed px-2">
-                Understand how everyday choices affect the environment, and what you can do to reduce your impact.
+                Singapore's one-stop platform for environmental action
                 </p>
               </FadeIn>
               <FadeIn delay={1.4}>

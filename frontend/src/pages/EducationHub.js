@@ -179,7 +179,7 @@ const EducationHub = () => {
                 {/* Hero copy */}
                 <div>
                   <p className="inline-flex items-center px-3 py-1 mb-4 text-xs font-semibold tracking-wide uppercase rounded-full bg-white/15 text-green-50 border border-white/20">
-                    Learn · Share · Act
+                    Learn · Act · Share
                   </p>
                   <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
                     Education Hub

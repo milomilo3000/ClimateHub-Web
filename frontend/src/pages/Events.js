@@ -159,7 +159,7 @@ const Events = () => {
                 <div className="mx-auto max-w-7xl px-6 md:px-28 h-[calc(100vh-80px)] flex items-center">
                   <div className="w-full flex flex-col items-center text-center">
                     <p className="inline-flex items-center px-3 py-1 mb-4 text-xs font-semibold tracking-wide uppercase rounded-full bg-white/15 text-green-50 border border-white/20">
-                      Discover · Join · Impact
+                      Discover · Sign-up · Act
                     </p>
 
                     <h1 className="text-3xl md:text-6xl font-extrabold text-white mb-4 leading-tight">
