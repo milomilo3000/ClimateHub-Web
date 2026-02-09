@@ -423,7 +423,7 @@ const Home = () => {
             <div className="absolute inset-0 hero-overlay-container flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8">
               <FadeIn delay={0.6}>
                 <div className="flex justify-center mb-4 sm:mb-6">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center relative overflow-hidden bg-white">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center relative overflow-hidden bg-transparent">
                     <img
                       src="/images/apple-touch-icon.png"
                       alt="ClimateHub leaf logo"
@@ -439,7 +439,7 @@ const Home = () => {
               
               <FadeIn delay={1.0}>
                 <h2 className="text-base sm:text-xl md:text-2xl lg:text-3xl font-semibold text-green-200 mb-3 sm:mb-4 px-2">
-                  Environmental action, made easy
+                  Environmental Action, Made Easy
                 </h2>
               </FadeIn>
               <FadeIn delay={1.2}>

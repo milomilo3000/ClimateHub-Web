@@ -1,6 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, Globe, Twitter, Facebook, Instagram } from 'lucide-react';
+import { Mail, Phone, MapPin, Globe, Tiktok,Twitter, Facebook, Instagram } from 'lucide-react';
+import { FaTiktok } from "react-icons/fa";
+import { FaInstagram } from "react-icons/fa";
+
 
 const Footer = () => {
   return (
@@ -10,9 +13,11 @@ const Footer = () => {
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">CH</span>
-              </div>
+              <img
+                src="/images/apple-touch-icon.png"
+                alt="ClimateHub logo"
+                className="w-8 h-8 rounded-lg object-cover"
+              />
               <span className="text-xl font-bold">ClimateHub</span>
             </div>
             <p className="text-gray-300 mb-4 max-w-md">
@@ -20,18 +25,25 @@ const Footer = () => {
               discover environmental events, and stay informed about climate initiatives.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
-                <Globe className="w-5 h-5" />
-              </a>
+              
+              <a
+                href="https://www.tiktok.com/@climatehub.sg"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white transition-colors duration-200"
+                >
+                <FaTiktok className="w-5 h-5" />
+                </a>
+                <a
+                href="https://www.tiktok.com/@climatehub.sg"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white transition-colors duration-200"
+                >
+                <FaInstagram className="w-5 h-5" />
+                </a>
+
+
             </div>
           </div>
 
