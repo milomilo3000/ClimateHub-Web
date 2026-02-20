@@ -556,38 +556,6 @@ const Events = () => {
               </div>
             </FadeIn>
 
-            {/* Partners Section */}
-            <FadeIn delay={0.4} duration={2}>
-              <div className="card">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Which events are being shown?</h2>
-                <p className="text-gray-600 mb-8">
-                  Our partners include leading environmental organizations and sustainability advocates 
-                  who are committed to making Singapore greener.
-                </p>
-                
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                  {partners.map((partner, index) => (
-                    <div key={index} className="flex items-center justify-center p-6 border border-gray-200 rounded-lg hover:shadow-md transition-shadow duration-200 bg-white">
-                      <div className="text-center">
-                        <div className="w-24 h-12 bg-gray-200 rounded-lg flex items-center justify-center mb-2">
-                          <span className="text-xs font-semibold text-gray-600">{partner.name}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-8 text-center">
-                  <p className="text-sm text-gray-600 mb-4">
-                    Want to become a partner organization?
-                  </p>
-                  <button className="inline-flex items-center space-x-2 btn-primary">
-                    <Users className="w-5 h-5" />
-                    <span>Partner with Us</span>
-                  </button>
-                </div>
-              </div>
-            </FadeIn>
 
             {/* Call to Action */}
             <FadeIn delay={0.5} duration={2}>

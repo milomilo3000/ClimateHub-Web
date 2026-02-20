@@ -34,7 +34,7 @@ const Team = () => {
                     <h3 className="text-2xl font-bold text-white leading-tight">
                       Milan Nathani
                     </h3>
-                    <p className="text-white/90 font-medium">Co-Founder &amp; Lead Developer</p>
+                    <p className="text-white/90 font-medium">Founder &amp; Lead Developer</p>
                     <a
                       href="https://www.linkedin.com/in/milan-nathani-32b235111/"
                       target="_blank"
@@ -70,41 +70,6 @@ const Team = () => {
                     </a>
                   </div>
                 </div>
-              </div>
-            </div>
-          </section>
-        </FadeIn>
-
-        {/* Special Thanks */}
-        <FadeIn>
-          <section className="w-full py-20 bg-[#F7FAF8]">
-            <div className="max-w-6xl mx-auto px-6 md:px-20">
-              <div className="text-center mb-10">
-                <h2 className="text-3xl font-bold text-gray-900 inline-block relative isolate">
-                  <span className="relative inline-block px-6 py-3">
-                    {/* Bush texture highlight (image) */}
-                    <span
-                      aria-hidden="true"
-                      className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] z-0"
-                    >
-                      <img
-                        src="/images/Bush-Texture.jpeg"
-                        alt=""
-                        className="w-full h-auto object-contain"
-                      />
-                    </span>
-
-                    {/* Text above the highlight */}
-                    <span className="relative z-10 text-gray-900">Special Thanks To</span>
-                  </span>
-                </h2>
-              </div>
-
-              {/* Simple placeholder rows (swap to real names later) */}
-              <div className="max-w-3xl mx-auto space-y-4">
-                <div className="h-14 rounded-xl bg-white shadow-sm" />
-                <div className="h-14 rounded-xl bg-white shadow-sm" />
-                <div className="h-14 rounded-xl bg-white shadow-sm" />
               </div>
             </div>
           </section>

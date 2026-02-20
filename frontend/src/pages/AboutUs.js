@@ -1,187 +1,346 @@
 import React from 'react';
-import { Users, Target, Globe } from 'lucide-react';
 import FadeIn from "../components/animations/FadeIn";
 import StaggerWrapper from "../components/animations/StaggerWrapper";
+import { FaLinkedin } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const AboutUs = () => {
-  const teamMembers = [
+  const majorTimeline = [
     {
-      name: 'Milan Nathani',
-      role: 'Founder & Executive Lead',
-      description: 'Founder and driving force behind ClimateHub. Leads strategy, technology, outreach, and overall project direction. Spearheads talks, school information sessions, and partnerships, while building the platform\'s technical backbone.',
-      icon: Target
+      date: "Jan 2025",
+      event: "ClimateHub conceptualised",
+      metric: "Prototype built",
+      description:
+        "A Singapore-based carbon footprint calculator prototype created during National Service — designed for youth habits, not generic assumptions.",
     },
     {
-      name: 'Dylan Seng',
-      role: 'Outreach, Marketing & Communications',
-      description: 'Leads ClimateHub\'s outreach, social media, and publicity campaigns. Represents the project through presentations, community engagement, and youth-facing initiatives. Focuses on growing awareness and making sustainability relatable and engaging for youth.',
-      icon: Users,
-      image: '/images/Dylan_About-Us.jpg'
+      date: "Jul 2025",
+      event: "SG Eco Fund support secured",
+      metric: "MSE Sprout funded",
+      description:
+        "Awarded funding under MSE’s SG Eco Fund (Sprout) to build ClimateHub into a full platform with tracking, nudges, and action systems.",
     },
     {
-      name: 'Maahir Bhatia',
-      role: 'Partnerships & Strategy',
-      description: 'Contributed to pitching ClimateHub to the Ministry of Sustainability and Environment during its founding phase. Advised on partnerships and strategic positioning.',
-      icon: Globe
-    }
+      date: "Sep 2025",
+      event: "First NS camp trial launched",
+      metric: "140+ NSFs",
+      description:
+        "Launched the first official trial in Selarang Camp to test whether tracking + behavioural design can shift daily choices.",
+    },
+    {
+      date: "Nov 2025",
+      event: "Preparing for public expansion",
+      metric: "Partnership rollout",
+      description:
+        "Built on early trial outcomes and shifted focus toward scaling beyond NS — partnering with local NGOs, schools, and youth organisations to reach the wider public.",
+    },
   ];
 
-  const founder = teamMembers.find(member => member.name === 'Milan Nathani');
-  const otherMembers = teamMembers.filter(member => member.name !== 'Milan Nathani');
+  const impactTiles = [
+    { value: "140+", label: "NSFs participated" },
+    { value: "21.4%", label: "Avg footprint reduction" },
+    { value: "40+", label: "Active users onboarded" },
+    { value: "3", label: "Key habit categories improved" },
+  ];
 
   return (
-    <div className="min-h-screen bg-black">
-      {/* Header Section */}
-      <FadeIn>
-      <div className="relative overflow-hidden bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-          <div className="text-center">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-              About Us
-            </h1>
-            <p className="text-xl sm:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              Meet the team behind ClimateHub — youth building tools for a sustainable future.
-            </p>
+    <div className="min-h-screen bg-white">
+      <StaggerWrapper>
+        {/* Header / Hero */}
+        <FadeIn>
+          <div className="relative overflow bg-gradient-to-b from-emerald-50 via-green-50 to-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+              <div className="text-center">
+                <p className="text-sm font-semibold tracking-widest text-green-700 uppercase mb-3">
+                  About ClimateHub
+                </p>
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-5">
+                  Singapore’s youth climate action platform.
+                </h1>
+                <p className="text-lg sm:text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed">
+                  Built for NSFs and students — track your footprint, build habits, and join real challenges designed for Singapore.
+                </p>
+
+                {/* CTAs */}
+                <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+                  <Link
+                    to="/carbon-tracker"
+                    onClick={() => window.scrollTo({ top: 0, left: 0, behavior: "auto" })}
+                    className="inline-flex items-center justify-center rounded-xl bg-green-600 px-6 py-3 text-white font-semibold shadow-sm hover:bg-green-700 transition-colors"
+                  >
+                    Try the Calculator
+                  </Link>
+                  <a
+                    href="#impact"
+                    className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3 text-gray-900 font-semibold border border-gray-200 shadow-sm hover:bg-gray-50 transition-colors"
+                  >
+                    See Our Impact
+                  </a>
+                </div>
+
+              </div>
+            </div>
+
+            {/* Decorative elements */}
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+              <div className="absolute -top-40 -right-40 w-80 h-80 bg-green-100 rounded-full opacity-25"></div>
+              <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald-100 rounded-full opacity-20"></div>
+            </div>
           </div>
-        </div>
-        
-        {/* Decorative elements */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-green-100 rounded-full opacity-20"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-100 rounded-full opacity-20"></div>
-        </div>
-      </div>
-      </FadeIn>
+        </FadeIn>
 
-      {/* Why We Started Section */}
-      <FadeIn delay={0.05}>
-      <div className="w-full bg-white py-20">
-        <div className="max-w-5xl mx-auto px-6">
-          <h2 className="text-5xl font-extrabold text-center text-black mb-10">Why We Started</h2>
-          <p className="text-lg leading-relaxed text-black max-w-4xl mx-auto">
-            ClimateHub was born during our time in Basic Military Training (BMT), where we saw firsthand how 
-            <strong> everyday habits — air‑conditioning, transport choices, food waste, and digital consumption — </strong>
-            quietly drive emissions in ways most young people never think about.
-            <br/><br/>
-            Among our peers, we noticed a common pattern: 
-            <strong><i> youth genuinely care about climate change, but many don’t know where to begin, what actions matter, or how their individual lifestyles contribute to Singapore’s carbon footprint.</i></strong>
-            The sustainability space often felt too abstract, too technical, or too distant from our lived experiences as NSFs and students.
-            <br/><br/>
-            Our vision with ClimateHub is to close this <strong>awareness‑to‑action gap</strong>. We wanted a platform built for youth — grounded in Singapore’s context, simple to use, powered by real data, and focused on enabling small, meaningful daily changes. 
-            What started as an NSF‑camp initiative has grown into a national youth‑driven movement to help every young person track, understand, and reduce their carbon footprint.
-          </p>
-        </div>
-      </div>
-      </FadeIn>
+        {/* Our Story Section */}
+        <FadeIn delay={0.1}>
+          <div className="w-full bg-gradient-to-b from-green-100 to-emerald-50 py-14">
+            <div className="max-w-5xl mx-auto px-6">
+              <h2 className="text-4xl md:text-5xl font-extrabold text-center text-gray-900 mb-10">
+                Our Story
+              </h2>
+              <div className="max-w-4xl mx-auto mb-8">
+                <p className="text-lg leading-relaxed text-gray-800 mb-4">
+                  ClimateHub began as a simple idea formed during National Service — sparked by shared observations that climate change often feels distant to young people, even though our daily actions quietly shape our environmental impact.
+                </p>
+                <p className="text-lg leading-relaxed text-gray-800">
+                  What started as an NSF-camp initiative has grown into a national youth-driven movement to help every young person track, understand, and reduce their carbon footprint.
+                </p>
+              </div>
 
-      {/* Meet the Founder Section */}
-      <FadeIn delay={0.1}>
-      <div className="w-full bg-white py-24">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center md:items-start gap-12 text-black">
-          {/* Left column: Founder Images Gallery */}
-          <div className="w-full md:w-1/2 grid grid-rows-2 gap-4 h-[600px]">
-            <img src="/images/About-Img1.jpg" alt="Founder 1" className="rounded-xl shadow-md object-cover object-top w-full h-full" />
-            <img src="/images/About-Img2.jpg" alt="Founder 2" className="rounded-xl shadow-md object-cover object-top w-full h-full" />
-          </div>
-          {/* Right column: Founder Info */}
-          <div className="w-full md:w-1/2 self-start">
-            <h2 className="text-5xl font-extrabold text-left text-black mb-10">Meet the Founder</h2>
-            <h3 className="text-4xl font-bold mb-2">{founder.name}</h3>
-            <p className="text-2xl font-semibold mb-6 text-black">{founder.role}</p>
-            <p className="leading-relaxed mb-8 text-lg">
-              Milan Nathani is the founder and executive lead of ClimateHub, a youth-driven climate-tech platform created to make sustainability accessible and actionable. Inspired during his National Service, he saw the potential to turn shared routines into collective climate action. Milan has led ClimateHub from idea to impact — coding the platform, securing SG Eco Fund support, piloting it in SAF camps, and building partnerships through talks and outreach. Under his leadership, ClimateHub has earned national recognition and is growing as a platform that empowers youth to track, reduce, and rethink their carbon footprints.
-            </p>
-            <blockquote className="border-l-4 border-green-600 italic text-black text-xl px-6 py-4 bg-green-100 rounded-lg shadow-inner">
-              "Our future depends on the actions we take today. I believe every young person has the power to make a difference, and ClimateHub is here to help unlock that potential."
-            </blockquote>
-          </div> 
-        </div>
-      </div>
-      </FadeIn>
-
-      {/* Meet the Team Section */}
-      <FadeIn delay={0.2}>
-      <div className="w-full bg-white py-16 text-black">
-        <h2 className="text-4xl font-bold text-black text-center mb-12 font-sans">Meet the Team</h2>
-
-        {/* Team Section */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <StaggerWrapper>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {otherMembers.map((member, index) => {
-              const IconComponent = member.icon;
-              return (
-                <FadeIn key={member.name}>
-                <div
-                  className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden"
-                >
-                  {/* Card Header */}
-                  <div className="bg-white p-0 text-white relative">
-                    {member.image && (
-                      <div className="w-full h-40 overflow-hidden rounded-t-2xl">
-                        <img 
-                          src={member.image} 
-                          alt={member.name} 
-                          className="w-full h-full object-cover object-center"
-                        />
-                      </div>
-                    )}
-                    <div className="p-6 bg-gradient-to-r from-green-500 to-blue-500 text-white relative">
-                      {!member.image && (
-                        <div className="flex items-center justify-center w-16 h-16 bg-white bg-opacity-20 rounded-full mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                          <IconComponent className="w-8 h-8" />
+              {/* Timeline */}
+              <div className="mt-10 max-w-5xl mx-auto">
+                <div className="relative pl-6">
+                  <div className="absolute left-2 top-2 bottom-2 w-px bg-gray-200" />
+                  <div className="space-y-6">
+                    {majorTimeline.map((item, index) => (
+                      <div key={index} className="relative">
+                        <div className="absolute left-0 top-2 w-4 h-4 rounded-full bg-green-600 ring-4 ring-green-100" />
+                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                            <div>
+                              <p className="text-sm font-semibold text-green-700">{item.date}</p>
+                              <h3 className="text-xl font-extrabold text-gray-900">{item.event}</h3>
+                            </div>
+                            <span className="inline-flex self-start md:self-auto items-center rounded-full bg-gray-50 text-gray-900 border border-gray-200 px-3 py-1 text-sm font-semibold">
+                              {item.metric}
+                            </span>
+                          </div>
+                          <p className="mt-3 text-gray-700 leading-relaxed">{item.description}</p>
                         </div>
-                      )}
-                      <h3 className="text-xl font-bold text-center mb-2">{member.name}</h3>
-                      <p className="text-green-100 text-center font-medium">{member.role}</p>
-                      
-                      {/* Decorative wave */}
-                      <div className="absolute bottom-0 left-0 w-full">
-                        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-6">
-                          <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="fill-white"></path>
-                        </svg>
                       </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+
+        {/* Our Mission Section */}
+        <FadeIn delay={0.15}>
+          <div className="w-full bg-white py-14">
+            <div className="max-w-5xl mx-auto px-6">
+              <h2 className="text-4xl md:text-5xl font-extrabold text-center text-gray-900 mb-10">
+                Our Mission
+              </h2>
+              <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-10 items-stretch">
+                {/* Visual */}
+                <div className="w-full h-full">
+                  <div className="w-full h-full rounded-2xl overflow-hidden flex items-center justify-center">
+                    <img
+                      src="/images/Pangolin_Wave.png"
+                      alt="ClimateHub pangolin riding a green energy wave"
+                      className="w-full h-full object-contain"
+                      style={{ maxHeight: "520px" }}
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.parentElement.innerHTML =
+                          '<div class="text-center p-8"><div class="text-gray-400 text-lg mb-2">🌿</div><p class="text-gray-500">Platform Preview</p></div>';
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Mission + pillars */}
+                <div className="w-full">
+                  <p className="text-lg text-gray-800 leading-relaxed">
+                    ClimateHub turns climate awareness into action — by making personal footprint tracking simple, habit change measurable, and participation social.
+                  </p>
+
+                  <div className="mt-6 grid grid-cols-1 gap-4">
+                    <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                      <p className="text-xs font-semibold tracking-widest uppercase text-green-700">Measure</p>
+                      <h3 className="text-lg font-extrabold text-gray-900 mt-1">Track what matters in Singapore</h3>
+                      <p className="text-gray-700 mt-2">Singapore-based assumptions, weekly summaries, and clear drivers — food, transport, and electricity.</p>
+                    </div>
+                    <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                      <p className="text-xs font-semibold tracking-widest uppercase text-green-700">Nudge</p>
+                      <h3 className="text-lg font-extrabold text-gray-900 mt-1">Build habits that stick</h3>
+                      <p className="text-gray-700 mt-2">Behavioural design, challenges, and simple next steps — so change feels doable, not preachy.</p>
+                    </div>
+                    <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+                      <p className="text-xs font-semibold tracking-widest uppercase text-green-700">Mobilise</p>
+                      <h3 className="text-lg font-extrabold text-gray-900 mt-1">Turn action into community</h3>
+                      <p className="text-gray-700 mt-2">Camp / school missions, events, and team-based nudges to make progress visible and shared.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+
+
+        {/* Meet the Team Section */}
+        <FadeIn delay={0.2}>
+          <section className="w-full bg-gradient-to-r from-emerald-700 to-green-600 py-14">
+            <div className="max-w-6xl mx-auto px-6 md:px-16">
+              <h2 className="text-4xl md:text-5xl font-extrabold text-center text-white mb-8">
+                Meet the Team
+              </h2>
+
+              <div className="grid md:grid-cols-2 gap-10">
+                {/* Milan Card */}
+                <div className="relative rounded-2xl overflow-hidden shadow-md">
+                  <img
+                    src="/images/About-Img2.jpg"
+                    alt="Milan Nathani"
+                    className="w-full h-[520px] object-cover bg-gray-100"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 h-[60%] bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
+                  <div className="absolute bottom-6 left-6 right-6">
+                    <h3 className="text-2xl font-extrabold text-white leading-tight">Milan Nathani</h3>
+                    <p className="text-white/90 font-semibold">Founder &amp; Lead Developer</p>
+                    <a
+                      href="https://www.linkedin.com/in/milan-nathani-32b235111/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center mt-3 text-white hover:text-white/80"
+                      aria-label="Milan Nathani LinkedIn"
+                    >
+                      <FaLinkedin size={22} />
+                    </a>
+                  </div>
+                </div>
+
+                {/* Dylan Card */}
+                <div className="relative rounded-2xl overflow-hidden shadow-md">
+                  <img
+                    src="/images/Dylan_About-Us.jpg"
+                    alt="Dylan Seng"
+                    className="w-full h-[520px] object-cover bg-gray-100"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 h-[60%] bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
+                  <div className="absolute bottom-6 left-6 right-6">
+                    <h3 className="text-2xl font-extrabold text-white leading-tight">Dylan Seng</h3>
+                    <p className="text-white/90 font-semibold">Marketing Lead</p>
+                    <a
+                      href="https://www.linkedin.com/in/dylan-s-797905303/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center mt-3 text-white hover:text-white/80"
+                      aria-label="Dylan Seng LinkedIn"
+                    >
+                      <FaLinkedin size={22} />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </FadeIn>
+
+        {/* Impact So Far Section */}
+        <FadeIn delay={0.25}>
+          <div id="impact" className="w-full bg-gradient-to-b from-emerald-50 to-green-100 py-14">
+            <div className="max-w-5xl mx-auto px-6">
+              <h2 className="text-4xl md:text-5xl font-extrabold text-center text-gray-900 mb-4">
+                Impact So Far
+              </h2>
+              <p className="text-center text-gray-600 mb-12 text-lg max-w-2xl mx-auto">
+                Real results from our first NS camp trial
+              </p>
+
+              {/* Stat tiles */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {impactTiles.map((t, i) => (
+                  <div
+                    key={i}
+                    className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+                  >
+                    <p className="text-4xl font-extrabold text-gray-900">{t.value}</p>
+                    <p className="mt-2 text-gray-700 font-semibold">{t.label}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Additional Impact Info */}
+              <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Real-World Behaviour Change</h3>
+                  <p className="text-gray-700 leading-relaxed">
+                    Participants reported greater awareness of their daily emissions and took meaningful actions — 
+                    choosing lower-impact meals, reducing electricity usage, and adopting greener transport choices.
+                  </p>
+                </div>
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Scaling Impact</h3>
+                  <p className="text-gray-700 leading-relaxed">
+                    Expanding to multiple NS camps with structured rollout phases, introducing full gamification systems, 
+                    and deploying AI-powered personalised recommendations based on user behaviour.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+
+        {/* Contact Us Section */}
+        <FadeIn delay={0.3}>
+          <div className="w-full bg-gradient-to-r from-emerald-600 via-green-600 to-emerald-500 py-20">
+            <div className="max-w-4xl mx-auto px-6 text-center">
+              <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6">
+                Contact Us!
+              </h2>
+              <p className="text-xl text-green-50 mb-12 leading-relaxed max-w-2xl mx-auto">
+                Whether you're a student, youth group, school, organisation, or partner keen to collaborate, 
+                we'd love to hear from you. ClimateHub is built for the community — and we're always excited 
+                to connect with those who want to drive climate action.
+              </p>
+
+              <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl mx-auto">
+                <div className="space-y-6">
+                  <div className="flex items-start gap-4 text-left">
+                    <div className="flex-shrink-0 w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                      <span className="text-2xl">📩</span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-gray-500 uppercase mb-1">Email</p>
+                      <p className="text-lg font-bold text-gray-900">climatehub.sg@gmail.com</p>
                     </div>
                   </div>
 
-                  {/* Card Content */}
-                  <div className="p-6">
-                    <p className="text-gray-600 leading-relaxed text-sm">
-                      {member.description}
-                    </p>
+                  <div className="flex items-start gap-4 text-left">
+                    <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span className="text-2xl">🤝</span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-gray-500 uppercase mb-1">Partnerships & Collaborations</p>
+                      <p className="text-gray-700 leading-relaxed">
+                        Reach out to us for school talks, NS briefings, sustainability events, or collaboration opportunities.
+                      </p>
+                    </div>
                   </div>
-
-                  {/* Hover effect overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-blue-500 opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
-                </FadeIn>
-              );
-            })}
-          </div>
-          </StaggerWrapper>
-        </div>
-      </div>
-      </FadeIn>
 
-      {/* Closing Section */}
-      <FadeIn delay={0.3}>
-      <div className="bg-gradient-to-r from-green-500 to-blue-500 text-white py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="bg-white bg-opacity-10 rounded-2xl p-8 backdrop-blur-sm">
-            <p className="text-xl sm:text-2xl font-medium leading-relaxed">
-              We're a youth-led team committed to turning awareness into action and making sustainability accessible to everyone.
-            </p>
-            
-            {/* Decorative elements */}
-            <div className="flex justify-center mt-8 space-x-4">
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                  <p className="text-gray-600 text-sm">
+                    We typically respond within 2-3 business days
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-      </FadeIn>
+        </FadeIn>
+      </StaggerWrapper>
     </div>
   );
 };

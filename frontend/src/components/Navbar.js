@@ -1,25 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Menu, X, User, LogOut, LogIn, ChevronDown } from 'lucide-react';
+import { Menu, X, User, LogOut, LogIn, ChevronDown, Calculator, BookOpen, CalendarDays } from 'lucide-react';
 
 const Navbar = () => {
   const { user, signInWithGoogle, signOutUser } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isFeaturesOpen, setIsFeaturesOpen] = useState(false);
-  const [isAboutOpen, setIsAboutOpen] = useState(false);
-  const [isMobileAboutOpen, setIsMobileAboutOpen] = useState(false);
+  const [isFeaturesAnimating, setIsFeaturesAnimating] = useState(false);
   const [isMobileFeaturesOpen, setIsMobileFeaturesOpen] = useState(false);
   const location = useLocation();
-  const aboutRef = useRef(null);
   const featuresRef = useRef(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (aboutRef.current && !aboutRef.current.contains(event.target)) {
-        setIsAboutOpen(false);
-      }
       if (featuresRef.current && !featuresRef.current.contains(event.target)) {
         setIsFeaturesOpen(false);
       }
@@ -31,25 +26,45 @@ const Navbar = () => {
     };
   }, []);
 
+  // Animate Features dropdown open/close
+  useEffect(() => {
+    if (isFeaturesOpen) {
+      requestAnimationFrame(() => setIsFeaturesAnimating(true));
+    } else {
+      setIsFeaturesAnimating(false);
+    }
+  }, [isFeaturesOpen]);
+
   const navigation = [
     { name: 'Home', href: '/' },
+    { name: 'About Us', href: '/about' },
   ];
 
   const featuresDropdown = [
-    { name: 'Carbon Calculator', href: '/carbon-tracker' },
-    { name: 'Education Hub', href: '/education' },
-    { name: 'Eco-Events Calendar', href: '/events' },
-  ];
-
-  const aboutDropdown = [
-    { name: 'How We Started', href: '/about/how-we-started' },
-    { name: 'Our Mission', href: '/about/mission' },
-    { name: 'Our Team', href: '/about/team' },
-    { name: 'Our Impact', href: '/about/impact' },
-    { name: 'Contact Us', href: '/about/contact' },
+    {
+      name: 'Carbon Calculator',
+      href: '/carbon-tracker',
+      description: 'Track your daily footprint in minutes with Singapore-friendly factors and tips.',
+      Icon: Calculator,
+    },
+    {
+      name: 'Education Hub',
+      href: '/education',
+      description: 'Learn fast: bite-sized explainers, news, and practical climate concepts.',
+      Icon: BookOpen,
+    },
+    {
+      name: 'Eco-Events Calendar',
+      href: '/events',
+      description: 'Discover and host eco-events across Singapore — RSVP and stay updated.',
+      Icon: CalendarDays,
+    },
   ];
 
   const isActive = (path) => location.pathname === path;
+
+  const openFeatures = () => setIsFeaturesOpen(true);
+  const closeFeatures = () => setIsFeaturesOpen(false);
 
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -93,47 +108,16 @@ const Navbar = () => {
                   {item.name}
                 </Link>
               ))}
-              
-              {/* About Us dropdown */}
-              <div className="relative" ref={aboutRef}>
-                <button
-                  onClick={() => setIsAboutOpen(!isAboutOpen)}
-                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200 ${
-                    aboutDropdown.some(item => isActive(item.href))
-                      ? 'border-primary-500 text-primary-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
-                >
-                  About Us
-                  <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-200 ${isAboutOpen ? 'rotate-180' : ''}`} />
-                </button>
-
-                {isAboutOpen && (
-                  <div className="absolute top-full left-0 mt-1 w-56 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-                    <div className="py-1">
-                      {aboutDropdown.map((item) => (
-                        <Link
-                          key={item.name}
-                          to={item.href}
-                          className={`block px-4 py-2 text-sm transition-colors duration-200 ${
-                            isActive(item.href)
-                              ? 'bg-primary-50 text-primary-600'
-                              : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                          }`}
-                          onClick={() => setIsAboutOpen(false)}
-                        >
-                          {item.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
 
               {/* Features dropdown */}
-              <div className="relative" ref={featuresRef}>
+              <div
+                className="relative"
+                ref={featuresRef}
+                onMouseEnter={openFeatures}
+                onMouseLeave={closeFeatures}
+              >
                 <button
-                  onClick={() => setIsFeaturesOpen(!isFeaturesOpen)}
+                  onClick={() => setIsFeaturesOpen((v) => !v)}
                   className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200 ${
                     featuresDropdown.some(item => isActive(item.href))
                       ? 'border-primary-500 text-primary-600'
@@ -145,24 +129,80 @@ const Navbar = () => {
                 </button>
                 
                 {isFeaturesOpen && (
-                  <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-                    <div className="py-1">
-                      {featuresDropdown.map((item) => (
-                        <Link
-                          key={item.name}
-                          to={item.href}
-                          className={`block px-4 py-2 text-sm transition-colors duration-200 ${
-                            isActive(item.href)
-                              ? 'bg-primary-50 text-primary-600'
-                              : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                          }`}
-                          onClick={() => setIsFeaturesOpen(false)}
-                        >
-                          {item.name}
-                        </Link>
-                      ))}
+                  <>
+                    {/* Apple-like blurred backdrop (desktop only) */}
+                    <div
+                      className={`hidden md:block fixed inset-x-0 top-16 bottom-0 z-40 pointer-events-none transition-all duration-1000 ${
+                        isFeaturesAnimating ? 'bg-black/10 backdrop-blur-md' : 'bg-black/0 backdrop-blur-0'
+                      }`}
+                      aria-hidden="true"
+                    />
+
+                    {/* Hover bridge to prevent accidental close when moving from trigger to panel */}
+                    <div
+                      className="absolute top-full left-1/2 -translate-x-1/2 z-50 h-3 w-[720px] max-w-[calc(100vw-2rem)]"
+                      aria-hidden="true"
+                    />
+                    {/* LottieFiles-like mega menu panel */}
+                    <div
+                      className={`absolute top-full left-1/2 -translate-x-1/2 mt-3 z-50 w-[720px] max-w-[calc(100vw-2rem)] transform transition-all duration-1000 ${
+                        isFeaturesAnimating ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 -translate-y-2 scale-[0.98]'
+                      }`}
+                    >
+                      <div className="rounded-2xl border border-gray-200 bg-white/80 backdrop-blur-xl shadow-2xl overflow-hidden">
+                        <div className="px-6 pt-6 pb-4">
+                          <div className="flex items-baseline justify-between">
+                            <h3 className="text-sm font-semibold tracking-wide text-gray-500">FEATURES</h3>
+                            <span className="text-xs text-gray-400">Explore ClimateHub tools</span>
+                          </div>
+                          <h2 className="mt-2 text-2xl font-bold text-gray-900">Build habits. Track impact.</h2>
+                          <p className="mt-1 text-sm text-gray-600">Everything you need to make sustainable choices easier — in one place.</p>
+                        </div>
+
+                        <div className="px-6 pb-6">
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            {featuresDropdown.map((item, idx) => {
+                              const Icon = item.Icon;
+                              return (
+                                <Link
+                                  key={item.name}
+                                  to={item.href}
+                                  onClick={() => setIsFeaturesOpen(false)}
+                                  style={{ transitionDelay: `${idx * 250}ms` }}
+                                  className={`group rounded-xl border border-gray-200 bg-white/70 hover:bg-white p-4 hover:shadow-md transition-all duration-1000 ${
+                                    isFeaturesAnimating ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+                                  } ${isActive(item.href) ? 'ring-2 ring-primary-200' : ''}`}
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-600 group-hover:bg-primary-100 transition-colors duration-200">
+                                      <Icon className="h-5 w-5" />
+                                    </div>
+                                    <div className="min-w-0">
+                                      <div className="flex items-center gap-2">
+                                        <h4 className="text-sm font-semibold text-gray-900 group-hover:text-gray-900">{item.name}</h4>
+                                      </div>
+                                      <p className="mt-1 text-xs leading-relaxed text-gray-600">{item.description}</p>
+                                    </div>
+                                  </div>
+                                </Link>
+                              );
+                            })}
+                          </div>
+
+                          <div className="mt-5 flex items-center justify-between rounded-xl bg-gray-50/70 border border-gray-200 px-4 py-3">
+                            <p className="text-xs text-gray-600">Tip: Hover to browse, click any card to open the feature.</p>
+                            <button
+                              type="button"
+                              onClick={() => setIsFeaturesOpen(false)}
+                              className="text-xs font-medium text-gray-700 hover:text-gray-900"
+                            >
+                              Close
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  </>
                 )}
               </div>
             </div>
@@ -248,39 +288,6 @@ const Navbar = () => {
                 {item.name}
               </Link>
             ))}
-            
-            {/* Mobile About Us section */}
-            <div className="space-y-1">
-              <button
-                onClick={() => setIsMobileAboutOpen(!isMobileAboutOpen)}
-                className="flex items-center justify-between w-full px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors duration-200"
-              >
-                About Us
-                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isMobileAboutOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {isMobileAboutOpen && (
-                <div className="pl-4 space-y-1">
-                  {aboutDropdown.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                        isActive(item.href)
-                          ? 'bg-primary-50 text-primary-600 border-l-4 border-primary-500'
-                          : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                      }`}
-                      onClick={() => {
-                        setIsMenuOpen(false);
-                        setIsMobileAboutOpen(false);
-                      }}
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
 
             {/* Mobile Features section */}
             <div className="space-y-1">
