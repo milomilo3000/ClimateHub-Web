@@ -852,7 +852,7 @@ const CarbonTracker = () => {
 
   return (
     <div 
-      className="min-h-screen py-8 relative"
+      className="min-h-screen py-6 sm:py-8 relative overflow-x-hidden"
       style={{
         backgroundImage: `url('/images/singapore-green-landscape.png')`,
         backgroundSize: 'cover',
@@ -867,12 +867,12 @@ const CarbonTracker = () => {
       {/* Overlay for better text readability */}
       <div className="absolute inset-0 bg-gradient-to-br from-white/90 via-green-50/80 to-blue-50/70"></div>
       
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full box-border">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 sm:mb-4 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent break-words px-2">
             Carbon Footprint Calculator
           </h1>
-          <p className="text-xl text-gray-700 font-medium">Calculate your environmental impact and discover ways to reduce it</p>
+          <p className="text-base sm:text-xl text-gray-700 font-medium break-words px-2">Calculate your environmental impact and discover ways to reduce it</p>
         </div>
 
         {/* Enhanced Progress Bar with Leaf Animation */}

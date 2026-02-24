@@ -173,18 +173,18 @@ const EducationHub = () => {
         {/* Header / Hero Section */}
         <FadeIn duration={2}>
           <div className="">
-            <div className="bg-gradient-to-r from-green-500 to-emerald-600 w-full shadow-lg">
-              <div className="mx-auto max-w-7xl px-6 md:px-28 h-[calc(100vh-80px)] flex items-center">
-                <div className="grid w-full gap-6 md:gap-8 md:grid-cols-[minmax(0,1.4fr),minmax(0,1fr)] items-center">
+<div className="bg-gradient-to-r from-green-500 to-emerald-600 w-full shadow-lg overflow-hidden">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-12 lg:px-28 min-h-[min(100vh-80px,520px)] sm:min-h-[calc(100vh-80px)] py-10 sm:py-0 flex items-center w-full box-border overflow-hidden">
+                <div className="grid w-full gap-6 md:gap-8 grid-cols-1 md:grid-cols-[minmax(0,1.4fr),minmax(0,1fr)] items-center">
                 {/* Hero copy */}
-                <div>
-                  <p className="inline-flex items-center px-3 py-1 mb-4 text-xs font-semibold tracking-wide uppercase rounded-full bg-white/15 text-green-50 border border-white/20">
+                <div className="min-w-0 order-2 md:order-1">
+                  <p className="inline-flex items-center px-3 py-1 mb-3 sm:mb-4 text-xs font-semibold tracking-wide uppercase rounded-full bg-white/15 text-green-50 border border-white/20">
                     Learn · Act · Share
                   </p>
-                  <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
+                  <h1 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-white mb-3 sm:mb-4 leading-tight break-words">
                     Education Hub
                   </h1>
-                  <p className="text-base md:text-lg text-green-50/90 max-w-xl mb-6 leading-relaxed">
+                  <p className="text-sm sm:text-base md:text-lg text-green-50/90 max-w-xl mb-4 sm:mb-6 leading-relaxed break-words">
                     Stay informed about Singapore's environmental initiatives, government policies,
                     and the latest climate news from around the world—empowering you to take
                     meaningful action for our planet.
@@ -221,8 +221,8 @@ const EducationHub = () => {
                 </div>
 
                 {/* News Scrolling Animation (inside laptop frame) */}
-                <div className="relative flex justify-center md:justify-end items-center">
-                  <div className="relative w-full max-w-2xl">
+                <div className="relative flex justify-center md:justify-end items-center order-1 md:order-2 min-w-0">
+                  <div className="relative w-full max-w-2xl min-w-0">
                     {/* Laptop screen / monitor */}
                     <div className="relative mx-auto">
                       {/* Outer bezel */}

@@ -822,27 +822,27 @@ const CarbonTrackerNew = () => {
     const percentileColor = getPercentileColor(relativePercent);
 
     return (
-      <div className="min-h-screen bg-white py-8">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-white py-6 sm:py-8 overflow-x-hidden">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full box-border">
           {/* Your Carbon Footprint block with dynamic background color */}
           <div
-            className="rounded-xl text-white text-center p-10 mb-12 shadow"
+            className="rounded-xl text-white text-center p-6 sm:p-10 mb-8 sm:mb-12 shadow min-w-0"
             style={{ backgroundColor: percentileColor }}
           >
-            <div className="mb-4 flex justify-center">
-              <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                <Calculator className="w-8 h-8 text-white" />
+            <div className="mb-3 sm:mb-4 flex justify-center">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                <Calculator className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
               </div>
             </div>
-            <h2 className="text-3xl font-bold mb-2">Your Carbon Footprint</h2>
-            <div className="text-6xl font-extrabold mb-2">{results.totalFootprint.toFixed(2)}</div>
-            <div className="text-xl opacity-90">kg CO₂ per week</div>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2 break-words">Your Carbon Footprint</h2>
+            <div className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-2">{results.totalFootprint.toFixed(2)}</div>
+            <div className="text-base sm:text-xl opacity-90">kg CO₂ per week</div>
           </div>
 
           {/* Comparison cards - mobile: horizontal scrollable flex, desktop: grid */}
           <div className="mb-12">
-            {/* Mobile: horizontal scrollable flex */}
-            <div className="block sm:hidden overflow-x-auto">
+            {/* Mobile: horizontal scrollable flex - scroll contained so page doesn't overflow */}
+            <div className="block sm:hidden overflow-x-auto w-full max-w-full" style={{ WebkitOverflowScrolling: 'touch' }}>
               <div className="flex gap-4 min-w-[600px]">
                 <div className="bg-white border border-green-100 rounded-xl p-6 min-w-[200px] flex-1 text-center shadow-sm">
                   <div className="mb-2 flex justify-center">
@@ -1107,8 +1107,8 @@ const CarbonTrackerNew = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-6 sm:py-8 overflow-x-hidden">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full box-border">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-8 py-6">

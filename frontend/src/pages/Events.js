@@ -155,26 +155,26 @@ const Events = () => {
           {/* Header / Hero Section */}
           <FadeIn duration={2}>
             <div className="">
-              <div className="bg-gradient-to-r from-green-500 to-emerald-600 w-full shadow-lg">
-                <div className="mx-auto max-w-7xl px-6 md:px-28 h-[calc(100vh-80px)] flex items-center">
-                  <div className="w-full flex flex-col items-center text-center">
-                    <p className="inline-flex items-center px-3 py-1 mb-4 text-xs font-semibold tracking-wide uppercase rounded-full bg-white/15 text-green-50 border border-white/20">
+              <div className="bg-gradient-to-r from-green-500 to-emerald-600 w-full shadow-lg overflow-hidden">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-12 lg:px-28 min-h-[min(100vh-80px,560px)] sm:min-h-[calc(100vh-80px)] py-10 sm:py-0 flex items-center w-full box-border overflow-hidden">
+                  <div className="w-full flex flex-col items-center text-center min-w-0">
+                    <p className="inline-flex items-center px-3 py-1 mb-3 sm:mb-4 text-xs font-semibold tracking-wide uppercase rounded-full bg-white/15 text-green-50 border border-white/20">
                       Discover · Sign-up · Act
                     </p>
 
-                    <h1 className="text-3xl md:text-6xl font-extrabold text-white mb-4 leading-tight">
+                    <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold text-white mb-3 sm:mb-4 leading-tight break-words px-2">
                       Eco-Events Calendar
                     </h1>
 
-                    <p className="text-base md:text-lg text-green-50/90 max-w-3xl mb-6 leading-relaxed">
+                    <p className="text-sm sm:text-base md:text-lg text-green-50/90 max-w-3xl mb-4 sm:mb-6 leading-relaxed break-words px-2">
                       Join sustainability-based events around Singapore and beyond. Connect with like-minded individuals,
                       and turn small actions into real impact.
                     </p>
 
-                    <ul className="space-y-2 text-sm md:text-base text-green-50/90 mb-10 max-w-3xl">
+                    <ul className="space-y-2 text-sm md:text-base text-green-50/90 mb-6 sm:mb-10 max-w-3xl px-2">
                       <li className="flex items-start justify-center gap-3">
-                        <span className="mt-2 h-1.5 w-1.5 rounded-full bg-white" />
-                        <span>Discover workshops, cleanups, and community events near you.</span>
+                        <span className="mt-2 h-1.5 w-1.5 rounded-full bg-white flex-shrink-0" />
+                        <span className="break-words">Discover workshops, cleanups, and community events near you.</span>
                       </li>
                       <li className="flex items-start justify-center gap-3">
                         <span className="mt-2 h-1.5 w-1.5 rounded-full bg-white" />
@@ -222,15 +222,15 @@ const Events = () => {
           </FadeIn>
 
           {/* Main Content */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 w-full box-border">
             
             {/* What can you do section */}
             <FadeIn delay={0.15} duration={2}>
               <div className="mb-14">
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-4">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 text-center mb-3 sm:mb-4 break-words px-2">
                   What can you do on the Eco-Events Calendar?
                 </h2>
-                <p className="text-gray-600 text-center max-w-3xl mx-auto mb-10">
+                <p className="text-gray-600 text-center max-w-3xl mx-auto mb-8 sm:mb-10 text-sm sm:text-base break-words px-2">
                   Think of this as your climate-social layer: discover events, join them in one click, and stay in the loop as new opportunities roll out across Singapore.
                 </p>
 

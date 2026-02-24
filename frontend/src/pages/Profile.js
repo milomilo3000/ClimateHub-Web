@@ -114,26 +114,26 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-6 sm:py-8 overflow-x-hidden">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full box-border">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center">
-              <User className="w-8 h-8 text-white" />
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="flex justify-center mb-3 sm:mb-4">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-primary-600 rounded-2xl flex items-center justify-center">
+              <User className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
             </div>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 break-words">
             Your Profile
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-base sm:text-lg text-gray-600 break-words px-2">
             Track your climate action journey and manage your account.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Profile Info */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 min-w-0">
             <div className="card">
               <div className="flex justify-between items-start mb-6">
                 <h2 className="text-xl font-bold text-gray-900">Profile Information</h2>
@@ -158,7 +158,7 @@ const Profile = () => {
                   </div>
                 )}
                 <h3 className="text-xl font-semibold text-gray-900">{user.displayName}</h3>
-                <p className="text-gray-600">{user.email}</p>
+                <p className="text-gray-600 text-sm sm:text-base break-all">{user.email}</p>
               </div>
 
               <div className="space-y-4">

@@ -23,7 +23,7 @@ function App() {
     <AuthProvider>
       <Router>
         <ScrollToTop />
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col overflow-x-hidden max-w-[100vw]">
           <Navbar />
           <main className="flex-grow">
             <Routes>
@@ -41,12 +41,12 @@ function App() {
               <Route path="/about/contact" element={<Contact />} />
  
               <Route path="*" element={
-                <div className="min-h-screen flex items-center justify-center">
-                  <div className="text-center">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-4">404 - Page Not Found</h1>
-                    <p className="text-gray-600 mb-4">The page you're looking for doesn't exist.</p>
-                    <p className="text-sm text-gray-500">Current path: {window.location.pathname}</p>
-                    <a href="/" className="mt-4 inline-block bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700">
+                <div className="min-h-screen flex items-center justify-center px-4 overflow-x-hidden">
+                  <div className="text-center max-w-full w-full box-border">
+                    <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 break-words">404 - Page Not Found</h1>
+                    <p className="text-gray-600 mb-4 text-sm sm:text-base break-words">The page you're looking for doesn't exist.</p>
+                    <p className="text-xs sm:text-sm text-gray-500 break-all mb-4">Current path: {window.location.pathname}</p>
+                    <a href="/" className="mt-4 inline-block bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 text-sm sm:text-base">
                       Go Home
                     </a>
                   </div>
