@@ -146,7 +146,7 @@ const AboutUs = () => {
                 <div className="w-full h-full">
                   <div className="w-full h-full rounded-2xl overflow-hidden flex items-center justify-center">
                     <img
-                      src="/images/Pangolin_Wave.png"
+                      src="/images/Climate_Hub_2.png"
                       alt="ClimateHub pangolin riding a green energy wave"
                       className="w-full h-full object-contain max-h-[280px] sm:max-h-[380px] md:max-h-[520px]"
                       onError={(e) => {

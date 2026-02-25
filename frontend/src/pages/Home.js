@@ -623,7 +623,7 @@ const Home = () => {
         </section>
 
         {/* Roulette Feature Section — on mobile: one card, full width; no cramped columns */}
-        <section className="py-10 sm:py-16 bg-gradient-to-b from-green-100 via-emerald-50 to-green-300 border-t border-green-200 overflow-hidden">
+        <section className="py-10 sm:py-16 bg-gradient-to-b from-green-200 via-emerald-50 to-emerald-200 border-t border-emerald-100 overflow-hidden">
           <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 w-full box-border">
             <div className="text-center mb-6 sm:mb-10">
               <h2 className="text-xl sm:text-2xl md:text-4xl font-bold text-gray-900 mb-2 sm:mb-3 break-words px-2 max-w-full">
@@ -642,7 +642,7 @@ const Home = () => {
 
 
         {/* Partners & Stats Combined Section */}
-        <section className="py-16 bg-gradient-to-b from-green-300 via-green-200 to-green-100 border-t border-green-300">
+        <section className="py-16 bg-gradient-to-b from-emerald-200 via-green-100 to-green-100 border-t border-emerald-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
             {/* LEFT — PARTNERS WITH TITLE */}
@@ -704,7 +704,7 @@ const Home = () => {
         {/* Features Section */}
 
         {/* Benefits Section */}
-        <section className="py-12 sm:py-14 bg-gradient-to-b from-green-100 via-green-50 to-white border-t border-green-100">
+        <section className="py-12 sm:py-14 bg-gradient-to-b from-green-100 via-cyan-50 to-cyan-100 border-t border-green-100">
           <FadeIn delay={0.4}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               {/* Centered title like the roulette section */}
@@ -735,7 +735,7 @@ const Home = () => {
                 {/* RIGHT — PANGOLIN IMAGE */}
                 <div className="w-full flex items-center justify-center lg:pr-6">
                   <img
-                    src="/images/Pangolin-Laptop.png"
+                    src="/images/Climate_Hub_1.png"
                     alt="Pangolin using ClimateHub to track carbon footprint"
                     className="max-w-full h-auto max-h-[260px] sm:max-h-[300px] object-contain"
                   />
@@ -746,7 +746,7 @@ const Home = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="py-12 sm:py-16 lg:py-20 bg-white border-t border-white">
+        <section className="py-12 sm:py-16 lg:py-20 bg-cyan-100 via-cyan-200 to-cyan-300 border-t border-cyan-100">
           <FadeIn delay={0.5}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl shadow-2xl p-8 sm:p-12 text-center">
