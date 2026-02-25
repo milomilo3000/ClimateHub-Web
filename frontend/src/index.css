@@ -480,7 +480,7 @@
 }
 
 .slick-dots li button:before {
-  font-size: 6px !important;  /* smaller dots for phones */
+  font-size: 10px !important;  /* visible on mobile; hero overrides to 14px */
   color: white !important;
   opacity: 0.6;
 }

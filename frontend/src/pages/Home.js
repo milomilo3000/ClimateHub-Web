@@ -146,41 +146,69 @@ const Home = () => {
   const RouletteCarousel = () => {
     const sliderRef = React.useRef(null);
     const [currentIndex, setCurrentIndex] = React.useState(1);
+    const [isMobile, setIsMobile] = React.useState(() => {
+      if (typeof window === 'undefined') return false;
+      return window.matchMedia('(max-width: 768px)').matches;
+    });
+
+    React.useEffect(() => {
+      if (typeof window === 'undefined') return;
+      const mq = window.matchMedia('(max-width: 768px)');
+      const handler = (e) => setIsMobile(e.matches);
+      // modern + fallback
+      if (mq.addEventListener) mq.addEventListener('change', handler);
+      else mq.addListener(handler);
+      setIsMobile(mq.matches);
+      return () => {
+        if (mq.removeEventListener) mq.removeEventListener('change', handler);
+        else mq.removeListener(handler);
+      };
+    }, []);
+
+    // Arrow components for mobile
+    const PrevArrow = (props) => {
+      const { className, onClick } = props;
+      return (
+        <button
+          type="button"
+          className={`${className} roulette-arrow roulette-arrow-prev`}
+          aria-label="Previous feature"
+          onClick={onClick}
+        />
+      );
+    };
+
+    const NextArrow = (props) => {
+      const { className, onClick } = props;
+      return (
+        <button
+          type="button"
+          className={`${className} roulette-arrow roulette-arrow-next`}
+          aria-label="Next feature"
+          onClick={onClick}
+        />
+      );
+    };
+
     const settings = {
       dots: true,
       infinite: true,
       speed: 500,
-      slidesToShow: 3,
+      slidesToShow: isMobile ? 1 : 3,
       slidesToScroll: 1,
       centerMode: true,
-      centerPadding: '0px',
-      arrows: false,
+      centerPadding: isMobile ? '0px' : '0px',
+      arrows: isMobile,
+      prevArrow: <PrevArrow />,
+      nextArrow: <NextArrow />,
       initialSlide: 1,
       beforeChange: (_, next) => setCurrentIndex(next),
       focusOnSelect: false,
       accessibility: false,
       pauseOnFocus: false,
-      responsive: [
-        {
-          breakpoint: 1024,
-          settings: {
-            slidesToShow: 1,
-            centerMode: true,
-            centerPadding: '60px',
-          }
-        },
-        {
-          breakpoint: 640,
-          settings: {
-            slidesToShow: 1,
-            centerMode: true,
-            centerPadding: '24px',
-          }
-        }
-      ]
     };
     return (
-      <Slider ref={sliderRef} {...settings} className="roulette-carousel">
+      <Slider key={isMobile ? 'mobile' : 'desktop'} ref={sliderRef} {...settings} className="roulette-carousel">
         {rouletteFeatures.map((feature, idx) => {
           const Icon = feature.icon;
           return (
@@ -189,14 +217,14 @@ const Home = () => {
               key={idx}
               onClick={() => sliderRef.current?.slickGoTo(idx)}
             >
-              <div className="roulette-card bg-white border border-gray-200 rounded-2xl p-6 sm:p-7 min-h-[220px] flex flex-col">
-                <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center mb-4">
-                  <Icon className="w-7 h-7 text-green-600" />
+              <div className="roulette-card bg-white border border-gray-200 rounded-2xl p-4 sm:p-7 min-h-[200px] sm:min-h-[220px] flex flex-col min-w-0">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-green-50 flex items-center justify-center mb-3 sm:mb-4 flex-shrink-0">
+                  <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-green-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                <h3 className="roulette-title text-base sm:text-xl font-semibold text-gray-900 mb-2 break-words">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4 flex-grow">
+                <p className="roulette-desc text-gray-600 text-sm sm:text-base leading-relaxed mb-4 flex-grow break-words min-w-0">
                   {feature.description}
                 </p>
                 <Link
@@ -298,9 +326,9 @@ const Home = () => {
   return (
     <>
       <style>{`
-         /* HERO carousel should fit within viewport minus navbar so dots are visible */
+         /* HERO carousel: viewport minus navbar */
          :root {
-           --navbar-height: 72px; /* adjust if you change navbar height */
+           --navbar-height: 72px;
          }
 
          .hero-carousel,
@@ -317,15 +345,38 @@ const Home = () => {
            height: 100%;
          }
 
-         /* The text overlay container should match the reduced hero height too */
          .hero-overlay-container {
            height: calc(100vh - var(--navbar-height));
          }
 
-         /* On small screens, navbar is usually taller */
+         /* Mobile: slightly shorter hero so content feels proportional; prevent overflow */
          @media (max-width: 640px) {
            :root {
              --navbar-height: 88px;
+           }
+           .hero-carousel,
+           .hero-carousel .slick-list,
+           .hero-carousel .slick-track,
+           .hero-carousel-slide,
+           .hero-overlay-container {
+             min-height: 60vh;
+             max-height: calc(100vh - var(--navbar-height));
+           }
+         }
+
+         /* Hero carousel dots: larger and visible on mobile */
+         .custom-carousel .slick-dots li button:before {
+           font-size: 14px !important;
+           opacity: 0.7;
+           color: white !important;
+         }
+         .custom-carousel .slick-dots li.slick-active button:before {
+           opacity: 1;
+           color: white !important;
+         }
+         @media (min-width: 640px) {
+           .custom-carousel .slick-dots li button:before {
+             font-size: 12px !important;
            }
          }
          /* Roulette carousel */
@@ -335,73 +386,177 @@ const Home = () => {
            margin-top: 16px;
          }
          .roulette-carousel .slick-dots li button:before {
-           font-size: 10px;
+           font-size: 12px;
            opacity: 0.35;
            color: #16a34a; /* green-600 */
+         }
+         @media (min-width: 640px) {
+           .roulette-carousel .slick-dots li button:before {
+             font-size: 10px;
+           }
          }
          .roulette-carousel .slick-dots li.slick-active button:before {
            opacity: 1;
            color: #16a34a;
          }
+         /* Mobile-only arrows (mid left/right) for the roulette carousel */
+         .roulette-arrow {
+           display: none; /* default hidden on desktop */
+         }
+
+         @media (max-width: 768px) {
+           .roulette-arrow {
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             position: absolute;
+             top: 50%;
+             transform: translateY(-50%);
+             z-index: 10;
+             width: 42px;
+             height: 42px;
+             border-radius: 9999px;
+             background: rgba(255, 255, 255, 0.95);
+             border: 1px solid rgba(22, 163, 74, 0.25); /* green-600 tint */
+             box-shadow: 0 10px 25px rgba(0,0,0,0.10);
+             cursor: pointer;
+           }
+
+           .roulette-arrow-prev { left: 10px; }
+           .roulette-arrow-next { right: 10px; }
+
+           /* Use slick's :before to draw chevrons */
+           .roulette-arrow:before {
+             font-size: 28px;
+             line-height: 1;
+             color: #16a34a; /* green-600 */
+             opacity: 1;
+           }
+
+           /* Make sure arrows are always visible even when slick disables them */
+           .roulette-arrow.slick-disabled {
+             opacity: 0.35;
+             pointer-events: none;
+           }
+
+           /* Give the carousel a bit of horizontal breathing room so arrows don't overlap content */
+           .roulette-carousel {
+             padding-left: 56px;
+             padding-right: 56px;
+           }
+
+           /* On mobile we don't want the side cards to peek; keep the card centered */
+           .roulette-carousel .slick-list {
+             overflow: hidden;
+           }
+         }
+
+         @media (max-width: 420px) {
+           .roulette-arrow {
+             width: 38px;
+             height: 38px;
+           }
+           .roulette-arrow:before {
+             font-size: 26px;
+           }
+           .roulette-arrow-prev { left: 8px; }
+           .roulette-arrow-next { right: 8px; }
+           .roulette-carousel {
+             padding-left: 50px;
+             padding-right: 50px;
+           }
+         }
          .roulette-slide {
            padding: 10px;
          }
+
+         /* Mobile: make the centered card much wider */
+         @media (max-width: 768px) {
+           .roulette-slide {
+             padding: 0;
+           }
+           .roulette-card {
+             width: 100%;
+           }
+         }
          .roulette-card {
            opacity: 0.4;
-           transform: scale(0.92);
+           transform: scale(0.8);
            background: #ffffff;
+           overflow: hidden;
            transition: opacity 250ms ease, transform 250ms ease, box-shadow 250ms ease, background-color 250ms ease;
+         }
+
+         /* Mobile readability: clamp long text so cards don't overflow */
+         @media (max-width: 768px) {
+           .roulette-title {
+             display: -webkit-box;
+             -webkit-box-orient: vertical;
+             -webkit-line-clamp: 2;
+             overflow: hidden;
+           }
+           .roulette-desc {
+             display: -webkit-box;
+             -webkit-box-orient: vertical;
+             -webkit-line-clamp: 4;
+             overflow: hidden;
+           }
+         }
+
+         /* Slightly tighter for very small phones */
+         @media (max-width: 420px) {
+           .roulette-desc {
+             -webkit-line-clamp: 3;
+           }
          }
 
          /* Hover preview: make hovered card fully visible + pop + light green */
          .roulette-slide:hover .roulette-card {
            opacity: 1;
            transform: scale(1);
-           background-color: #bbf7d0; /* tailwind green-200 */
+           background-color:rgb(255, 255, 255); 
            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
          }
 
-         /* Do NOT keep the centered slide popped — hover should be the only trigger */
+         /* Desktop: centered slide dimmed; hover pops it */
          .roulette-carousel .slick-center .roulette-card {
            opacity: 0.4;
            transform: scale(0.92);
            box-shadow: none;
-           background: #ffffff;
+           background:rgb(255, 255, 255);
+         }
+         /* Mobile: single visible card always full so it's readable (no hover) */
+         @media (max-width: 768px) {
+           .roulette-carousel .slick-center .roulette-card {
+             opacity: 1;
+             transform: scale(1);
+             background: #ffffff;
+             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+             pointer-events: auto;
+           }
          }
 
          /* If the centered slide is hovered, apply the same hover styles */
          .roulette-carousel .slick-center:hover .roulette-card {
            opacity: 1;
            transform: scale(1);
-           background-color: #bbf7d0; /* tailwind green-200 */
+           background-color:rgb(255, 255, 255); /* tailwind green-200 */
            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
          }
          .custom-carousel .slick-dots {
            position: absolute;
-           bottom: 20px;
+           bottom: 16px;
            left: 0;
            right: 0;
            margin: 0 auto;
            z-index: 5;
          }
          .custom-carousel .slick-dots li {
-           margin: 0 4px;
-         }
-         .custom-carousel .slick-dots li button:before {
-           font-size: 10px;
-           opacity: 0.5;
-           color: white;
-         }
-         .custom-carousel .slick-dots li.slick-active button:before {
-           opacity: 1;
-           color: white;
+           margin: 0 6px;
          }
          @media (min-width: 640px) {
            .custom-carousel .slick-dots {
              bottom: 70px;
-           }
-           .custom-carousel .slick-dots li button:before {
-             font-size: 12px;
            }
          }
          @media (min-width: 1024px) {
@@ -415,15 +570,15 @@ const Home = () => {
            }
          }
       `}</style>
-      <div>
+      <div className="overflow-x-hidden w-full max-w-[100vw]">
         {/* Hero Section */}
-        <section className="relative">
+        <section className="relative overflow-hidden">
           <FadeIn>
             <HeroCarousel />
-            <div className="absolute inset-0 hero-overlay-container flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8">
+            <div className="absolute inset-0 hero-overlay-container flex flex-col justify-center items-center text-center px-3 sm:px-6 lg:px-8 overflow-hidden">
               <FadeIn delay={0.6}>
-                <div className="flex justify-center mb-4 sm:mb-6">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center relative overflow-hidden bg-transparent">
+                <div className="flex justify-center mb-2 sm:mb-6">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center relative overflow-hidden bg-transparent flex-shrink-0">
                     <img
                       src="/images/apple-touch-icon.png"
                       alt="ClimateHub leaf logo"
@@ -433,33 +588,33 @@ const Home = () => {
                 </div>
               </FadeIn>
               
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-6 animate__animated animate__fadeInDown">
+                <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2 sm:mb-6 animate__animated animate__fadeInDown break-words max-w-full">
                   ClimateHub
                 </h1>
               
               <FadeIn delay={1.0}>
-                <h2 className="text-base sm:text-xl md:text-2xl lg:text-3xl font-semibold text-green-200 mb-3 sm:mb-4 px-2">
+                <h2 className="text-sm sm:text-xl md:text-2xl lg:text-3xl font-semibold text-green-200 mb-2 sm:mb-4 px-1 break-words max-w-full">
                   Environmental Action, Made Easy
                 </h2>
               </FadeIn>
               <FadeIn delay={1.2}>
-                <p className="text-sm sm:text-lg md:text-xl text-gray-100 mb-6 sm:mb-8 max-w-xs sm:max-w-2xl lg:max-w-3xl mx-auto leading-relaxed px-2">
+                <p className="text-xs sm:text-lg md:text-xl text-gray-100 mb-4 sm:mb-8 max-w-[min(16rem,85vw)] sm:max-w-2xl lg:max-w-3xl mx-auto leading-relaxed px-1 break-words">
                 Singapore's one-stop platform for environmental action
                 </p>
               </FadeIn>
               <FadeIn delay={1.4}>
-                <div className="flex justify-center w-full px-4 mb-6 sm:mb-8">
+                <div className="flex justify-center w-full px-3 mb-4 sm:mb-8">
                   <Link
                     to="/carbon-tracker"
                     className="bg-green-600 hover:bg-green-700 text-white font-semibold 
-                      py-2 sm:py-4 px-4 sm:px-8 
+                      py-2.5 sm:py-4 px-5 sm:px-8 
                       rounded-lg text-sm sm:text-lg 
                       transition-colors duration-200 
-                      inline-flex items-center justify-center space-x-2 
-                      w-auto max-w-[300px] sm:max-w-sm md:w-auto min-h-[30px]"
+                      inline-flex items-center justify-center gap-2 
+                      w-full max-w-[280px] sm:max-w-sm md:w-auto min-h-[44px]"
                   >
-                    <span>Calculate your footprint</span>
-                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="break-words">Calculate your footprint</span>
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                   </Link>
                 </div>
               </FadeIn>
@@ -467,19 +622,19 @@ const Home = () => {
           </FadeIn>
         </section>
 
-        {/* Roulette Feature Section */}
-        <section className="py-12 sm:py-16 bg-white border-t border-green-100">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8 sm:mb-10">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+        {/* Roulette Feature Section — on mobile: one card, full width; no cramped columns */}
+        <section className="py-10 sm:py-16 bg-gradient-to-b from-green-100 via-emerald-50 to-green-300 border-t border-green-200 overflow-hidden">
+          <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 w-full box-border">
+            <div className="text-center mb-6 sm:mb-10">
+              <h2 className="text-xl sm:text-2xl md:text-4xl font-bold text-gray-900 mb-2 sm:mb-3 break-words px-2 max-w-full">
                 Everything you need to start your own action journey
               </h2>
-              <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+              <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto break-words px-2">
                 Built for Singaporean youth — NSFs, school and university students — to track impact, learn fast, and take action.
               </p>
             </div>
 
-            <div className="roulette-carousel">
+            <div className="roulette-carousel w-full max-w-full">
               <RouletteCarousel />
             </div>
           </div>
@@ -487,7 +642,7 @@ const Home = () => {
 
 
         {/* Partners & Stats Combined Section */}
-        <section className="py-16 bg-green-50 border-t border-slate-100">
+        <section className="py-16 bg-gradient-to-b from-green-300 via-green-200 to-green-100 border-t border-green-300">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
             {/* LEFT — PARTNERS WITH TITLE */}
@@ -549,7 +704,7 @@ const Home = () => {
         {/* Features Section */}
 
         {/* Benefits Section */}
-        <section className="py-10 sm:py-12 bg-slate-50 border-t border-slate-100">
+        <section className="py-12 sm:py-14 bg-gradient-to-b from-green-100 via-green-50 to-white border-t border-green-100">
           <FadeIn delay={0.4}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               {/* Centered title like the roulette section */}
@@ -591,7 +746,7 @@ const Home = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="py-12 sm:py-16 lg:py-20 bg-white border-t border-slate-100">
+        <section className="py-12 sm:py-16 lg:py-20 bg-white border-t border-white">
           <FadeIn delay={0.5}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl shadow-2xl p-8 sm:p-12 text-center">
