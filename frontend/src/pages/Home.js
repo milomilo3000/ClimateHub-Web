@@ -735,7 +735,7 @@ const Home = () => {
                 {/* RIGHT — PANGOLIN IMAGE */}
                 <div className="w-full flex items-center justify-center lg:pr-6">
                   <img
-                    src="/images/Climate_Hub_1.png"
+                    src="/images/Climate_Hub_3.png"
                     alt="Pangolin using ClimateHub to track carbon footprint"
                     className="max-w-full h-auto max-h-[260px] sm:max-h-[300px] object-contain"
                   />
