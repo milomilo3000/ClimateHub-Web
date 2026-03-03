@@ -285,9 +285,9 @@ const Home = () => {
 
   // Array of images to show in the hero carousel
   const heroImages = [
-    "/images/skyline.jpg",
-    "/images/Treetops.jpg",
-    "/images/resevoir.jpg"
+    "/images/gardens-by-the-bay.jpg",
+    "/images/jewel-changi.jpg",
+    "/images/marsiling-park.jpg"
   ];
 
 
