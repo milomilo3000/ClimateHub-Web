@@ -742,8 +742,8 @@ const EducationHub = () => {
               <div className="p-6 border border-gray-200 rounded-lg">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Carbon Tax</h3>
                 <p className="text-gray-600 mb-4">
-                  Singapore implemented a carbon tax in 2019, starting at S$5 per tonne of CO₂ 
-                  and increasing to S$25 by 2024.
+                  A carbon tax was implemented in 2019, starting at S$5 per tonne of CO₂, 
+                  increasing to S$25 in 2024, $45 in 2026, and eventually between $50 to $80 in 2030.
                 </p>
                 <div className="text-sm text-gray-500">
                   <strong>Impact:</strong> Encourages businesses to reduce emissions and 
@@ -786,14 +786,13 @@ const EducationHub = () => {
               </div>
 
               <div className="p-6 border border-gray-200 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">30 by 30 Food Security</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Regional Power Grid</h3>
                 <p className="text-gray-600 mb-4">
-                  Goal to produce 30% of Singapore's nutritional needs locally by 2030, 
-                  reducing food miles and increasing resilience.
+                Singapore plans to import 6GW of low-carbon electricity by 2035,
+                tapping on neighbouring countries' renewable energy sources.
                 </p>
                 <div className="text-sm text-gray-500">
-                  <strong>Methods:</strong> Vertical farming, urban agriculture, 
-                  sustainable aquaculture
+                  <strong>Progress:</strong> 11 approved projects and 6 advancing toward implementation
                 </div>
               </div>
             </div>
