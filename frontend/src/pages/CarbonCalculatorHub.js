@@ -1,12 +1,10 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Calculator, Leaf, Users, TrendingUp, ArrowRight } from 'lucide-react';
 import FadeIn from '../components/animations/FadeIn';
 import StaggerWrapper from '../components/animations/StaggerWrapper';
 
 const CarbonCalculatorHub = () => {
-  const navigate = useNavigate();
-
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
     if (el) {
@@ -137,13 +135,12 @@ const CarbonCalculatorHub = () => {
                       >
                         NSF
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => scrollToSection('section-what')}
+                      <Link
+                        to="/carbon-tracker/youth"
                         className="py-2.5 rounded-lg bg-white text-[11px] font-semibold text-slate-900 flex items-center justify-center shadow-sm border border-slate-200 hover:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
                       >
                         Youth
-                      </button>
+                      </Link>
                       <button
                         type="button"
                         onClick={() => scrollToSection('section-what')}
@@ -328,45 +325,30 @@ const CarbonCalculatorHub = () => {
                 </div>
               </Link>
 
-              {/* Youth Carbon Footprint Tracker - COMING SOON */}
-              <div id="youth-calculator" className="relative">
-                <div className="bg-white rounded-2xl shadow-lg p-8 blur-sm opacity-60">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center">
-                      <Users className="w-7 h-7 text-white" />
-                    </div>
-                    <ArrowRight className="w-6 h-6 text-blue-600" />
+              {/* Youth Carbon Footprint Tracker */}
+              <Link
+                id="youth-calculator"
+                to="/carbon-tracker/youth"
+                className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-2 border-transparent hover:border-blue-500"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center">
+                    <Users className="w-7 h-7 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                    Youth Carbon Footprint Tracker
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed mb-4">
-                    Tailored for young Singaporeans. Track your environmental impact 
-                    from school, social activities, and lifestyle choices.
-                  </p>
-                  <div className="inline-flex items-center text-blue-600 font-semibold">
-                    <span>Start Calculating</span>
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </div>
+                  <ArrowRight className="w-6 h-6 text-blue-600" />
                 </div>
-                
-                {/* Coming Soon Overlay */}
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="bg-white rounded-2xl shadow-2xl p-8 text-center max-w-sm border-2 border-blue-500">
-                    <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Users className="w-8 h-8 text-white" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">Coming Soon</h3>
-                    <p className="text-gray-600 mb-4">
-                      The Youth Carbon Footprint Tracker is currently under development. 
-                      We're working hard to bring you this feature soon!
-                    </p>
-                    <div className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-semibold">
-                      🚀 In Development
-                    </div>
-                  </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                  Youth Carbon Footprint Tracker
+                </h3>
+                <p className="text-gray-600 leading-relaxed mb-4">
+                  Tailored for young Singaporeans. Track your environmental impact
+                  from school, social activities, and lifestyle choices.
+                </p>
+                <div className="inline-flex items-center text-blue-600 font-semibold">
+                  <span>Start Calculating</span>
+                  <ArrowRight className="w-5 h-5 ml-2" />
                 </div>
-              </div>
+              </Link>
             </div>
               </div>
             </div>

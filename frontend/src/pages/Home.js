@@ -145,7 +145,6 @@ const Home = () => {
   // RouletteCarousel component
   const RouletteCarousel = () => {
     const sliderRef = React.useRef(null);
-    const [currentIndex, setCurrentIndex] = React.useState(1);
     const [isMobile, setIsMobile] = React.useState(() => {
       if (typeof window === 'undefined') return false;
       return window.matchMedia('(max-width: 768px)').matches;
@@ -165,44 +164,16 @@ const Home = () => {
       };
     }, []);
 
-    // Arrow components for mobile
-    const PrevArrow = (props) => {
-      const { className, onClick } = props;
-      return (
-        <button
-          type="button"
-          className={`${className} roulette-arrow roulette-arrow-prev`}
-          aria-label="Previous feature"
-          onClick={onClick}
-        />
-      );
-    };
-
-    const NextArrow = (props) => {
-      const { className, onClick } = props;
-      return (
-        <button
-          type="button"
-          className={`${className} roulette-arrow roulette-arrow-next`}
-          aria-label="Next feature"
-          onClick={onClick}
-        />
-      );
-    };
-
     const settings = {
       dots: true,
       infinite: true,
       speed: 500,
       slidesToShow: isMobile ? 1 : 3,
       slidesToScroll: 1,
-      centerMode: true,
-      centerPadding: isMobile ? '0px' : '0px',
-      arrows: isMobile,
-      prevArrow: <PrevArrow />,
-      nextArrow: <NextArrow />,
-      initialSlide: 1,
-      beforeChange: (_, next) => setCurrentIndex(next),
+      centerMode: !isMobile,
+      centerPadding: '0px',
+      arrows: false,
+      initialSlide: isMobile ? 0 : 1,
       focusOnSelect: false,
       accessibility: false,
       pauseOnFocus: false,
@@ -349,18 +320,27 @@ const Home = () => {
            height: calc(100vh - var(--navbar-height));
          }
 
-         /* Mobile: slightly shorter hero so content feels proportional; prevent overflow */
+         /* Mobile hero: shorter, tighter, and visually balanced */
          @media (max-width: 640px) {
            :root {
-             --navbar-height: 88px;
+             --navbar-height: 64px;
            }
            .hero-carousel,
            .hero-carousel .slick-list,
            .hero-carousel .slick-track,
            .hero-carousel-slide,
            .hero-overlay-container {
-             min-height: 60vh;
-             max-height: calc(100vh - var(--navbar-height));
+             height: min(72svh, 640px);
+           }
+
+           .hero-overlay-container {
+             justify-content: flex-start;
+             padding-top: calc(var(--navbar-height) + 2rem);
+             padding-bottom: 4.5rem;
+           }
+
+           .hero-carousel-img {
+             object-position: center;
            }
          }
 
@@ -399,73 +379,6 @@ const Home = () => {
            opacity: 1;
            color: #16a34a;
          }
-         /* Mobile-only arrows (mid left/right) for the roulette carousel */
-         .roulette-arrow {
-           display: none; /* default hidden on desktop */
-         }
-
-         @media (max-width: 768px) {
-           .roulette-arrow {
-             display: flex;
-             align-items: center;
-             justify-content: center;
-             position: absolute;
-             top: 50%;
-             transform: translateY(-50%);
-             z-index: 10;
-             width: 42px;
-             height: 42px;
-             border-radius: 9999px;
-             background: rgba(255, 255, 255, 0.95);
-             border: 1px solid rgba(22, 163, 74, 0.25); /* green-600 tint */
-             box-shadow: 0 10px 25px rgba(0,0,0,0.10);
-             cursor: pointer;
-           }
-
-           .roulette-arrow-prev { left: 10px; }
-           .roulette-arrow-next { right: 10px; }
-
-           /* Use slick's :before to draw chevrons */
-           .roulette-arrow:before {
-             font-size: 28px;
-             line-height: 1;
-             color: #16a34a; /* green-600 */
-             opacity: 1;
-           }
-
-           /* Make sure arrows are always visible even when slick disables them */
-           .roulette-arrow.slick-disabled {
-             opacity: 0.35;
-             pointer-events: none;
-           }
-
-           /* Give the carousel a bit of horizontal breathing room so arrows don't overlap content */
-           .roulette-carousel {
-             padding-left: 56px;
-             padding-right: 56px;
-           }
-
-           /* On mobile we don't want the side cards to peek; keep the card centered */
-           .roulette-carousel .slick-list {
-             overflow: hidden;
-           }
-         }
-
-         @media (max-width: 420px) {
-           .roulette-arrow {
-             width: 38px;
-             height: 38px;
-           }
-           .roulette-arrow:before {
-             font-size: 26px;
-           }
-           .roulette-arrow-prev { left: 8px; }
-           .roulette-arrow-next { right: 8px; }
-           .roulette-carousel {
-             padding-left: 50px;
-             padding-right: 50px;
-           }
-         }
          .roulette-slide {
            padding: 10px;
          }
@@ -480,34 +393,18 @@ const Home = () => {
            }
          }
          .roulette-card {
-           opacity: 0.4;
-           transform: scale(0.8);
+           opacity: 1;
+           transform: scale(1);
            background: #ffffff;
            overflow: hidden;
            transition: opacity 250ms ease, transform 250ms ease, box-shadow 250ms ease, background-color 250ms ease;
          }
 
-         /* Mobile readability: clamp long text so cards don't overflow */
-         @media (max-width: 768px) {
-           .roulette-title {
-             display: -webkit-box;
-             -webkit-box-orient: vertical;
-             -webkit-line-clamp: 2;
-             overflow: hidden;
-           }
-           .roulette-desc {
-             display: -webkit-box;
-             -webkit-box-orient: vertical;
-             -webkit-line-clamp: 4;
-             overflow: hidden;
-           }
-         }
-
-         /* Slightly tighter for very small phones */
-         @media (max-width: 420px) {
-           .roulette-desc {
-             -webkit-line-clamp: 3;
-           }
+         /* Keep full text visible on mobile */
+         .roulette-title,
+         .roulette-desc {
+           overflow-wrap: anywhere;
+           word-break: normal;
          }
 
          /* Hover preview: make hovered card fully visible + pop + light green */
@@ -518,21 +415,18 @@ const Home = () => {
            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
          }
 
-         /* Desktop: centered slide dimmed; hover pops it */
-         .roulette-carousel .slick-center .roulette-card {
-           opacity: 0.4;
-           transform: scale(0.92);
-           box-shadow: none;
-           background:rgb(255, 255, 255);
-         }
-         /* Mobile: single visible card always full so it's readable (no hover) */
-         @media (max-width: 768px) {
+         /* Desktop: non-centered cards are dimmed; center card pops */
+         @media (min-width: 769px) {
+           .roulette-carousel .slick-slide .roulette-card {
+             opacity: 0.45;
+             transform: scale(0.9);
+             box-shadow: none;
+           }
            .roulette-carousel .slick-center .roulette-card {
              opacity: 1;
              transform: scale(1);
+             box-shadow: 0 20px 50px rgba(0,0,0,0.15);
              background: #ffffff;
-             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-             pointer-events: auto;
            }
          }
 
@@ -553,6 +447,11 @@ const Home = () => {
          }
          .custom-carousel .slick-dots li {
            margin: 0 6px;
+         }
+         @media (max-width: 639px) {
+           .custom-carousel .slick-dots {
+             bottom: 18px;
+           }
          }
          @media (min-width: 640px) {
            .custom-carousel .slick-dots {
@@ -575,10 +474,10 @@ const Home = () => {
         <section className="relative overflow-hidden">
           <FadeIn>
             <HeroCarousel />
-            <div className="absolute inset-0 hero-overlay-container flex flex-col justify-center items-center text-center px-3 sm:px-6 lg:px-8 overflow-hidden">
+            <div className="absolute inset-0 hero-overlay-container flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 overflow-hidden">
               <FadeIn delay={0.6}>
-                <div className="flex justify-center mb-2 sm:mb-6">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center relative overflow-hidden bg-transparent flex-shrink-0">
+                <div className="flex justify-center mb-1 sm:mb-6">
+                  <div className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center relative overflow-hidden bg-transparent flex-shrink-0">
                     <img
                       src="/images/apple-touch-icon.png"
                       alt="ClimateHub leaf logo"
@@ -588,30 +487,30 @@ const Home = () => {
                 </div>
               </FadeIn>
               
-                <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2 sm:mb-6 animate__animated animate__fadeInDown break-words max-w-full">
+                <h1 className="text-[2rem] sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-1 sm:mb-6 leading-tight animate__animated animate__fadeInDown break-words max-w-full">
                   ClimateHub
                 </h1>
               
               <FadeIn delay={1.0}>
-                <h2 className="text-sm sm:text-xl md:text-2xl lg:text-3xl font-semibold text-green-200 mb-2 sm:mb-4 px-1 break-words max-w-full">
+                <h2 className="text-base sm:text-xl md:text-2xl lg:text-3xl font-semibold text-green-200 mb-2 sm:mb-4 px-2 leading-snug break-words max-w-[19rem] sm:max-w-full">
                   Environmental Action, Made Easy
                 </h2>
               </FadeIn>
               <FadeIn delay={1.2}>
-                <p className="text-xs sm:text-lg md:text-xl text-gray-100 mb-4 sm:mb-8 max-w-[min(16rem,85vw)] sm:max-w-2xl lg:max-w-3xl mx-auto leading-relaxed px-1 break-words">
+                <p className="text-sm sm:text-lg md:text-xl text-gray-100 mb-4 sm:mb-8 max-w-[17rem] sm:max-w-2xl lg:max-w-3xl mx-auto leading-relaxed px-2 break-words">
                 Singapore's one-stop platform for environmental action
                 </p>
               </FadeIn>
               <FadeIn delay={1.4}>
-                <div className="flex justify-center w-full px-3 mb-4 sm:mb-8">
+                <div className="flex justify-center w-full px-4 mb-4 sm:mb-8">
                   <Link
                     to="/carbon-tracker"
                     className="bg-green-600 hover:bg-green-700 text-white font-semibold 
-                      py-2.5 sm:py-4 px-5 sm:px-8 
-                      rounded-lg text-sm sm:text-lg 
+                      py-3 sm:py-4 px-5 sm:px-8 
+                      rounded-xl text-base sm:text-lg 
                       transition-colors duration-200 
                       inline-flex items-center justify-center gap-2 
-                      w-full max-w-[280px] sm:max-w-sm md:w-auto min-h-[44px]"
+                      w-full max-w-[260px] sm:max-w-sm md:w-auto min-h-[48px] shadow-lg"
                   >
                     <span className="break-words">Calculate your footprint</span>
                     <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
@@ -746,28 +645,28 @@ const Home = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="py-12 sm:py-16 lg:py-20 bg-cyan-100 via-cyan-200 to-cyan-300 border-t border-cyan-100">
+        <section className="py-8 sm:py-16 lg:py-20 bg-cyan-100 via-cyan-200 to-cyan-300 border-t border-cyan-100">
           <FadeIn delay={0.5}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl shadow-2xl p-8 sm:p-12 text-center">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6">
+              <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl shadow-2xl px-5 py-6 sm:p-12 text-center">
+                <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-6 leading-tight max-w-[16rem] sm:max-w-none mx-auto">
                   Ready to Build Singapore's Green Future?
                 </h2>
-                <p className="text-base sm:text-lg lg:text-xl text-green-100 mb-6 sm:mb-8 max-w-xl sm:max-w-2xl mx-auto px-4">
+                <p className="text-sm sm:text-lg lg:text-xl text-green-100 mb-5 sm:mb-8 max-w-[16.5rem] sm:max-w-2xl mx-auto px-1 sm:px-4 leading-relaxed">
                   Join fellow Singaporeans in making every day count for the environment. 
                   Start your eco-mission today and be part of the movement towards sustainability.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center max-w-md sm:max-w-none mx-auto">
+                <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-4 justify-center max-w-[15rem] sm:max-w-none mx-auto">
                   <Link
                     to="/carbon-tracker"
-                    className="bg-white text-emerald-600 hover:bg-gray-100 font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg text-base sm:text-lg transition-colors duration-200 inline-flex items-center justify-center space-x-2 w-full sm:w-auto min-h-[48px]"
+                    className="bg-white text-emerald-600 hover:bg-gray-100 font-semibold py-2.5 sm:py-4 px-5 sm:px-8 rounded-lg text-sm sm:text-lg transition-colors duration-200 inline-flex items-center justify-center space-x-2 w-full sm:w-auto min-h-[44px]"
                   >
                     <span>Calculate Your Footprint</span>
                     <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                   </Link>
                   <Link
                     to="/events"
-                    className="border-2 border-white text-white hover:bg-white hover:text-emerald-600 font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-lg text-base sm:text-lg transition-colors duration-200 inline-flex items-center justify-center space-x-2 w-full sm:w-auto min-h-[48px]"
+                    className="border-2 border-white text-white hover:bg-white hover:text-emerald-600 font-semibold py-2.5 sm:py-4 px-5 sm:px-8 rounded-lg text-sm sm:text-lg transition-colors duration-200 inline-flex items-center justify-center space-x-2 w-full sm:w-auto min-h-[44px]"
                   >
                     <span>Explore Events</span>
                     <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />

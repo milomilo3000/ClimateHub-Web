@@ -7,6 +7,7 @@ import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
 import CarbonCalculatorHub from './pages/CarbonCalculatorHub';
 import CarbonTrackerNew from './pages/CarbonTrackerNew';
+import CarbonTrackerYouth from './pages/CarbonTrackerYouth';
 import EducationHub from './pages/EducationHub';
 import Events from './pages/Events';
 import Profile from './pages/Profile';
@@ -25,6 +26,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/carbon-tracker" element={<CarbonCalculatorHub />} />
               <Route path="/carbon-tracker/nsf" element={<CarbonTrackerNew />} />
+              <Route path="/carbon-tracker/youth" element={<CarbonTrackerYouth />} />
               <Route path="/education" element={<EducationHub />} />
               <Route path="/events" element={<Events />} />
               <Route path="/profile" element={<Profile />} />
