@@ -30,7 +30,7 @@ const Events = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [category, setCategory] = useState('all');
-  const [status, setStatus] = useState('upcoming');
+  const [status, setStatus] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
@@ -47,11 +47,20 @@ const Events = () => {
     try {
       const response = await axios.get('/api/events');
       if (response.data.success) {
-        setEvents(response.data.events);
-        setFilteredEvents(response.data.events);
+        const apiEvents = response.data.events || [];
+      
+        const mergedEvents = [
+          ...recentCompletedEvents,
+          ...apiEvents
+        ];
+      
+        setEvents(mergedEvents);
+        setFilteredEvents(mergedEvents);
       }
     } catch (error) {
       console.error('Error fetching events:', error);
+      setEvents(recentCompletedEvents);
+      setFilteredEvents(recentCompletedEvents);
       toast.error('Failed to fetch events');
     } finally {
       setLoading(false);
@@ -146,6 +155,53 @@ const Events = () => {
     { name: 'WWF', logo: 'https://via.placeholder.com/120x60?text=WWF' },
     { name: 'Climate Action SG', logo: 'https://via.placeholder.com/120x60?text=Climate+Action' },
     { name: 'Green Movement', logo: 'https://via.placeholder.com/120x60?text=Green+Movement' }
+  ];
+
+  const recentCompletedEvents = [
+    {
+      _id: 'selarang-briefing-info-session-2025-09-26',
+      title: 'Sustainability Briefing and Info Session',
+      description: 'A sustainability briefing and introductory information session conducted at Selarang Camp to build awareness around ClimateHub, climate action, and everyday sustainable habits.',
+      organizer: 'ClimateHub',
+      category: 'seminar',
+      status: 'completed',
+      startDate: '2025-09-26T09:30:00+08:00',
+      endDate: '2025-09-26T11:30:00+08:00',
+      location: { address: 'Selarang Camp' }
+    },
+    {
+      _id: 'selarang-weekly-carbon-footprint-challenge-2025-10-01',
+      title: 'Weekly Carbon Footprint Challenge',
+      description: 'A camp-based challenge encouraging participants to track and reflect on their weekly carbon footprint.',
+      organizer: 'ClimateHub',
+      category: 'volunteer',
+      status: 'completed',
+      startDate: '2025-10-01T13:00:00+08:00',
+      endDate: '2025-10-01T14:00:00+08:00',
+      location: { address: 'Selarang Camp' }
+    },
+    {
+      _id: 'selarang-briefing-data-exploration-2025-11-14',
+      title: 'Sustainability Briefing and Data Exploration',
+      description: 'A follow-up session exploring data and behavioural insights from participants.',
+      organizer: 'ClimateHub',
+      category: 'workshop',
+      status: 'completed',
+      startDate: '2025-11-14T09:30:00+08:00',
+      endDate: '2025-11-14T11:30:00+08:00',
+      location: { address: 'Selarang Camp' }
+    },
+    {
+      _id: 'selarang-recycling-drive-2025-12-29',
+      title: 'Sustainability Recycling Drive',
+      description: 'A recycling drive promoting better waste segregation habits.',
+      organizer: 'ClimateHub',
+      category: 'cleanup',
+      status: 'completed',
+      startDate: '2025-12-29T14:00:00+08:00',
+      endDate: '2025-12-29T16:00:00+08:00',
+      location: { address: 'Selarang Camp' }
+    }
   ];
 
   return (

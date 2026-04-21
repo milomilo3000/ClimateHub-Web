@@ -532,7 +532,7 @@ const CarbonTrackerYouth = () => {
             </div>
 
             <div>
-              <label className="form-label">How many times did you order-in or takeaway in the past week (includes canteen, lim kopi, etc)?</label>
+              <label className="form-label">How many times did you order food delivery or takeaway in the past week? (e.g., GrabFood, Foodpanda) </label>
               <select {...register('diet.takeaway', { required: true })} className="input-field">
                 <option value="">Select times per week</option>
                 <option value="0">0 times</option>
@@ -543,7 +543,7 @@ const CarbonTrackerYouth = () => {
             </div>
 
             <div>
-              <label className="form-label">How many times in the past week have you bought packaged drinks/snacks/instant noodles from Cheers?</label>
+              <label className="form-label">How many times did you buy packaged drinks, snacks, or instant meals in the past week? (e.g. 7-Eleven, Cheers) </label>
               <select {...register('diet.packagedSnacks', { required: true })} className="input-field">
                 <option value="">Select times per week</option>
                 <option value="0">0 times</option>

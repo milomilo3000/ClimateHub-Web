@@ -69,7 +69,7 @@ const Navbar = () => {
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex justify-between items-center h-16">
           {/* Logo and main navigation */}
           <div className="flex items-center">
             <Link 
@@ -85,7 +85,7 @@ const Navbar = () => {
                 alt="ClimateHub Logo"
                 className="w-8 h-8 rounded-lg"
               />
-              <span className="text-xl font-bold text-gray-900">ClimateHub</span>
+              <span className="text-lg sm:text-xl font-bold text-gray-900">ClimateHub</span>
             </Link>
             
             {/* Desktop navigation */}
@@ -209,7 +209,7 @@ const Navbar = () => {
           </div>
 
           {/* User menu */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             {user ? (
               <div className="flex items-center space-x-4">
                 <Link
@@ -242,10 +242,11 @@ const Navbar = () => {
             ) : (
               <button
                 onClick={signInWithGoogle}
-                className="flex items-center space-x-2 btn-primary"
+                aria-label="Sign in"
+                className="inline-flex items-center justify-center rounded-xl bg-green-600 px-3 py-2 sm:px-4 sm:py-2.5 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-green-700 whitespace-nowrap"
               >
-                <LogIn className="w-4 h-4" />
-                <span>Sign In</span>
+                <LogIn className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Sign In</span>
               </button>
             )}
 
@@ -253,7 +254,7 @@ const Navbar = () => {
             <div className="md:hidden">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                className="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors duration-200"
               >
                 {isMenuOpen ? (
                   <X className="w-6 h-6" />

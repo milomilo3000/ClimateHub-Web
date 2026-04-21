@@ -101,12 +101,18 @@ const Profile = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <User className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Please Sign In</h1>
-            <p className="text-gray-600">You need to sign in to view your profile.</p>
+      <div className="min-h-[calc(100vh-4rem)] bg-gray-50 px-4 py-8 sm:px-6 lg:px-8">
+        <div className="max-w-md mx-auto flex items-start sm:items-center justify-center min-h-[calc(100vh-8rem)] sm:min-h-[calc(100vh-9rem)]">
+          <div className="w-full bg-white rounded-2xl shadow-sm border border-gray-200 text-center px-6 py-8 sm:px-8 sm:py-10">
+            <div className="flex justify-center mb-4">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center">
+                <User className="w-8 h-8 sm:w-9 sm:h-9 text-gray-400" />
+              </div>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">Please Sign In</h1>
+            <p className="text-sm sm:text-base text-gray-600 leading-relaxed max-w-[16rem] sm:max-w-sm mx-auto">
+              You need to sign in to view your profile.
+            </p>
           </div>
         </div>
       </div>

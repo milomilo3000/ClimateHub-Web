@@ -224,7 +224,7 @@ const AboutUs = () => {
                   <img
                     src="/images/About-Img2.jpg"
                     alt="Milan Nathani"
-                    className="w-full h-[260px] sm:h-[320px] md:h-[420px] object-cover bg-gray-100"
+                    className="w-full h-[260px] sm:h-[320px] md:h-[420px] object-contain sm:object-cover bg-gray-100"
                   />
                   <div className="absolute inset-x-0 bottom-0 h-[60%] bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6">
@@ -272,44 +272,27 @@ const AboutUs = () => {
         {/* Impact So Far Section */}
         <FadeIn delay={0.25}>
           <div id="impact" className="w-full bg-gradient-to-b from-emerald-50 to-green-100 py-10 sm:py-14 overflow-hidden">
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 w-full box-border">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-gray-900 mb-3 sm:mb-4 break-words">
+            <div className="max-w-5xl mx-auto px-3 sm:px-6 w-full box-border">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center text-gray-900 mb-2 sm:mb-4 break-words">
                 Impact So Far
               </h2>
-              <p className="text-center text-gray-600 mb-8 sm:mb-12 text-base sm:text-lg max-w-2xl mx-auto px-2">
+              <p className="text-center text-gray-600 mb-6 sm:mb-12 text-sm sm:text-lg max-w-2xl mx-auto px-2">
                 Real results from our first NS camp trial
               </p>
 
               {/* Stat tiles */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 {impactTiles.map((t, i) => (
                   <div
                     key={i}
-                    className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+                    className="rounded-xl sm:rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-sm min-h-[118px] sm:min-h-[140px] flex flex-col justify-center"
                   >
-                    <p className="text-4xl font-extrabold text-gray-900">{t.value}</p>
-                    <p className="mt-2 text-gray-700 font-semibold">{t.label}</p>
+                    <p className="text-2xl sm:text-4xl font-extrabold text-gray-900 leading-none">{t.value}</p>
+                    <p className="mt-2 text-sm sm:text-base text-gray-700 font-semibold leading-snug">{t.label}</p>
                   </div>
                 ))}
               </div>
 
-              {/* Additional Impact Info */}
-              <div className="mt-6 sm:mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                <div className="bg-white rounded-xl p-4 sm:p-6 border border-green-200 min-w-0">
-                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3 break-words">Real-World Behaviour Change</h3>
-                  <p className="text-gray-700 leading-relaxed text-sm sm:text-base break-words">
-                    Participants reported greater awareness of their daily emissions and took meaningful actions — 
-                    choosing lower-impact meals, reducing electricity usage, and adopting greener transport choices.
-                  </p>
-                </div>
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 sm:p-6 border border-blue-200 min-w-0">
-                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3 break-words">Scaling Impact</h3>
-                  <p className="text-gray-700 leading-relaxed text-sm sm:text-base break-words">
-                    Expanding to multiple NS camps with structured rollout phases, introducing full gamification systems, 
-                    and deploying AI-powered personalised recommendations based on user behaviour.
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </FadeIn>
