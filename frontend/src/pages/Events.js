@@ -14,7 +14,10 @@ import {
   Leaf,
   TrendingUp,
   BookOpen,
-  CheckCircle
+  CheckCircle,
+  Star,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -32,6 +35,8 @@ const Events = () => {
   const [category, setCategory] = useState('all');
   const [status, setStatus] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [joinedEventIds, setJoinedEventIds] = useState([]);
+  const [calendarDate, setCalendarDate] = useState(new Date());
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
@@ -40,8 +45,13 @@ const Events = () => {
   }, []);
 
   useEffect(() => {
+    const savedJoinedEvents = JSON.parse(localStorage.getItem('climatehubJoinedEvents') || '[]');
+    setJoinedEventIds(savedJoinedEvents);
+  }, []);
+
+  useEffect(() => {
     filterEvents();
-  }, [events, category, status, searchQuery]);
+  }, [events, category, status, searchQuery, joinedEventIds]);
 
   const fetchEvents = async () => {
     try {
@@ -74,7 +84,9 @@ const Events = () => {
       filtered = filtered.filter(event => event.category === category);
     }
 
-    if (status !== 'all') {
+    if (status === 'joined') {
+      filtered = filtered.filter(event => joinedEventIds.includes(event._id));
+    } else if (status !== 'all') {
       filtered = filtered.filter(event => event.status === status);
     }
 
@@ -126,6 +138,62 @@ const Events = () => {
     });
   };
 
+  const formatShortDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-SG', {
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  const handleJoinEvent = (eventId) => {
+    if (!user) {
+      toast.error('Please sign in to add this event to your calendar');
+      return;
+    }
+
+    const nextJoinedEvents = joinedEventIds.includes(eventId)
+      ? joinedEventIds.filter(id => id !== eventId)
+      : [...joinedEventIds, eventId];
+
+    setJoinedEventIds(nextJoinedEvents);
+    localStorage.setItem('climatehubJoinedEvents', JSON.stringify(nextJoinedEvents));
+
+    toast.success(joinedEventIds.includes(eventId)
+      ? 'Event removed from your calendar'
+      : 'Event added to your calendar');
+  };
+
+  const joinedEvents = events
+    .filter(event => joinedEventIds.includes(event._id))
+    .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+
+  const upcomingEvents = events
+    .filter(event => event.status === 'upcoming')
+    .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+
+  const calendarMonth = calendarDate.getMonth();
+  const calendarYear = calendarDate.getFullYear();
+  const firstDayOfMonth = new Date(calendarYear, calendarMonth, 1).getDay();
+  const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+  const calendarDays = Array.from({ length: firstDayOfMonth + daysInMonth }, (_, index) => {
+    if (index < firstDayOfMonth) return null;
+    return index - firstDayOfMonth + 1;
+  });
+
+  const getJoinedEventsForDay = (day) => {
+    if (!day) return [];
+    return joinedEvents.filter(event => {
+      const eventDate = new Date(event.startDate);
+      return eventDate.getFullYear() === calendarYear &&
+        eventDate.getMonth() === calendarMonth &&
+        eventDate.getDate() === day;
+    });
+  };
+
+  const changeCalendarMonth = (direction) => {
+    setCalendarDate(new Date(calendarYear, calendarMonth + direction, 1));
+  };
+
   const getCategoryColor = (category) => {
     const colors = {
       workshop: 'bg-blue-100 text-blue-800',
@@ -133,6 +201,7 @@ const Events = () => {
       seminar: 'bg-purple-100 text-purple-800',
       protest: 'bg-red-100 text-red-800',
       conference: 'bg-yellow-100 text-yellow-800',
+      competition: 'bg-pink-100 text-pink-800',
       volunteer: 'bg-orange-100 text-orange-800',
       other: 'bg-gray-100 text-gray-800'
     };
@@ -201,6 +270,18 @@ const Events = () => {
       startDate: '2025-12-29T14:00:00+08:00',
       endDate: '2025-12-29T16:00:00+08:00',
       location: { address: 'Selarang Camp' }
+    },
+    {
+      _id: 'ycs-shot-at-nature-wild-we-see-2026-05-17',
+      title: 'A Shot At Nature: The Wild We See Photography Competition',
+      description: 'Youth Corps Singapore invites participants to submit nature photographs from A Shot At Nature walks or everyday encounters with nature. The competition celebrates personal interactions with the outdoors across inclusive photography categories.',
+      organizer: 'Youth Corps Singapore',
+      category: 'competition',
+      status: 'upcoming',
+      startDate: '2026-05-17T23:59:00+08:00',
+      endDate: '2026-05-17T23:59:00+08:00',
+      location: { address: 'Online Submission' },
+      registrationUrl: 'https://linktr.ee/ycs.sustainability?utm_source=linktree_profile_share&ltsid=9c940976-c7ad-4348-89a2-96e19e4e31cf'
     }
   ];
 
@@ -242,32 +323,28 @@ const Events = () => {
                       </li>
                     </ul>
 
-                    <div className="flex flex-wrap justify-center gap-4 items-center">
+                    <div className="flex flex-wrap justify-center gap-4 items-center w-full">
                       <button
                         onClick={() => document.getElementById('events-section')?.scrollIntoView({ behavior: 'smooth' })}
                         className="inline-flex items-center space-x-2 bg-white text-green-700 hover:bg-green-50 font-semibold py-3 px-6 rounded-lg text-sm md:text-base transition-colors duration-200 shadow-md"
                       >
                         <CheckCircle className="w-5 h-5" />
-                        <span>View upcoming events</span>
+                        <span>Browse events calendar</span>
                       </button>
 
                       <button
-                        onClick={() => document.getElementById('events-section')?.scrollIntoView({ behavior: 'smooth' })}
+                        onClick={() => {
+                          setStatus('joined');
+                          document.getElementById('my-calendar-section')?.scrollIntoView({ behavior: 'smooth' });
+                        }}
                         className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg text-sm md:text-base transition-colors duration-200 shadow-md"
                       >
                         <Calendar className="w-5 h-5" />
-                        <span>RSVP a new event</span>
+                        <span>View my events</span>
                       </button>
 
-                      <button
-                        onClick={() => setShowCreateForm(true)}
-                        className="inline-flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg text-sm md:text-base transition-colors duration-200 shadow-md"
-                      >
-                        <Users className="w-5 h-5" />
-                        <span>Host your event</span>
-                      </button>
 
-                      <span className="text-xs md:text-sm text-green-50/80 w-full mt-2">
+                      <span className="text-xs md:text-sm text-green-50/80 w-full mt-2 text-center">
                         Free to join · Updated weekly
                       </span>
                     </div>
@@ -409,6 +486,7 @@ const Events = () => {
                           <option value="cleanup">Cleanup</option>
                           <option value="seminar">Seminar</option>
                           <option value="conference">Conference</option>
+                          <option value="competition">Competition</option>
                           <option value="volunteer">Volunteer</option>
                           <option value="other">Other</option>
                         </select>
@@ -485,8 +563,10 @@ const Events = () => {
             {/* Upcoming Events Section */}
             <FadeIn delay={0.3} duration={2}>
               <div id="events-section" className="mb-12">
-                <h2 className="text-3xl font-bold text-gray-900 mb-6">Your Upcoming Events</h2>
-                
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">Eco-Events Calendar</h2>
+                <p className="text-gray-600 mb-6 max-w-3xl">
+                  Browse upcoming sustainability events open to the ClimateHub community. Events you join are saved to your personal calendar below.
+                </p>
                 {/* Filters */}
                 <div className="card mb-6">
                   <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
@@ -511,6 +591,7 @@ const Events = () => {
                         <option value="cleanup">Cleanup</option>
                         <option value="seminar">Seminar</option>
                         <option value="conference">Conference</option>
+                        <option value="competition">Competition</option>
                         <option value="volunteer">Volunteer</option>
                         <option value="other">Other</option>
                       </select>
@@ -521,6 +602,7 @@ const Events = () => {
                       >
                         <option value="upcoming">Upcoming</option>
                         <option value="ongoing">Ongoing</option>
+                        <option value="joined">My Joined Events</option>
                         <option value="completed">Completed</option>
                         <option value="all">All Status</option>
                       </select>
@@ -588,10 +670,32 @@ const Events = () => {
                             )}
                           </div>
                           
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-center justify-between gap-3">
                             <span className="text-sm text-gray-500">
                               by {event.organizer}
                             </span>
+                            {joinedEventIds.includes(event._id) && (
+                              <span className="inline-flex items-center gap-1 text-xs font-semibold text-green-700 bg-green-50 px-2 py-1 rounded-full">
+                                <Star className="w-3 h-3" />
+                                Joined
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="mt-4 flex flex-wrap items-center gap-3">
+                            {event.status === 'upcoming' && (
+                              <button
+                                onClick={() => handleJoinEvent(event._id)}
+                                className={`inline-flex items-center space-x-1 text-sm font-semibold px-3 py-2 rounded-lg transition-colors duration-200 ${joinedEventIds.includes(event._id)
+                                  ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                                  : 'bg-primary-600 text-white hover:bg-primary-700'
+                                }`}
+                              >
+                                <Calendar className="w-4 h-4" />
+                                <span>{joinedEventIds.includes(event._id) ? 'Added to calendar' : 'Add to my calendar'}</span>
+                              </button>
+                            )}
+
                             {event.registrationUrl && (
                               <a
                                 href={event.registrationUrl}
@@ -611,7 +715,117 @@ const Events = () => {
                 </div>
               </div>
             </FadeIn>
+            {/* My Calendar Section */}
+            <FadeIn delay={0.4} duration={2}>
+              <div id="my-calendar-section" className="mb-12">
+                <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-6">
+                  <div>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-2">My Event Calendar</h2>
+                    <p className="text-gray-600 max-w-3xl">
+                      Events you add from the Eco-Events Calendar appear here, so your personal ClimateHub schedule stays separate from the public listings.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setStatus('joined')}
+                    className="inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-3 rounded-lg text-sm transition-colors duration-200"
+                  >
+                    <Filter className="w-4 h-4" />
+                    Show only joined events
+                  </button>
+                </div>
 
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  <div className="card lg:col-span-1">
+                    <div className="flex items-center justify-between mb-5">
+                      <button
+                        onClick={() => changeCalendarMonth(-1)}
+                        className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                        aria-label="Previous month"
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+                      <h3 className="font-bold text-gray-900">
+                        {calendarDate.toLocaleDateString('en-SG', { month: 'long', year: 'numeric' })}
+                      </h3>
+                      <button
+                        onClick={() => changeCalendarMonth(1)}
+                        className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                        aria-label="Next month"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-gray-500 mb-2">
+                      {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                        <span key={day}>{day}</span>
+                      ))}
+                    </div>
+
+                    <div className="grid grid-cols-7 gap-1">
+                      {calendarDays.map((day, index) => {
+                        const dayJoinedEvents = getJoinedEventsForDay(day);
+                        return (
+                          <div
+                            key={`${day || 'blank'}-${index}`}
+                            className={`min-h-[44px] rounded-lg border text-sm flex flex-col items-center justify-center ${day
+                              ? 'border-gray-200 bg-white text-gray-800'
+                              : 'border-transparent bg-transparent text-transparent'
+                            }`}
+                          >
+                            {day && <span>{day}</span>}
+                            {dayJoinedEvents.length > 0 && (
+                              <span className="mt-1 h-2 w-2 rounded-full bg-green-600" />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="card lg:col-span-2">
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">Joined Events</h3>
+                    {joinedEvents.length === 0 ? (
+                      <div className="text-center py-10">
+                        <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-600 mb-2">No joined events yet</p>
+                        <p className="text-sm text-gray-500">Add an upcoming event to your calendar from the public event listings above.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {joinedEvents.map(event => (
+                          <div key={`joined-${event._id}`} className="flex gap-4 p-4 border border-gray-200 rounded-xl hover:shadow-sm transition-shadow duration-200">
+                            <div className="flex-shrink-0 w-16 h-16 rounded-xl bg-green-100 text-green-800 flex flex-col items-center justify-center font-bold">
+                              <span className="text-xs uppercase">{formatShortDate(event.startDate).split(' ')[0]}</span>
+                              <span className="text-lg">{formatShortDate(event.startDate).split(' ')[1]}</span>
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex flex-wrap items-center gap-2 mb-1">
+                                <h4 className="font-semibold text-gray-900">{event.title}</h4>
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getStatusColor(event.status)}`}>
+                                  {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+                                </span>
+                              </div>
+                              <p className="text-sm text-gray-600 mb-2">{event.description}</p>
+                              <div className="flex flex-wrap gap-3 text-sm text-gray-500">
+                                <span className="inline-flex items-center gap-1"><Clock className="w-4 h-4" />{formatDate(event.startDate)}</span>
+                                <span className="inline-flex items-center gap-1"><MapPin className="w-4 h-4" />{event.location?.address || 'Location TBA'}</span>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => handleJoinEvent(event._id)}
+                              className="self-start text-sm font-semibold text-red-600 hover:text-red-700"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </FadeIn>
 
             {/* Call to Action */}
             <FadeIn delay={0.5} duration={2}>
@@ -621,7 +835,7 @@ const Events = () => {
                 </h2>
                 <p className="text-lg md:text-xl text-green-100 mb-8 max-w-2xl mx-auto">
                   Join thousands of Singaporeans taking action for the environment. 
-                  Browse events, RSVP, or host your own today.
+                  Browse events, add them to your personal ClimateHub calendar, RSVP, or host your own today.
                 </p>
                 <div className="flex flex-wrap justify-center gap-4">
                   <button
