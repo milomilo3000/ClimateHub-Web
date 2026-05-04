@@ -5,13 +5,6 @@ import FadeIn from '../components/animations/FadeIn';
 import StaggerWrapper from '../components/animations/StaggerWrapper';
 
 const CarbonCalculatorHub = () => {
-  const scrollToSection = (id) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
   return (
     <StaggerWrapper>
       <div className="min-h-screen bg-gray-50">
@@ -44,7 +37,7 @@ const CarbonCalculatorHub = () => {
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="mt-1 h-1.5 w-1.5 rounded-full bg-white" />
-                      <span>Separate trackers for NSFs and youth, tailored to daily routines.</span>
+                      <span>Youth-focused weekly quiz covering diet, transport, home, devices, and shopping.</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="mt-1 h-1.5 w-1.5 rounded-full bg-white" />
@@ -54,11 +47,11 @@ const CarbonCalculatorHub = () => {
 
                   <div className="flex flex-wrap gap-4 items-center">
                     <Link
-                      to="/carbon-tracker/nsf"
+                      to="/carbon-tracker/youth"
                       className="inline-flex items-center space-x-2 bg-white text-green-700 hover:bg-green-50 font-semibold py-3 px-6 rounded-full text-sm md:text-base transition-colors duration-200 shadow-md"
                     >
                       <Calculator className="w-5 h-5" />
-                      <span>Start NSFs Tracker</span>
+                      <span>Start Youth Calculator</span>
                       <ArrowRight className="w-4 h-4" />
                     </Link>
                     <span className="text-xs md:text-sm text-green-50/80">
@@ -93,7 +86,7 @@ const CarbonCalculatorHub = () => {
 
                       <div className="space-y-2 mb-2">
                         <div className="flex items-center justify-between text-[11px]">
-                          <span className="text-gray-500">Camp / School</span>
+                          <span className="text-gray-500">Diet</span>
                           <span className="font-semibold text-gray-800">8.1 kg</span>
                         </div>
                         <div className="h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
@@ -109,7 +102,7 @@ const CarbonCalculatorHub = () => {
                         </div>
 
                         <div className="flex items-center justify-between text-[11px]">
-                          <span className="text-gray-500">Food &amp; lifestyle</span>
+                          <span className="text-gray-500">Home &amp; shopping</span>
                           <span className="font-semibold text-gray-800">9.7 kg</span>
                         </div>
                         <div className="h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
@@ -126,71 +119,14 @@ const CarbonCalculatorHub = () => {
                       </div>
                     </div>
 
-                    {/* Calculator keypad */}
-                    <div className="grid grid-cols-3 gap-3 pt-1">
-                      <button
-                        type="button"
-                        onClick={() => scrollToSection('section-what')}
-                        className="py-2.5 rounded-lg bg-white text-[11px] font-semibold text-slate-900 flex items-center justify-center shadow-sm border border-slate-200 hover:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
-                      >
-                        NSF
-                      </button>
-                      <Link
-                        to="/carbon-tracker/youth"
-                        className="py-2.5 rounded-lg bg-white text-[11px] font-semibold text-slate-900 flex items-center justify-center shadow-sm border border-slate-200 hover:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
-                      >
-                        Youth
-                      </Link>
-                      <button
-                        type="button"
-                        onClick={() => scrollToSection('section-what')}
-                        className="py-2.5 rounded-lg bg-white text-[11px] font-semibold text-slate-900 flex items-center justify-center shadow-sm border border-slate-200 hover:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
-                      >
-                        Method
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => scrollToSection('section-what')}
-                        className="py-2.5 rounded-lg bg-white text-[11px] font-semibold text-slate-900 flex items-center justify-center shadow-sm border border-slate-200 hover:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
-                      >
-                        Basics
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => scrollToSection('section-what')}
-                        className="py-2.5 rounded-lg bg-white text-[11px] font-semibold text-slate-900 flex items-center justify-center shadow-sm border border-slate-200 hover:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
-                      >
-                        Trackers
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => scrollToSection('section-what')}
-                        className="py-2.5 rounded-lg bg-white text-[11px] font-semibold text-slate-900 flex items-center justify-center shadow-sm border border-slate-200 hover:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
-                      >
-                        Action
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => scrollToSection('section-what')}
-                        className="py-2.5 rounded-lg bg-white text-[11px] font-semibold text-slate-900 flex items-center justify-center shadow-sm border border-slate-200 hover:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
-                      >
-                        Camp
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => scrollToSection('section-what')}
-                        className="py-2.5 rounded-lg bg-white text-[11px] font-semibold text-slate-900 flex items-center justify-center shadow-sm border border-slate-200 hover:bg-slate-100 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
-                      >
-                        Transport
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => scrollToSection('section-calculators')}
-                        className="py-2.5 rounded-lg bg-orange-500 text-[11px] font-semibold text-white flex items-center justify-center shadow-sm border border-orange-600 hover:bg-orange-600 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
-                      >
-                        Calculate
-                      </button>
-                    </div>
+                    <Link
+                      to="/carbon-tracker/youth"
+                      className="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-green-500"
+                    >
+                      <Calculator className="h-4 w-4" />
+                      Open youth calculator
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
 
                     {/* subtle floating glow */}
                     <div className="absolute -z-10 inset-x-8 -bottom-6 h-10 bg-green-500/20 blur-xl rounded-full" />
@@ -290,71 +226,6 @@ const CarbonCalculatorHub = () => {
           </FadeIn>
         </div>
 
-        {/* Calculator Options */}
-        <div className="w-full bg-gray-50 py-16">
-          <FadeIn delay={0.4} duration={2}>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div id="section-calculators">
-            <h2 className="text-3xl font-bold text-gray-900 text-center mb-8">
-              Choose Your Calculator
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-              
-              {/* NSFs Carbon Footprint Tracker - ACTIVE */}
-              <Link 
-                to="/carbon-tracker/nsf"
-                className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-2 border-transparent hover:border-green-500"
-              >
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-14 h-14 bg-green-600 rounded-xl flex items-center justify-center">
-                    <Calculator className="w-7 h-7 text-white" />
-                  </div>
-                  <ArrowRight className="w-6 h-6 text-green-600" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                  NSFs Carbon Footprint Tracker
-                </h3>
-                <p className="text-gray-600 leading-relaxed mb-4">
-                  Designed specifically for National Service Full-time servicemen. 
-                  Calculate your carbon footprint based on camp life, transport, and daily activities.
-                </p>
-                <div className="inline-flex items-center text-green-600 font-semibold">
-                  <span>Start Calculating</span>
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </div>
-              </Link>
-
-              {/* Youth Carbon Footprint Tracker */}
-              <Link
-                id="youth-calculator"
-                to="/carbon-tracker/youth"
-                className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-2 border-transparent hover:border-blue-500"
-              >
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center">
-                    <Users className="w-7 h-7 text-white" />
-                  </div>
-                  <ArrowRight className="w-6 h-6 text-blue-600" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                  Youth Carbon Footprint Tracker
-                </h3>
-                <p className="text-gray-600 leading-relaxed mb-4">
-                  Tailored for young Singaporeans. Track your environmental impact
-                  from school, social activities, and lifestyle choices.
-                </p>
-                <div className="inline-flex items-center text-blue-600 font-semibold">
-                  <span>Start Calculating</span>
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </div>
-              </Link>
-            </div>
-              </div>
-            </div>
-          </FadeIn>
-        </div>
-
         {/* Call to Action */}
         <div className="w-full bg-green-700 py-20">
           <FadeIn delay={0.5} duration={2}>
@@ -368,7 +239,7 @@ const CarbonCalculatorHub = () => {
               working towards a sustainable future.
             </p>
                 <Link
-                  to="/carbon-tracker/nsf"
+                  to="/carbon-tracker/youth"
                   className="inline-flex items-center space-x-2 bg-white text-green-600 hover:bg-gray-100 
                            font-semibold py-4 px-8 rounded-full text-lg transition-colors duration-200 shadow-lg"
                 >

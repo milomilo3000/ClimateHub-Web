@@ -1,8 +1,11 @@
 const express = require('express');
 const User = require('../models/User');
 const CarbonFootprint = require('../models/CarbonFootprint');
+const CarbonResult = require('../models/CarbonResult');
 const { emissionFactors, averages, conversions } = require('../data/emissionFactors');
 const router = express.Router();
+
+const YOUTH_LEADERBOARD_LIMIT = 50;
 
 // Import the proper verifyToken middleware
 const admin = require('firebase-admin');
@@ -23,6 +26,31 @@ const verifyToken = async (req, res, next) => {
     res.status(401).json({ error: 'Invalid token' });
   }
 };
+
+/** Attach Mongo user id when a valid Bearer token is sent; never fails the request */
+const optionalAuth = async (req, res, next) => {
+  req.viewerMongoId = null;
+  try {
+    const token = req.headers.authorization?.split('Bearer ')[1];
+    if (!token) return next();
+    const decoded = await admin.auth().verifyIdToken(token);
+    const dbUser = await User.findOne({ firebaseUid: decoded.uid }).select('_id');
+    if (dbUser) req.viewerMongoId = dbUser._id.toString();
+  } catch (_) {
+    /* public leaderboard */
+  }
+  next();
+};
+
+function youthDisplayName(userDoc) {
+  if (!userDoc) return 'ClimateHub User';
+  const n = (userDoc.displayName || '').trim();
+  return n || 'ClimateHub User';
+}
+
+function round2(n) {
+  return Math.round(n * 100) / 100;
+}
 
 // Calculate carbon footprint with new Singapore-specific logic
 router.post('/calculate', async (req, res) => {
@@ -593,6 +621,168 @@ router.get('/factors', async (req, res) => {
     averages,
     conversions
   });
+});
+
+// --- Youth carbon footprint: persisted results & leaderboards (CarbonResult) ---
+
+router.post('/youth/result', verifyToken, async (req, res) => {
+  try {
+    const { totalWeeklyKg, breakdown, answers } = req.body;
+
+    if (typeof totalWeeklyKg !== 'number' || Number.isNaN(totalWeeklyKg) || totalWeeklyKg < 0) {
+      return res.status(400).json({ error: 'totalWeeklyKg must be a non-negative number' });
+    }
+    if (!breakdown || typeof breakdown !== 'object') {
+      return res.status(400).json({ error: 'breakdown object is required' });
+    }
+
+    const user = await User.findOne({ firebaseUid: req.user.uid });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const normalizedBreakdown = {
+      diet: Number(breakdown.diet) || 0,
+      transport: Number(breakdown.transport) || 0,
+      home: Number(breakdown.home) || 0,
+      electronics: Number(breakdown.electronics) || 0,
+      shopping: Number(breakdown.shopping) || 0,
+    };
+
+    const doc = new CarbonResult({
+      userId: user._id,
+      calculatorType: 'youth',
+      totalWeeklyKg,
+      breakdown: normalizedBreakdown,
+      answers: answers && typeof answers === 'object' ? answers : undefined,
+    });
+    await doc.save();
+
+    res.json({
+      success: true,
+      message: 'Youth footprint saved',
+      id: doc._id,
+    });
+  } catch (error) {
+    console.error('Youth result save error:', error);
+    res.status(500).json({ error: 'Failed to save youth footprint' });
+  }
+});
+
+router.get('/youth/leaderboard', optionalAuth, async (req, res) => {
+  try {
+    const grouped = await CarbonResult.aggregate([
+      { $match: { calculatorType: 'youth', isFlagged: { $ne: true } } },
+      { $sort: { createdAt: 1 } },
+      {
+        $group: {
+          _id: '$userId',
+          entries: { $push: { kg: '$totalWeeklyKg', createdAt: '$createdAt' } },
+        },
+      },
+    ]);
+
+    if (!grouped.length) {
+      return res.json({
+        success: true,
+        leaderboards: {
+          lowestFootprint: [],
+          mostImprovedFromLast: [],
+          mostImprovedOverall: [],
+        },
+      });
+    }
+
+    const userIds = grouped.map((g) => g._id);
+    const users = await User.find({ _id: { $in: userIds } }).select('displayName');
+    const userById = new Map(users.map((u) => [u._id.toString(), u]));
+
+    const stats = grouped.map((g) => {
+      const sorted = [...g.entries].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      const first = sorted[0];
+      const latest = sorted[sorted.length - 1];
+      const prev = sorted.length >= 2 ? sorted[sorted.length - 2] : null;
+      const submissionCount = sorted.length;
+
+      let improvementFromLastPercent = 0;
+      if (prev && prev.kg > 0) {
+        improvementFromLastPercent = ((prev.kg - latest.kg) / prev.kg) * 100;
+      }
+
+      let improvementOverallPercent = 0;
+      if (submissionCount >= 2 && first.kg > 0) {
+        improvementOverallPercent = ((first.kg - latest.kg) / first.kg) * 100;
+      }
+
+      return {
+        userIdStr: g._id.toString(),
+        displayName: youthDisplayName(userById.get(g._id.toString())),
+        latestWeeklyKg: latest.kg,
+        submissionCount,
+        improvementFromLastPercent,
+        improvementOverallPercent,
+        hasPriorSubmission: submissionCount >= 2,
+      };
+    });
+
+    const row = (s, rank, improvementPercent, reqRef) => ({
+      rank,
+      displayName: s.displayName,
+      latestWeeklyKg: round2(s.latestWeeklyKg),
+      improvementPercent: improvementPercent === null || improvementPercent === undefined ? null : round2(improvementPercent),
+      submissionCount: s.submissionCount,
+      isYou: reqRef.viewerMongoId === s.userIdStr,
+    });
+
+    const lowestSorted = [...stats].sort((a, b) => {
+      if (a.latestWeeklyKg !== b.latestWeeklyKg) return a.latestWeeklyKg - b.latestWeeklyKg;
+      return b.submissionCount - a.submissionCount;
+    });
+    const lowestFootprint = lowestSorted.slice(0, YOUTH_LEADERBOARD_LIMIT).map((s, i) =>
+      row(
+        s,
+        i + 1,
+        s.hasPriorSubmission ? s.improvementOverallPercent : null,
+        req
+      )
+    );
+
+    const tierFromLast = (s) => (s.submissionCount >= 2 ? 1 : 0);
+    const fromLastSorted = [...stats].sort((a, b) => {
+      if (tierFromLast(b) !== tierFromLast(a)) return tierFromLast(b) - tierFromLast(a);
+      if (b.improvementFromLastPercent !== a.improvementFromLastPercent) {
+        return b.improvementFromLastPercent - a.improvementFromLastPercent;
+      }
+      return a.latestWeeklyKg - b.latestWeeklyKg;
+    });
+    const mostImprovedFromLast = fromLastSorted.slice(0, YOUTH_LEADERBOARD_LIMIT).map((s, i) =>
+      row(s, i + 1, s.submissionCount >= 2 ? s.improvementFromLastPercent : 0, req)
+    );
+
+    const tierOverall = (s) => (s.submissionCount >= 2 ? 1 : 0);
+    const overallSorted = [...stats].sort((a, b) => {
+      if (tierOverall(b) !== tierOverall(a)) return tierOverall(b) - tierOverall(a);
+      if (b.improvementOverallPercent !== a.improvementOverallPercent) {
+        return b.improvementOverallPercent - a.improvementOverallPercent;
+      }
+      return a.latestWeeklyKg - b.latestWeeklyKg;
+    });
+    const mostImprovedOverall = overallSorted.slice(0, YOUTH_LEADERBOARD_LIMIT).map((s, i) =>
+      row(s, i + 1, s.submissionCount >= 2 ? s.improvementOverallPercent : 0, req)
+    );
+
+    res.json({
+      success: true,
+      leaderboards: {
+        lowestFootprint,
+        mostImprovedFromLast,
+        mostImprovedOverall,
+      },
+    });
+  } catch (error) {
+    console.error('Youth leaderboard error:', error);
+    res.status(500).json({ error: 'Failed to load youth leaderboard' });
+  }
 });
 
 module.exports = router;

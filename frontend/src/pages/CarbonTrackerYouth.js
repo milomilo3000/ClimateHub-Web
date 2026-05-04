@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getAuth } from 'firebase/auth';
 import { useForm } from 'react-hook-form';
@@ -17,7 +17,9 @@ import {
   Wind,
   Bird,
   Share2,
-  Award
+  Award,
+  Trophy,
+  Loader2
 } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -26,12 +28,20 @@ import ImpactMeasures from '../components/ImpactMeasures';
 import RecommendationCarousel from '../components/RecommendationCarousel';
 
 const CarbonTrackerYouth = () => {
-  const { user, refreshUserProfile } = useAuth();
+  const { user, signInWithGoogle } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({});
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [youthLeaderboardSaved, setYouthLeaderboardSaved] = useState(false);
+  const [leaderboardTab, setLeaderboardTab] = useState(0);
+  const [leaderboards, setLeaderboards] = useState({
+    lowestFootprint: [],
+    mostImprovedFromLast: [],
+    mostImprovedOverall: [],
+  });
+  const [leaderboardLoading, setLeaderboardLoading] = useState(false);
+  const [savingYouthResult, setSavingYouthResult] = useState(false);
   const [showAirconQuestions, setShowAirconQuestions] = useState(true);
 
   const { register, handleSubmit, watch, formState: { errors }, trigger } = useForm({
@@ -92,6 +102,32 @@ const CarbonTrackerYouth = () => {
     setShowAirconQuestions(coolingMethod === 'only_aircon' || coolingMethod === 'both');
   }, [watchedValues?.home?.coolingMethod]);
 
+  const fetchYouthLeaderboard = useCallback(async () => {
+    setLeaderboardLoading(true);
+    try {
+      const headers = {};
+      const fbUser = getAuth().currentUser;
+      if (fbUser) {
+        const token = await fbUser.getIdToken();
+        headers.Authorization = `Bearer ${token}`;
+      }
+      const res = await axios.get('/api/carbon/youth/leaderboard', { headers });
+      if (res.data?.success && res.data.leaderboards) {
+        setLeaderboards(res.data.leaderboards);
+      }
+    } catch (e) {
+      console.error('Leaderboard fetch error:', e);
+    } finally {
+      setLeaderboardLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (results) {
+      fetchYouthLeaderboard();
+    }
+  }, [results, user?.id, fetchYouthLeaderboard]);
+
   const onSubmit = async (data) => {
     setLoading(true);
     try {
@@ -99,44 +135,14 @@ const CarbonTrackerYouth = () => {
       const weeklyFootprint = calculateWeeklyFootprint(data);
       setResults(weeklyFootprint);
       setFormData(data);
-      setSaved(false);
-      
-      // Auto-save results if user is logged in
-      if (user) {
-        await autoSaveResults(weeklyFootprint, data);
-      }
-      
+      setYouthLeaderboardSaved(false);
+
       toast.success('Carbon footprint calculated successfully!');
     } catch (error) {
       console.error('Calculation error:', error);
       toast.error('Failed to calculate carbon footprint');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const autoSaveResults = async (footprintResults, inputData) => {
-    try {
-      const token = await getAuth().currentUser?.getIdToken();
-      const response = await axios.post('/api/carbon/save', {
-        footprint: footprintResults,
-        breakdown: footprintResults.breakdown,
-        inputData: inputData,
-        notes: 'Auto-saved youth weekly footprint calculation'
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-
-      if (response.data.success) {
-        setSaved(true);
-        await refreshUserProfile();
-        toast.success('Results automatically saved to your profile!');
-      }
-    } catch (error) {
-      console.error('Auto-save error:', error);
-      // Don't show error toast for auto-save failures to avoid interrupting user experience
     }
   };
 
@@ -331,33 +337,49 @@ const CarbonTrackerYouth = () => {
     return values[option] || 1;
   };
 
-  const saveResults = async () => {
+  const saveYouthResultToLeaderboard = async () => {
     if (!user) {
-      toast.error('Please sign in to save your results');
+      toast.error('Please sign in to save your result');
       return;
     }
+    if (!results) return;
 
+    setSavingYouthResult(true);
     try {
-      const token = await getAuth().currentUser?.getIdToken();
-      const response = await axios.post('/api/carbon/save', {
-        footprint: results,
-        breakdown: results.breakdown,
-        inputData: formData,
-        notes: 'Youth weekly footprint calculation'
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`
+      const cu = getAuth().currentUser;
+      if (!cu) {
+        toast.error('Please sign in again to save');
+        return;
+      }
+      const token = await cu.getIdToken();
+      const b = results.breakdown || {};
+      const response = await axios.post(
+        '/api/carbon/youth/result',
+        {
+          totalWeeklyKg: results.totalFootprint,
+          breakdown: {
+            diet: b.diet ?? 0,
+            transport: b.transport ?? 0,
+            home: b.home ?? 0,
+            electronics: b.electronics ?? 0,
+            shopping: b.shopping ?? 0,
+          },
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
         }
-      });
+      );
 
       if (response.data.success) {
-        setSaved(true);
-        toast.success('Results saved successfully!');
-        await refreshUserProfile();
+        setYouthLeaderboardSaved(true);
+        toast.success('Saved to the leaderboard!');
+        await fetchYouthLeaderboard();
       }
     } catch (error) {
-      console.error('Save error:', error);
-      toast.error('Failed to save results');
+      console.error('Youth save error:', error);
+      toast.error('Failed to save your result');
+    } finally {
+      setSavingYouthResult(false);
     }
   };
 
@@ -976,6 +998,169 @@ const CarbonTrackerYouth = () => {
             </div>
           </div>
 
+          {/* Youth Carbon Leaderboard */}
+          {(() => {
+            const tabKeys = ['lowestFootprint', 'mostImprovedFromLast', 'mostImprovedOverall'];
+            const tabLabels = [
+              'Lowest Footprint',
+              'Most Improved From Last Result',
+              'Most Improved Overall',
+            ];
+            const improvementHeaders = ['Overall Δ %', 'Since last %', 'Overall %'];
+            const currentRows = leaderboards[tabKeys[leaderboardTab]] || [];
+            return (
+              <div className="mb-12">
+                <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 sm:p-8">
+                  <div className="flex flex-col sm:flex-row sm:items-start gap-4 mb-6">
+                    <div className="flex items-start gap-3 min-w-0">
+                      <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+                        <Trophy className="w-6 h-6 text-green-700" />
+                      </div>
+                      <div className="min-w-0">
+                        <h3 className="text-xl font-bold text-gray-900">Youth Carbon Leaderboard</h3>
+                        <p className="text-sm text-gray-500 mt-1">
+                          Community rankings from saved Youth calculator runs. Switch views with the tabs or dots below.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {!user && (
+                    <div className="mb-6 p-4 rounded-xl bg-blue-50 border border-blue-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <p className="text-sm text-blue-900">
+                        Log in to save your footprint, track your progress, and join the leaderboard.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => signInWithGoogle()}
+                        className="shrink-0 inline-flex items-center justify-center px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors"
+                      >
+                        Sign in with Google
+                      </button>
+                    </div>
+                  )}
+
+                  {user && (
+                    <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-gray-100">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-sm text-gray-600">
+                          Save this run to appear on the leaderboard and refresh rankings.
+                        </span>
+                        {youthLeaderboardSaved && (
+                          <span className="text-sm font-medium text-green-700 flex items-center gap-1">
+                            <CheckCircle className="w-4 h-4" />
+                            Saved — your latest footprint is on the board.
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        disabled={savingYouthResult}
+                        onClick={saveYouthResultToLeaderboard}
+                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full font-semibold bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shrink-0"
+                      >
+                        {savingYouthResult ? (
+                          <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            Saving…
+                          </>
+                        ) : (
+                          <>
+                            <Save className="w-5 h-5" />
+                            Save My Result
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {tabLabels.map((label, idx) => (
+                      <button
+                        key={label}
+                        type="button"
+                        onClick={() => setLeaderboardTab(idx)}
+                        className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-colors ${
+                          leaderboardTab === idx
+                            ? 'bg-green-600 text-white shadow-sm'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="rounded-xl border border-gray-100 overflow-hidden bg-gray-50/50">
+                    {leaderboardLoading ? (
+                      <div className="py-16 flex flex-col items-center justify-center text-gray-500 gap-2">
+                        <Loader2 className="w-8 h-8 animate-spin text-green-600" />
+                        <span className="text-sm">Loading leaderboard…</span>
+                      </div>
+                    ) : currentRows.length === 0 ? (
+                      <div className="py-12 px-4 text-center text-gray-500 text-sm">
+                        No saved youth results yet. Save your footprint to help fill the board.
+                      </div>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="min-w-full text-sm text-left">
+                          <thead>
+                            <tr className="bg-gray-100 text-xs uppercase tracking-wide text-gray-600">
+                              <th className="px-4 py-3 font-semibold">Rank</th>
+                              <th className="px-4 py-3 font-semibold">Participant</th>
+                              <th className="px-4 py-3 font-semibold whitespace-nowrap">Latest (kg CO₂ / week)</th>
+                              <th className="px-4 py-3 font-semibold whitespace-nowrap">{improvementHeaders[leaderboardTab]}</th>
+                              <th className="px-4 py-3 font-semibold">Saves</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-100 bg-white">
+                            {currentRows.map((row) => (
+                              <tr
+                                key={`${leaderboardTab}-${row.rank}-${row.displayName}`}
+                                className={row.isYou ? 'bg-green-50/80' : ''}
+                              >
+                                <td className="px-4 py-3 font-medium text-gray-900">{row.rank}</td>
+                                <td className="px-4 py-3 text-gray-800">
+                                  {row.displayName}
+                                  {row.isYou && (
+                                    <span className="ml-2 text-xs font-semibold text-green-700">(You)</span>
+                                  )}
+                                </td>
+                                <td className="px-4 py-3 text-gray-800 whitespace-nowrap">{row.latestWeeklyKg.toFixed(2)}</td>
+                                <td className="px-4 py-3 text-gray-800 whitespace-nowrap">
+                                  {row.improvementPercent === null || row.improvementPercent === undefined
+                                    ? '—'
+                                    : `${row.improvementPercent.toFixed(2)}%`}
+                                </td>
+                                <td className="px-4 py-3 text-gray-800">{row.submissionCount}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex justify-center gap-2 mt-5" role="tablist" aria-label="Leaderboard view">
+                    {[0, 1, 2].map((idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        role="tab"
+                        aria-selected={leaderboardTab === idx}
+                        onClick={() => setLeaderboardTab(idx)}
+                        className={`h-2.5 w-2.5 rounded-full transition-colors ${
+                          leaderboardTab === idx ? 'bg-green-600 scale-110' : 'bg-gray-300 hover:bg-gray-400'
+                        }`}
+                        aria-label={`Show ${tabLabels[idx]}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
           {/* Performance Badge */}
           {relativePercent >= 0 && (
             <div className="mb-8 flex justify-center">
@@ -1021,26 +1206,14 @@ const CarbonTrackerYouth = () => {
             </button>
           </div>
 
-          {/* Auto-save confirmation and retry button */}
           <div className="flex flex-col items-center gap-4 w-full max-w-lg mx-auto">
-            {saved && user && (
-              <div className="flex items-center text-green-700 text-sm font-medium bg-green-50 px-4 py-2 rounded-lg border border-green-200">
-                <CheckCircle className="w-5 h-5 mr-2" />
-                Results automatically saved to your profile!
-              </div>
-            )}
-            {!user && (
-              <div className="flex items-center text-blue-700 text-sm font-medium bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
-                <Calculator className="w-5 h-5 mr-2" />
-                Sign in to automatically save your results to your profile
-              </div>
-            )}
             <button
               onClick={() => {
                 setResults(null);
                 setCurrentStep(1);
                 setFormData({});
-                setSaved(false);
+                setYouthLeaderboardSaved(false);
+                setLeaderboardTab(0);
               }}
               className="flex items-center space-x-2 px-6 py-3 rounded-full font-semibold bg-green-600 text-white hover:bg-green-700 shadow-lg hover:shadow-xl transition-all duration-300"
             >
