@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getAuth } from 'firebase/auth';
 import { useForm } from 'react-hook-form';
@@ -26,6 +26,7 @@ import toast from 'react-hot-toast';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import ImpactMeasures from '../components/ImpactMeasures';
 import RecommendationCarousel from '../components/RecommendationCarousel';
+import FadeIn from '../components/animations/FadeIn';
 
 const CarbonTrackerYouth = () => {
   const { user, signInWithGoogle } = useAuth();
@@ -335,6 +336,552 @@ const CarbonTrackerYouth = () => {
   const getShowerValue = (option) => {
     const values = { '1': 1, '2': 2, '3+': 3 };
     return values[option] || 1;
+  };
+
+  const CATEGORY_LABELS = {
+    diet: 'Diet',
+    transport: 'Transport',
+    home: 'Home',
+    electronics: 'Electronics',
+    shopping: 'Shopping',
+  };
+
+  const formatKg = (value) => `${value.toFixed(2)} kg CO2e`;
+
+  /**
+   * Min/max achievable weekly kg CO₂e per category given only the discrete options in this questionnaire.
+   * Used to classify Low/Medium/High relative to modeled answer space (not vs share of total footprint).
+   */
+  const computeYouthCategoryBenchmarkBands = () => {
+    const hourOpts = ['0-2', '2-4', '4-6', '6+'];
+    const phoneOpts = ['1', '2', '3', '4+'];
+
+    let eMin = Infinity;
+    let eMax = -Infinity;
+    for (const sm of hourOpts) {
+      const smWeek = getMedianValue(sm) * 7;
+      for (const gm of hourOpts) {
+        const gmWeek = getMedianValue(gm) * 7;
+        for (const st of hourOpts) {
+          const stWeek = getMedianValue(st) * 7;
+          for (const lp of hourOpts) {
+            const lpWeek = getMedianValue(lp) * 7;
+            for (const pc of phoneOpts) {
+              const chargesWeek = getPhoneChargingValue(pc) * 7;
+              const v =
+                smWeek * 0.01 +
+                gmWeek * 0.03 +
+                stWeek * 0.03 +
+                lpWeek * 0.02 +
+                chargesWeek * 0.005;
+              eMin = Math.min(eMin, v);
+              eMax = Math.max(eMax, v);
+            }
+          }
+        }
+      }
+    }
+
+    const weeklyDietOpts = ['0', '1-3', '3-7', '7+'];
+    const wasteOpts = ['never', 'rarely', 'often', 'always'];
+    let dMin = Infinity;
+    let dMax = -Infinity;
+    for (const beef of weeklyDietOpts) {
+      const beefMid = getBeefPorkMidpoint(beef);
+      for (const om of weeklyDietOpts) {
+        const otherMid = getDietWeeklyMidpoint(om);
+        for (const tea of weeklyDietOpts) {
+          const teaMid = getDietWeeklyMidpoint(tea);
+          for (const take of weeklyDietOpts) {
+            const takeMid = getDietWeeklyMidpoint(take);
+            for (const pack of weeklyDietOpts) {
+              const packMid = getDietWeeklyMidpoint(pack);
+              for (const waste of wasteOpts) {
+                const wasteCount = getFoodWasteYouthMapped(waste);
+                const v =
+                  beefMid * 2.5 +
+                  otherMid * 1.0 +
+                  teaMid * 0.5 +
+                  takeMid * 0.2 +
+                  packMid * 0.1 +
+                  wasteCount * 2.0;
+                dMin = Math.min(dMin, v);
+                dMax = Math.max(dMax, v);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    const tripOpts = ['0-3', '3-7', '7+'];
+    const distOpts = ['0-5', '6-10', '11-15', '15+'];
+    let tMin = Infinity;
+    let tMax = -Infinity;
+    for (const pub of tripOpts) {
+      const pubTrips = getTripMidpoint(pub);
+      for (const car of tripOpts) {
+        const carTrips = getTripMidpoint(car);
+        for (const moto of tripOpts) {
+          const motoTrips = getTripMidpoint(moto);
+          for (const dist of distOpts) {
+            const distKm = getYouthDistanceMedian(dist);
+            const v = pubTrips * 0.05 + carTrips * distKm * 0.2 + motoTrips * distKm * 0.1;
+            tMin = Math.min(tMin, v);
+            tMax = Math.max(tMax, v);
+          }
+        }
+      }
+    }
+
+    const coolMethods = ['only_aircon', 'only_fan', 'both'];
+    const coolingHourOpts = ['0', '1-5', '6-10', '11-14'];
+    const tempOpts = ['<20', '20-23', '24-26', '26+'];
+    const homeTypeOpts = ['hdb', 'condo', 'landed'];
+    const bedOpts = ['1', '2', '3', '4+'];
+    const showerOpts = ['1', '2', '3+'];
+    const applianceOpts = ['never', 'rarely', 'often', 'always'];
+
+    const computeHomeCategoryEmissions = ({
+      coolingMethod,
+      coolingHoursOpt,
+      airconTempOpt,
+      homeType,
+      bedrooms,
+      showers,
+      appliancesOff,
+    }) => {
+      const homeTypeMult = getYouthHomeTypeMultiplier(homeType);
+      const bedroomMult = getBedroomMultiplier(bedrooms);
+      const weeklyCoolHours = getMedianValue(coolingHoursOpt) * 7;
+      const tempMult = getYouthTempMultiplier(airconTempOpt);
+
+      let coolingEmissions = 0;
+      if (coolingMethod === 'only_aircon') {
+        coolingEmissions = weeklyCoolHours * 0.24 * tempMult;
+      } else if (coolingMethod === 'only_fan') {
+        coolingEmissions = weeklyCoolHours * 0.03;
+      } else if (coolingMethod === 'both') {
+        const fanPart = weeklyCoolHours * 0.5 * 0.03;
+        const acPart = weeklyCoolHours * 0.5 * 0.24 * tempMult;
+        coolingEmissions = fanPart + acPart;
+      }
+
+      const showersPerDay = getShowerValue(showers);
+      let homeEmissions = coolingEmissions + showersPerDay * 7 * 0.24;
+      homeEmissions *= homeTypeMult * bedroomMult;
+      homeEmissions *= getYouthSwitchOffMultiplier(appliancesOff);
+      return homeEmissions;
+    };
+
+    let hMin = Infinity;
+    let hMax = -Infinity;
+    for (const cm of coolMethods) {
+      for (const ho of coolingHourOpts) {
+        for (const temp of tempOpts) {
+          for (const ht of homeTypeOpts) {
+            for (const bd of bedOpts) {
+              for (const sh of showerOpts) {
+                for (const ap of applianceOpts) {
+                  const v = computeHomeCategoryEmissions({
+                    coolingMethod: cm,
+                    coolingHoursOpt: ho,
+                    airconTempOpt: temp,
+                    homeType: ht,
+                    bedrooms: bd,
+                    showers: sh,
+                    appliancesOff: ap,
+                  });
+                  hMin = Math.min(hMin, v);
+                  hMax = Math.max(hMax, v);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    const inPersonOpts = ['0-3', '3-7', '7+'];
+    const bagOpts = ['never', 'rarely', 'often', 'always'];
+    let sMin = Infinity;
+    let sMax = -Infinity;
+    for (const ip of inPersonOpts) {
+      const shopTrips = getTripMidpoint(ip);
+      for (const bag of bagOpts) {
+        const bagsPerTrip = getPlasticBagsPerTrip(bag);
+        for (const onl of tripOpts) {
+          const onlineOrders = getTripMidpoint(onl);
+          const v = shopTrips * bagsPerTrip * 0.04 + onlineOrders * 0.3;
+          sMin = Math.min(sMin, v);
+          sMax = Math.max(sMax, v);
+        }
+      }
+    }
+
+    return {
+      electronics: { min: eMin, max: eMax },
+      diet: { min: dMin, max: dMax },
+      transport: { min: tMin, max: tMax },
+      home: { min: hMin, max: hMax },
+      shopping: { min: sMin, max: sMax },
+    };
+  };
+
+  const benchmarkBandsForYouthQuiz = useMemo(() => computeYouthCategoryBenchmarkBands(), []);
+
+  const getImpactLevelFromCategoryRange = (value, band) => {
+    const min = band.min;
+    const max = band.max;
+    if (!(Number.isFinite(value) && Number.isFinite(min) && Number.isFinite(max))) {
+      return 'Moderate';
+    }
+    const span = max - min;
+    if (span < 1e-9) {
+      return 'Moderate';
+    }
+    const clamped = Math.min(max, Math.max(min, value));
+    const t = (clamped - min) / span;
+    if (t < 1 / 3) return 'Low';
+    if (t < 2 / 3) return 'Moderate';
+    return 'High';
+  };
+
+  const getCategoryInterpretation = (name, value, portfolioPercent, impactLevel, band) => {
+    const pctText = portfolioPercent.toFixed(1);
+    const minText = band.min.toFixed(2);
+    const maxText = band.max.toFixed(2);
+    let rel = '';
+    if (impactLevel === 'Low') {
+      rel =
+        'Relative to everything this questionnaire can output for this category alone, your value sits in the lower third of that range—not a standout high-impact pocket for this quiz model.';
+    } else if (impactLevel === 'Moderate') {
+      rel =
+        "Relative to this questionnaire's modeled range for this category, your value sits in the middle band—balanced room for improvement without overstating it.";
+    } else {
+      rel =
+        'Relative to this questionnaire\'s modeled range for this category, your value sits in the upper third—this is a meaningful improvement opportunity on the answers you can change here.';
+    }
+
+    return `${name} is ${formatKg(value)} per week (${pctText}% of your modeled weekly total). For this calculator, answers in this category alone can land between about ${minText} and ${maxText} kg CO2e per week. ${rel}`;
+  };
+
+  const getCategoryActions = (name) => {
+    if (name === 'Diet') {
+      return [
+        'Reduce meat-heavy meals where possible.',
+        'Choose lower-carbon proteins more often.',
+        'Cut back on food delivery and takeaway when possible.',
+      ];
+    }
+    if (name === 'Transport') {
+      return [
+        'Replace short car or ride-hailing trips with MRT, bus, walking, or cycling.',
+        'Combine errands into fewer trips each week.',
+        'Use public transport for routine journeys when possible.',
+      ];
+    }
+    if (name === 'Home') {
+      return [
+        'Set aircon to 25-26 C where comfortable.',
+        'Use fans first before turning on aircon.',
+        'Switch off unused lights and appliances consistently.',
+      ];
+    }
+    if (name === 'Electronics') {
+      return [
+        'Reduce unnecessary charging and standby power.',
+        'Keep devices longer before replacing.',
+        'Limit non-essential upgrades where possible.',
+      ];
+    }
+    return [
+      'Buy less frequently and plan purchases.',
+      'Prioritize durable products over short-lived items.',
+      'Avoid impulse purchases and fast fashion habits.',
+    ];
+  };
+
+  const generateSpecificReductionWays = ({ totalWeeklyKg, formData: rawFormData }) => {
+    const input = rawFormData || {};
+    const opportunities = [];
+
+    const beefOption = input?.diet?.beefPork;
+    const beefCurrent = getBeefPorkMidpoint(beefOption);
+    if (beefCurrent > 0) {
+      const beefTarget = Math.max(0, Math.floor(beefCurrent / 2));
+      const beefDelta = beefCurrent - beefTarget;
+      const savings = beefDelta * 2.5;
+      opportunities.push({
+        title: 'Reduce beef meals',
+        currentText: `Based on your selected range (${beefOption}), this is about ${beefCurrent} beef/pork meals per week.`,
+        proposalText: `If you reduce this to around ${beefTarget} meals per week,`,
+        savings,
+      });
+    }
+
+    const carOption = input?.transport?.carTaxi;
+    const carCurrent = getTripMidpoint(carOption);
+    const distance = getYouthDistanceMedian(input?.transport?.distance);
+    if (carCurrent > 0) {
+      const carTarget = Math.max(0, Math.floor(carCurrent * 0.6));
+      const carDelta = carCurrent - carTarget;
+      const savings = carDelta * distance * 0.2;
+      opportunities.push({
+        title: 'Reduce ride-hailing or car trips',
+        currentText: `Based on your selected range (${carOption}), this is about ${carCurrent} trips per week at around ${distance} km per trip.`,
+        proposalText: `If you reduce this to around ${carTarget} trips per week,`,
+        savings,
+      });
+    }
+
+    const coolingMethod = input?.home?.coolingMethod;
+    const coolingHours = getMedianValue(input?.home?.coolingHours);
+    if ((coolingMethod === 'only_aircon' || coolingMethod === 'both') && coolingHours > 0) {
+      const tempMult = getYouthTempMultiplier(input?.home?.airconTemp);
+      const homeTypeMult = getYouthHomeTypeMultiplier(input?.home?.homeType);
+      const bedroomMult = getBedroomMultiplier(input?.home?.bedrooms);
+      const switchMult = getYouthSwitchOffMultiplier(input?.home?.appliancesOff);
+      const airconShare = coolingMethod === 'both' ? 0.5 : 1;
+      const perHourSavings = 0.24 * tempMult * airconShare * 7 * homeTypeMult * bedroomMult * switchMult;
+      const targetHours = Math.max(0, coolingHours - 2);
+      const savings = (coolingHours - targetHours) * perHourSavings;
+      opportunities.push({
+        title: 'Reduce aircon hours',
+        currentText: `You selected about ${coolingHours} cooling hours per day with ${coolingMethod === 'both' ? 'mixed fan + aircon usage' : 'aircon usage'}.`,
+        proposalText: `If you reduce this to about ${targetHours} hours per day,`,
+        savings,
+      });
+    }
+
+    const onlineOption = input?.shopping?.online;
+    const onlineCurrent = getTripMidpoint(onlineOption);
+    if (onlineCurrent > 0) {
+      const onlineTarget = Math.max(0, onlineCurrent - 2);
+      const delta = onlineCurrent - onlineTarget;
+      const savings = delta * 0.3;
+      opportunities.push({
+        title: 'Reduce online shopping orders',
+        currentText: `Based on your selected range (${onlineOption}), this is about ${onlineCurrent} online orders per week.`,
+        proposalText: `If you reduce this to around ${onlineTarget} orders per week,`,
+        savings,
+      });
+    }
+
+    // --- Begin additional specific reduction opportunities ---
+
+    const otherMeatsOption = input?.diet?.otherMeats;
+    const otherMeatsCurrent = getDietWeeklyMidpoint(otherMeatsOption);
+    if (otherMeatsCurrent > 0) {
+      const otherMeatsTarget = Math.max(0, Math.floor(otherMeatsCurrent / 2));
+      const delta = otherMeatsCurrent - otherMeatsTarget;
+      const savings = delta * 1.0;
+      opportunities.push({
+        title: 'Reduce other meat meals',
+        currentText: `Based on your selected range (${otherMeatsOption}), this is about ${otherMeatsCurrent} chicken, fish, duck, or other meat meals per week.`,
+        proposalText: `If you reduce this to around ${otherMeatsTarget} meals per week,`,
+        savings,
+      });
+    }
+
+    const takeawayOption = input?.diet?.takeaway;
+    const takeawayCurrent = getDietWeeklyMidpoint(takeawayOption);
+    if (takeawayCurrent > 0) {
+      const takeawayTarget = Math.max(0, Math.floor(takeawayCurrent * 0.6));
+      const delta = takeawayCurrent - takeawayTarget;
+      const savings = delta * 0.2;
+      opportunities.push({
+        title: 'Reduce takeaway or food delivery',
+        currentText: `Based on your selected range (${takeawayOption}), this is about ${takeawayCurrent} takeaway or delivery meals per week.`,
+        proposalText: `If you reduce this to around ${takeawayTarget} meals per week,`,
+        savings,
+      });
+    }
+
+    const publicTransportOption = input?.transport?.publicTransport;
+    const publicTransportCurrent = getTripMidpoint(publicTransportOption);
+    if (publicTransportCurrent > 0) {
+      const publicTransportTarget = Math.max(0, Math.floor(publicTransportCurrent * 0.7));
+      const delta = publicTransportCurrent - publicTransportTarget;
+      const savings = delta * 0.05;
+      opportunities.push({
+        title: 'Reduce unnecessary transport trips',
+        currentText: `Based on your selected range (${publicTransportOption}), this is about ${publicTransportCurrent} public transport trips per week.`,
+        proposalText: `If you reduce this to around ${publicTransportTarget} trips per week by combining journeys or avoiding unnecessary trips,`,
+        savings,
+      });
+    }
+
+    const packagedSnacksOption = input?.diet?.packagedSnacks;
+    const packagedSnacksCurrent = getDietWeeklyMidpoint(packagedSnacksOption);
+    if (packagedSnacksCurrent > 0) {
+      const packagedSnacksTarget = Math.max(0, Math.floor(packagedSnacksCurrent / 2));
+      const delta = packagedSnacksCurrent - packagedSnacksTarget;
+      const savings = delta * 0.1;
+      opportunities.push({
+        title: 'Cut down packaged snacks and drinks',
+        currentText: `Based on your selected range (${packagedSnacksOption}), this is about ${packagedSnacksCurrent} packaged snacks, drinks, or instant meals per week.`,
+        proposalText: `If you reduce this to around ${packagedSnacksTarget} times per week,`,
+        savings,
+      });
+    }
+
+    const bubbleTeaOption = input?.diet?.bubbleTea;
+    const bubbleTeaCurrent = getDietWeeklyMidpoint(bubbleTeaOption);
+    if (bubbleTeaCurrent > 0) {
+      const bubbleTeaTarget = Math.max(0, Math.floor(bubbleTeaCurrent / 2));
+      const delta = bubbleTeaCurrent - bubbleTeaTarget;
+      const savings = delta * 0.5;
+      opportunities.push({
+        title: 'Reduce bubble tea consumption',
+        currentText: `Based on your selected range (${bubbleTeaOption}), this is about ${bubbleTeaCurrent} cups of bubble tea per week.`,
+        proposalText: `If you reduce this to around ${bubbleTeaTarget} cups per week,`,
+        savings,
+      });
+    }
+
+    const foodWasteOption = input?.diet?.foodWaste;
+    const foodWasteCurrent = getFoodWasteYouthMapped(foodWasteOption);
+    if (foodWasteCurrent > 0) {
+      const foodWasteTarget = Math.max(0, foodWasteCurrent - 1);
+      const delta = foodWasteCurrent - foodWasteTarget;
+      const savings = delta * 2.0;
+      opportunities.push({
+        title: 'Reduce food waste',
+        currentText: `Based on your selected response (${foodWasteOption}), your food waste contribution is estimated at about ${foodWasteCurrent} units per week in the calculator.`,
+        proposalText: `If you improve this by one level,`,
+        savings,
+      });
+    }
+
+    const motorbikeOption = input?.transport?.motorbike;
+    const motorbikeCurrent = getTripMidpoint(motorbikeOption);
+    if (motorbikeCurrent > 0) {
+      const motorbikeTarget = Math.max(0, Math.floor(motorbikeCurrent * 0.6));
+      const delta = motorbikeCurrent - motorbikeTarget;
+      const savings = delta * distance * 0.1;
+      opportunities.push({
+        title: 'Reduce motorbike or e-scooter trips',
+        currentText: `Based on your selected range (${motorbikeOption}), this is about ${motorbikeCurrent} motorbike or e-scooter trips per week at around ${distance} km per trip.`,
+        proposalText: `If you reduce this to around ${motorbikeTarget} trips per week,`,
+        savings,
+      });
+    }
+
+    const showersOption = input?.home?.showers;
+    const showersCurrent = getShowerValue(showersOption);
+    if (showersCurrent > 1) {
+      const showersTarget = Math.max(1, showersCurrent - 1);
+      const delta = showersCurrent - showersTarget;
+      const homeTypeMult = getYouthHomeTypeMultiplier(input?.home?.homeType);
+      const bedroomMult = getBedroomMultiplier(input?.home?.bedrooms);
+      const switchMult = getYouthSwitchOffMultiplier(input?.home?.appliancesOff);
+      const savings = delta * 7 * 0.24 * homeTypeMult * bedroomMult * switchMult;
+      opportunities.push({
+        title: 'Reduce extra showers',
+        currentText: `Based on your selected range (${showersOption}), this is about ${showersCurrent} showers per day.`,
+        proposalText: `If you reduce this to about ${showersTarget} showers per day,`,
+        savings,
+      });
+    }
+
+    const shoppingTripsOption = input?.shopping?.inPerson;
+    const shoppingTripsCurrent = getTripMidpoint(shoppingTripsOption);
+    const bagsPerTrip = getPlasticBagsPerTrip(input?.shopping?.reusableBag);
+    if (shoppingTripsCurrent > 0 && bagsPerTrip > 0) {
+      const improvedBagsPerTrip = Math.max(0, bagsPerTrip - 1);
+      const savings = shoppingTripsCurrent * (bagsPerTrip - improvedBagsPerTrip) * 0.04;
+      opportunities.push({
+        title: 'Use fewer plastic bags while shopping',
+        currentText: `Based on your shopping answers, the calculator estimates around ${bagsPerTrip} plastic bags per in-person shopping trip.`,
+        proposalText: `If you reduce this by one bag per trip,`,
+        savings,
+      });
+    }
+    // --- End additional specific reduction opportunities ---
+
+    return opportunities
+      .filter((item) => item.savings > 0)
+      .sort((a, b) => b.savings - a.savings)
+      .slice(0, 5)
+      .map((item, index) => {
+        const reductionPercent = totalWeeklyKg > 0 ? (item.savings / totalWeeklyKg) * 100 : 0;
+        return {
+          id: index + 1,
+          title: item.title,
+          narrative: `${item.currentText} ${item.proposalText} you could save around ${item.savings.toFixed(2)} kg CO2e per week. That would reduce your total footprint by about ${reductionPercent.toFixed(1)}%.`,
+        };
+      });
+  };
+
+  const generateCarbonInsights = ({
+    totalWeeklyKg,
+    singaporeAverage,
+    globalAverage,
+    percentile,
+    breakdown,
+    formData: rawFormData,
+  }) => {
+    const sortedCategories = Object.entries(breakdown || {})
+      .map(([key, value]) => ({
+        key,
+        name: CATEGORY_LABELS[key] || key,
+        value: Number(value || 0),
+      }))
+      .sort((a, b) => b.value - a.value);
+
+    const categoryDiagnosis = sortedCategories.map((item) => {
+      const percentage = totalWeeklyKg > 0 ? (item.value / totalWeeklyKg) * 100 : 0;
+      const band = benchmarkBandsForYouthQuiz[item.key] ?? { min: 0, max: 0 };
+      const impactLevel = getImpactLevelFromCategoryRange(item.value, band);
+      return {
+        categoryKey: item.key,
+        category: item.name,
+        emissionValue: item.value,
+        percentage,
+        benchmarkMin: band.min,
+        benchmarkMax: band.max,
+        impactLevel,
+        interpretation: getCategoryInterpretation(item.name, item.value, percentage, impactLevel, band),
+      };
+    });
+
+    const topCategories = sortedCategories.slice(0, 3);
+    const topTwo = sortedCategories.slice(0, 2);
+    const topTwoTotal = topTwo.reduce((sum, item) => sum + item.value, 0);
+    const topTwoShare = totalWeeklyKg > 0 ? (topTwoTotal / totalWeeklyKg) * 100 : 0;
+
+    const comparatorText =
+      totalWeeklyKg <= singaporeAverage
+        ? `lower than the Singapore average of ${singaporeAverage.toFixed(2)} kg CO2e/week`
+        : `higher than the Singapore average of ${singaporeAverage.toFixed(2)} kg CO2e/week`;
+    const globalText =
+      totalWeeklyKg <= globalAverage
+        ? `lower than the global average of ${globalAverage.toFixed(2)} kg CO2e/week`
+        : `higher than the global average of ${globalAverage.toFixed(2)} kg CO2e/week`;
+    const percentileText =
+      percentile >= 0
+        ? `You are currently about ${percentile.toFixed(1)}% better than the Singapore baseline.`
+        : `Your current footprint is about ${Math.abs(percentile).toFixed(1)}% above the Singapore baseline, which means there is clear room to improve with targeted changes.`;
+
+    return {
+      overallSummary: `Your estimated weekly carbon footprint is ${totalWeeklyKg.toFixed(2)} kg CO2e. This is ${comparatorText} and ${globalText}. ${percentileText}`,
+      carbonPortfolio: sortedCategories.map((item) => ({
+        category: item.name,
+        emissionValue: item.value,
+        percentage: totalWeeklyKg > 0 ? (item.value / totalWeeklyKg) * 100 : 0,
+      })),
+      categoryDiagnosis,
+      priorityAreas: topCategories.map((item) => item.name),
+      actionPlan: topCategories.map((item) => ({
+        category: item.name,
+        recommendations: getCategoryActions(item.name),
+      })),
+      potentialImpact: `Your top two categories (${topTwo.map((item) => item.name).join(' and ')}) currently represent about ${topTwoShare.toFixed(1)}% of your weekly footprint.`,
+      specificWays: generateSpecificReductionWays({ totalWeeklyKg, formData: rawFormData }),
+      finalTakeaway:
+        'Your footprint is concentrated in a few key areas, which is good news. Focused changes in your highest-impact habits can create meaningful progress without needing to change everything at once.',
+    };
   };
 
   const saveYouthResultToLeaderboard = async () => {
@@ -793,6 +1340,14 @@ const CarbonTrackerYouth = () => {
     // Percentile logic for color and text
     const relativePercent = ((57.17 - results.totalFootprint) / 57.17) * 100;
     const percentileColor = getPercentileColor(relativePercent);
+    const insights = generateCarbonInsights({
+      totalWeeklyKg: results.totalFootprint,
+      singaporeAverage: results.comparison.singaporeAverage,
+      globalAverage: results.comparison.globalAverage,
+      percentile: results.comparison.percentile,
+      breakdown: results.breakdown,
+      formData,
+    });
 
     return (
       <div className="min-h-screen bg-white py-6 sm:py-8 overflow-x-hidden">
@@ -1160,6 +1715,117 @@ const CarbonTrackerYouth = () => {
               </div>
             );
           })()}
+
+          {/* AI Carbon Insights */}
+          <FadeIn direction="up" delay={0.1} duration={0.5} className="mb-12">
+            <div className="bg-white rounded-xl border border-green-100 shadow-sm p-6 sm:p-8">
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-gray-900">AI Carbon Insights</h3>
+                <p className="text-sm sm:text-base text-gray-600 mt-2">
+                  Understand your footprint, identify your biggest impact areas, and get practical steps to improve.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
+                <FadeIn direction="up" delay={1.1} duration={0.5}>
+                  <div className="rounded-xl border border-gray-100 bg-white p-5 h-full">
+                    <h4 className="text-base font-semibold text-green-700 mb-2">Overall Footprint Summary</h4>
+                    <p className="text-sm text-gray-700 leading-relaxed">{insights.overallSummary}</p>
+                  </div>
+                </FadeIn>
+
+                <FadeIn direction="up" delay={2.1} duration={0.5}>
+                  <div className="rounded-xl border border-gray-100 bg-white p-5 h-full">
+                    <h4 className="text-base font-semibold text-green-700 mb-2">Carbon Portfolio Breakdown</h4>
+                    <p className="text-sm text-gray-700 leading-relaxed mb-3">
+                      Your footprint is mainly concentrated in {insights.priorityAreas.slice(0, 2).join(' and ')}. Together, these categories account for most of your weekly emissions.
+                    </p>
+                    <div className="space-y-2">
+                      {insights.carbonPortfolio.map((item) => (
+                        <div key={item.category} className="flex items-center justify-between gap-4 text-sm">
+                          <span className="text-gray-700 font-medium">{item.category}</span>
+                          <span className="text-gray-600 text-right">{item.emissionValue.toFixed(2)} kg CO2e ({item.percentage.toFixed(1)}%)</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </FadeIn>
+
+                <div className="lg:col-span-2">
+                  <FadeIn direction="up" delay={3.1} duration={0.5}>
+                    <div className="rounded-xl border border-gray-100 bg-white p-5">
+                      <h4 className="text-base font-semibold text-green-700 mb-3">Category Diagnosis</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {insights.categoryDiagnosis.map((item) => {
+                        const impactCardClass =
+                          item.impactLevel === 'High'
+                            ? 'border-red-200 bg-red-50'
+                            : item.impactLevel === 'Moderate'
+                            ? 'border-yellow-200 bg-yellow-50'
+                            : 'border-green-200 bg-green-50';
+                        const impactPillClass =
+                          item.impactLevel === 'High'
+                            ? 'bg-red-100 text-red-700'
+                            : item.impactLevel === 'Moderate'
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : 'bg-green-100 text-green-700';
+
+                        return (
+                          <div key={item.category} className={`rounded-lg border p-4 ${impactCardClass}`}>
+                            <div className="flex items-center justify-between gap-3 mb-2">
+                              <span className="font-semibold text-gray-900">{item.category}</span>
+                              <span className={`text-xs px-2 py-1 rounded-full font-semibold ${impactPillClass}`}>
+                                {item.impactLevel} impact
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-600 mb-2">
+                              {item.emissionValue.toFixed(2)} kg CO2e/week ({item.percentage.toFixed(2)}%)
+                            </p>
+                            <p className="text-sm text-gray-700">{item.interpretation}</p>
+                          </div>
+                        );
+                        })}
+                      </div>
+                    </div>
+                  </FadeIn>
+                </div>
+
+                <div className="lg:col-span-2">
+                  <FadeIn direction="up" delay={4.1} duration={0.5}>
+                    <div className="rounded-xl border border-gray-100 bg-white p-5">
+                      <h4 className="text-base font-semibold text-green-700 mb-2">Specific Ways You Could Reduce Your Footprint</h4>
+                      <p className="text-sm text-gray-700 mb-3">{insights.potentialImpact}</p>
+                      {insights.specificWays.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                          {insights.specificWays.map((way) => (
+                            <div key={way.id} className="rounded-lg border border-green-100 bg-green-50/40 p-4">
+                              <p className="text-sm font-semibold text-gray-900 mb-1">
+                                {way.id}. {way.title}
+                              </p>
+                              <p className="text-sm text-gray-700 leading-relaxed">{way.narrative}</p>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-gray-700">
+                          Your current answers already indicate low activity in several high-impact behaviors. Small improvements in your top categories can still create measurable gains over time.
+                        </p>
+                      )}
+                    </div>
+                  </FadeIn>
+                </div>
+
+                <div className="lg:col-span-2">
+                  <FadeIn direction="up" delay={5.1} duration={0.5}>
+                    <div className="rounded-xl border border-gray-100 bg-white p-5">
+                      <h4 className="text-base font-semibold text-green-700 mb-2">Final Takeaway</h4>
+                      <p className="text-sm text-gray-700 leading-relaxed">{insights.finalTakeaway}</p>
+                    </div>
+                  </FadeIn>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
 
           {/* Performance Badge */}
           {relativePercent >= 0 && (
